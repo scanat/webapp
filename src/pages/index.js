@@ -11,7 +11,7 @@ const IndexPage = () => {
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
-  })
+  }, [])
 
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)

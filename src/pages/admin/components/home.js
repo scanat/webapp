@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Card from "./card"
 import styled from "styled-components"
-import QRCode from "easyqrcodejs"
+import { QRCode } from "react-qrcode-logo"
 import { navigate } from "gatsby"
 import { window, document, exists } from "browser-monads"
 
@@ -37,13 +37,13 @@ const Home = () => {
       const rno2 = no2.split("").reverse().join("")
       const orgUrl = rno2 + "-" + orgName + "-" + rno1
 
-      var qrcode = new QRCode(document.getElementById("qr_Code"), {
-        text: "http://localhost:8000/org-display?org=" + orgUrl,
-        logo: scanatlogo,
-        title: "Scan At",
-        titleColor: "#169188",
-        backgroundBorderRadius: 5,
-      })
+      // var qrcode = new QRCode(document.getElementById("qr_Code"), {
+      //   text: "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" + orgUrl,
+      //   logo: scanatlogo,
+      //   title: "Scan At",
+      //   titleColor: "#169188",
+      //   backgroundBorderRadius: 5,
+      // })
 
       setQrActive(true)
       setOrgActiveUrl(orgUrl)
@@ -90,6 +90,20 @@ const Home = () => {
         </section>
       </Card>
       <div id="qr_Code"></div>
+      {qrActive && (
+        <QRCode
+          value={
+            "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" +
+            orgActiveUrl
+          }
+          size={270}
+          logoImage={scanatlogo}
+          logoWidth={80}
+          qrStyle="dots"
+          enableCORS={true}
+          ecLevel="H"
+        />
+      )}
     </Container>
   )
 }
