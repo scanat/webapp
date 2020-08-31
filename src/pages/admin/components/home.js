@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import Card from "./card"
 import styled from "styled-components"
-import QRCodeWithLogo from "qrcode-with-logos"
+import QRCode from "easyqrcodejs"
 import { navigate } from "gatsby"
 import { window, document, exists } from "browser-monads"
 
@@ -37,17 +37,14 @@ const Home = () => {
       const rno2 = no2.split("").reverse().join("")
       const orgUrl = rno2 + "-" + orgName + "-" + rno1
 
-      qrcodeCanvas.style.display = "flex"
+      var qrcode = new QRCode(document.getElementById("qr_Code"), {
+        text: "http://localhost:8000/org-display?org=" + orgUrl,
+        logo: scanatlogo,
+        title: "Scan At",
+        titleColor: "#169188",
+        backgroundBorderRadius: 5,
+      })
 
-      new QRCodeWithLogo({
-        canvas: qrcodeCanvas,
-        content: "http://localhost:8000/org-display?org=" + orgUrl,
-        width: 300,
-        canvas: qrcodeCanvas,
-        logo: {
-          src: scanatlogo,
-        },
-      }).toCanvas()
       setQrActive(true)
       setOrgActiveUrl(orgUrl)
     }
@@ -92,7 +89,7 @@ const Home = () => {
           <LayoutName>Basic Linear Layout</LayoutName>
         </section>
       </Card>
-      <QrCanvas id="qrcodeCanvas"></QrCanvas>
+      <div id="qr_Code"></div>
     </Container>
   )
 }
@@ -113,10 +110,6 @@ const Container = styled.section`
   LayoutName = styled.h4`
     text-decoration: underline;
     color: #169188;
-  `,
-  QrCanvas = styled.canvas`
-    display: none;
-    margin: 0 auto;
   `
 
 export default Home

@@ -18,7 +18,7 @@ const OrgDisplay = () => {
     setOrgName(tracedOrgName)
 
     getAllData(id)
-  })
+  }, [])
 
   const getAllData = async id => {
     try {
@@ -43,7 +43,7 @@ const OrgDisplay = () => {
         <ListItem
           key={item._id}
         >
-          <BasicListCard item={item} status={item.status} />
+          <BasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
         </ListItem>
       ))}
     </Container>
