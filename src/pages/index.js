@@ -1,22 +1,46 @@
-import React from "react"
-import { Link } from "gatsby"
+import React, { useState } from "react"
+import styled from "styled-components"
+import Header from "../components/header"
+import Menu from "../components/menu"
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const banner = require("../images/scanat-banner.jpg")
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+const IndexPage = () => {
+  const [menuState, setMenuState] = useState(false)
+
+  const menuStateHandler = () => {
+    menuState ? setMenuState(false) : setMenuState(true)
+  }
+
+  return (
+    <Container>
+      <Constant>
+        {window.innerWidth <= 992 && (
+          <Header onMenuStateChange={menuStateHandler} />
+        )}
+        <Menu onMenuStateChange={menuState} />
+      </Constant>
+
+      <img
+        src={banner}
+        alt="Scan At Banner"
+        style={{ width: window.innerWidth <= 992 ? "90%" : '70%', alignSelf: "center", marginTop: "40px" }}
+      />
+    </Container>
+  )
+}
+
+const Container = styled.section`
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  `,
+  Constant = styled.section`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+  `
 
 export default IndexPage

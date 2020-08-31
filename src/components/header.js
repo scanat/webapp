@@ -1,42 +1,44 @@
-import { Link } from "gatsby"
-import PropTypes from "prop-types"
 import React from "react"
+import styled from "styled-components"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
-        >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
-)
+const Header = props => {
+  const logOut = () => {
+    window.location.href = `http://localhost:8000/admin/login`
+    localStorage.removeItem("loggedIn")
+  }
 
-Header.propTypes = {
-  siteTitle: PropTypes.string,
+  return (
+    <Head>
+      <h3 style={{ color: "white" }}>Scan At</h3>
+
+      <section>
+        <FontAwesomeIcon
+          icon={faBars}
+          color="white"
+          onClick={() => props.onMenuStateChange()}
+        />
+        {localStorage.getItem("loggedIn") && (
+          <FontAwesomeIcon
+            icon={faSignOutAlt}
+            color="white"
+            onClick={logOut}
+            style={{ margin: "0 0 0 30px" }}
+          />
+        )}
+      </section>
+    </Head>
+  )
 }
 
-Header.defaultProps = {
-  siteTitle: ``,
-}
+const Head = styled.header`
+  background: #169188;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  justify-content: space-between;
+`
 
 export default Header
