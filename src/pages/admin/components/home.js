@@ -3,7 +3,6 @@ import Card from "./card"
 import styled from "styled-components"
 import { QRCode } from "react-qrcode-logo"
 import { navigate } from "gatsby"
-import { window, document, exists } from "browser-monads"
 
 const activeLayoutImage = require(`../../../images/basic-linear-layout.png`)
 const scanatlogo = require(`../../../images/scan_at_logo.png`)
@@ -12,19 +11,13 @@ const Home = () => {
   const [qrActive, setQrActive] = useState(false)
   const [orgActiveUrl, setOrgActiveUrl] = useState("")
 
-  var qrcodeCanvas
-
   const redirectToLayout = () => {
     navigate("/admin/linear-layout")
   }
 
   useEffect(() => {
     qrActive && generateQrCode()
-  }, [])
-
-  useEffect(() => {
-    qrcodeCanvas = document.getElementById("qrcodeCanvas")
-  })
+  }, [qrActive])
 
   const generateQrCode = () => {
     if (typeof window !== "undefined") {
@@ -36,14 +29,6 @@ const Home = () => {
       const rno1 = no1.split("").reverse().join("")
       const rno2 = no2.split("").reverse().join("")
       const orgUrl = rno2 + "-" + orgName + "-" + rno1
-
-      // var qrcode = new QRCode(document.getElementById("qr_Code"), {
-      //   text: "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" + orgUrl,
-      //   logo: scanatlogo,
-      //   title: "Scan At",
-      //   titleColor: "#169188",
-      //   backgroundBorderRadius: 5,
-      // })
 
       setQrActive(true)
       setOrgActiveUrl(orgUrl)
@@ -60,7 +45,7 @@ const Home = () => {
 
       <Card>
         <img
-          alt="Current Active Layout Temp Image"
+          alt="Current Active Layout Temp"
           src={activeLayoutImage}
           onClick={redirectToLayout}
         />

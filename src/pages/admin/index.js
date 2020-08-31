@@ -7,10 +7,10 @@ import {navigate} from 'gatsby'
 
 const Index = () => {
   const [menuState, setMenuState] = useState(false)
-  const [windowWidth, setWindowWidth] = useState()
 
+  var windowWidth
   useEffect(() => {
-    setWindowWidth(window.innerWidth)
+    windowWidth = window.innerWidth
   })
 
   const menuStateHandler = () => {

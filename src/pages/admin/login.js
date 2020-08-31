@@ -4,7 +4,6 @@ import Menu from "../../components/menu"
 import Anime from "animejs"
 import axios from "axios"
 import { navigate } from "gatsby"
-import { window, document, exists } from "browser-monads"
 
 import styled from "styled-components"
 
@@ -20,8 +19,10 @@ const Login = () => {
   const [regdConfirmPassword, setRegdConfirmPassword] = useState("")
   const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
 
-  const [windowWidth, setWindowWidth] = useState()
-  var RegPanel
+  var windowWidth
+  useEffect(() => {
+    windowWidth = window.innerWidth
+  })
 
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)
@@ -31,9 +32,6 @@ const Login = () => {
     if (localStorage.getItem("loggedIn")) {
       navigate("/admin")
     }
-    setWindowWidth(window.innerWidth)
-
-    RegPanel = document.getElementById('regPanel')
   })
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const Login = () => {
 
   const openRegistrationPanel = () => {
     Anime({
-      targets: RegPanel,
+      targets: document.getElementById('regPanel'),
       opacity: [0, 1],
       height: [0, 220],
       easing: "linear",

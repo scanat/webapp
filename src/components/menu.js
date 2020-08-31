@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import { Link } from "gatsby"
 import Anime from "animejs"
@@ -8,14 +8,13 @@ import {
   faInstagram,
   faPinterest,
 } from "@fortawesome/free-brands-svg-icons"
-import {window, document} from 'browser-monads'
 
 var windowWidth
 
 const Menu = props => {
 
   useEffect(() => {
-    windowWidth =  window.innerWidth
+    windowWidth = window.innerWidth
   })
 
   useEffect(() => {
@@ -79,8 +78,8 @@ const Contain = styled.section`
     position: relative;
     width: 300px;
     background: rgba(0, 0, 0, 0.54);
-    height: ${window.innerWidth <= 992 ? "calc(100vh - 50px)" : "100vh"};
-    transform: ${window.innerWidth <= 992 && "translateX(-302)"};
+    height: ${windowWidth <= 992 ? "calc(100vh - 50px)" : "100vh"};
+    transform: ${windowWidth <= 992 && "translateX(-302)"};
   `,
   Nav = styled.nav`
     float: left;

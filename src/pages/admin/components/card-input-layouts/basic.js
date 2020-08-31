@@ -6,7 +6,6 @@ import BasicListCard from "../card-layouts/basic-card"
 import styled from "styled-components"
 import axios from "axios"
 import { navigate } from "gatsby"
-import { window, document, exists } from "browser-monads"
 
 const Basic = props => {
   const [itemName, setItemName] = useState("")
