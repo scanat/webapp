@@ -3,9 +3,15 @@ import styled from "styled-components"
 import Header from "../../components/header"
 import Menu from "../../components/menu"
 import Home from './components/home'
+import {navigate} from 'gatsby'
 
 const Index = () => {
   const [menuState, setMenuState] = useState(false)
+  const [windowWidth, setWindowWidth] = useState()
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+  })
 
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)
@@ -22,15 +28,14 @@ const Index = () => {
       !localStorage.getItem("loggedIn") ||
       localStorage.getItem("loggedIn") === null
     ) {
-      window.location.href = `http://localhost:8000/admin/login`
+      navigate('/admin/login')
     }
-    console.log(JSON.parse(localStorage.getItem('userData')))
   })
 
   return (
     <Container>
       <Constant>
-        {window.innerWidth <= 992 && (
+        {windowWidth <= 992 && (
           <Header onMenuStateChange={menuStateHandler} />
         )}
         <Menu onMenuStateChange={menuState}/>

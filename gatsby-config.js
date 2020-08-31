@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `Scan At`,
     description: `A dynamic contactless automation system for food serving organizations or businesses.`,
-    author: `omkarDeshmukh@scanat`,
+    author: `omkarDeshmukh@scanat`
   },
   plugins: [
     `gatsby-plugin-react-helmet`,

@@ -5,6 +5,8 @@ import { FcAddRow } from "react-icons/fc"
 import BasicListCard from "../card-layouts/basic-card"
 import styled from "styled-components"
 import axios from "axios"
+import { navigate } from "gatsby"
+import { window, document, exists } from "browser-monads"
 
 const Basic = props => {
   const [itemName, setItemName] = useState("")
@@ -53,8 +55,10 @@ const Basic = props => {
       )
       setItemName("")
       setItemPrice("")
-      document.getElementById("item-name-input").value = ""
-      document.getElementById("item-price-input").value = ""
+      if (typeof window !== 'undefined') {
+        document.getElementById("item-name-input").value = ""
+        document.getElementById("item-price-input").value = ""
+      }
     }
     console.log(list)
   }
@@ -65,18 +69,24 @@ const Basic = props => {
     setItemPrice("")
     setChanging(false)
     setChosenItem()
-    document.getElementById("item-name-input").value = ""
-    document.getElementById("item-price-input").value = ""
-    document.getElementById("card-change-options").style.display = "none"
+    if (typeof window !== 'undefined') {
+      document.getElementById("item-name-input").value = ""
+      document.getElementById("item-price-input").value = ""
+      document.getElementById("card-change-options").style.display = "none"
+    }
   }
 
   // Displaying the options to handle changes in the list
   const cardChangeOptionsHandler = (visibile, item) => {
-    visibile
-      ? (document.getElementById("card-change-options").style.display = "block")
-      : (document.getElementById("card-change-options").style.display = "none")
+    if (typeof window !== 'undefined') {
+      visibile
+        ? (document.getElementById("card-change-options").style.display =
+            "block")
+        : (document.getElementById("card-change-options").style.display =
+            "none")
 
-    setChosenItem(item)
+      setChosenItem(item)
+    }
   }
 
   // Toggling the active status of the item
@@ -89,7 +99,8 @@ const Basic = props => {
     newList[elementIndex].status = newListStatus ? false : true
     setList(newList)
     setChosenItem()
-    document.getElementById("card-change-options").style.display = "none"
+    if (typeof window !== 'undefined')
+      document.getElementById("card-change-options").style.display = "none"
   }
 
   // Removing the item from the list
@@ -105,12 +116,14 @@ const Basic = props => {
 
   // Adding the chosen items to input
   const updateItemHandler = () => {
-    setItemName(chosenItem.itemName)
-    setItemPrice(chosenItem.itemPrice)
-    document.getElementById("item-name-input").value = chosenItem.itemName
-    document.getElementById("item-price-input").value = chosenItem.itemPrice
-    setChanging(true)
-    document.getElementById("card-change-options").style.display = "none"
+    if (typeof window !== 'undefined') {
+      setItemName(chosenItem.itemName)
+      setItemPrice(chosenItem.itemPrice)
+      document.getElementById("item-name-input").value = chosenItem.itemName
+      document.getElementById("item-price-input").value = chosenItem.itemPrice
+      setChanging(true)
+      document.getElementById("card-change-options").style.display = "none"
+    }
   }
 
   // Updating the item finally
@@ -145,7 +158,7 @@ const Basic = props => {
       )
       if (res.status === 201) {
         alert(res.data.msg)
-        window.location.href = `http://localhost:8000/admin`
+        navigate("/admin")
       } else {
         alert(res.data.msg)
       }
@@ -219,7 +232,7 @@ const Basic = props => {
             onClick={() => cardChangeOptionsHandler(true, item)}
             key={item._id}
           >
-            <BasicListCard item={item} status={item.status} />
+            <BasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
           </ListItem>
         ))}
       </ListContainer>

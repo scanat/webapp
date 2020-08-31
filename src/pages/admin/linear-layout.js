@@ -1,6 +1,7 @@
-import React, {useEffect} from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import BasicSystem from "./components/card-input-layouts/basic"
+import { navigate } from "gatsby"
 
 const LinearLayout = () => {
 
@@ -9,9 +10,8 @@ const LinearLayout = () => {
       !localStorage.getItem("loggedIn") ||
       localStorage.getItem("loggedIn") === null
     ) {
-      window.location.href = `http://localhost:8000/admin/login`
+      navigate('/admin/login')
     }
-    console.log(JSON.parse(localStorage.getItem('userData')))
   })
 
   return (

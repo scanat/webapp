@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Header from "../components/header"
 import Menu from "../components/menu"
@@ -7,6 +7,11 @@ const banner = require("../images/scanat-banner.jpg")
 
 const IndexPage = () => {
   const [menuState, setMenuState] = useState(false)
+  const [windowWidth, setWindowWidth] = useState()
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth)
+  })
 
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)
@@ -15,7 +20,7 @@ const IndexPage = () => {
   return (
     <Container>
       <Constant>
-        {window.innerWidth <= 992 && (
+        {windowWidth <= 992 && (
           <Header onMenuStateChange={menuStateHandler} />
         )}
         <Menu onMenuStateChange={menuState} />
@@ -24,7 +29,7 @@ const IndexPage = () => {
       <img
         src={banner}
         alt="Scan At Banner"
-        style={{ width: window.innerWidth <= 992 ? "90%" : '70%', alignSelf: "center", marginTop: "40px" }}
+        style={{ height: "90vh", alignSelf: "center", marginTop: "40px" }}
       />
     </Container>
   )

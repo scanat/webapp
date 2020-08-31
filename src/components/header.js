@@ -2,10 +2,11 @@ import React from "react"
 import styled from "styled-components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import {navigate} from 'gatsby'
 
 const Header = props => {
   const logOut = () => {
-    window.location.href = `http://localhost:8000/admin/login`
+    navigate('/admin/login')
     localStorage.removeItem("loggedIn")
   }
 

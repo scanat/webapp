@@ -198,7 +198,7 @@ const Basic = props => {
 
         {list.map(item => (
           <ListItem onClick={() => cardChangeOptionsHandler(true, item)}>
-            <CategoryBasicListCard item={item} status={item.status} />
+            <CategoryBasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
           </ListItem>
         ))}
       </ListContainer>

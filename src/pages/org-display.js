@@ -18,7 +18,7 @@ const OrgDisplay = () => {
     setOrgName(tracedOrgName)
 
     getAllData(id)
-  }, [])
+  })
 
   const getAllData = async id => {
     try {
@@ -30,7 +30,6 @@ const OrgDisplay = () => {
         params
       )
       alert(res.data.msg)
-      console.log(res.data.item)
       setList(res.data.item)
     } catch (error) {
       console.log(error)

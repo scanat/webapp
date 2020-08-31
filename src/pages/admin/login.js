@@ -3,6 +3,8 @@ import Header from "../../components/header"
 import Menu from "../../components/menu"
 import Anime from "animejs"
 import axios from "axios"
+import { navigate } from "gatsby"
+import { window, document, exists } from "browser-monads"
 
 import styled from "styled-components"
 
@@ -18,14 +20,20 @@ const Login = () => {
   const [regdConfirmPassword, setRegdConfirmPassword] = useState("")
   const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
 
+  const [windowWidth, setWindowWidth] = useState()
+  var RegPanel
+
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)
   }
 
   useEffect(() => {
     if (localStorage.getItem("loggedIn")) {
-      window.location.href = `http://localhost:8000/admin`
+      navigate("/admin")
     }
+    setWindowWidth(window.innerWidth)
+
+    RegPanel = document.getElementById('regPanel')
   })
 
   useEffect(() => {
@@ -35,21 +43,23 @@ const Login = () => {
   }, [menuState])
 
   const clearInput = () => {
-    document.getElementById("userIdInput").value = ""
-    document.getElementById("userPasswordInput").value = ""
-    document.getElementById("userIdInput").style.borderColor = "white"
-    document.getElementById("userPasswordInput").style.borderColor = "white"
+    if (typeof window !== 'undefined') {
+      document.getElementById("userIdInput").value = ""
+      document.getElementById("userPasswordInput").value = ""
+      document.getElementById("userIdInput").style.borderColor = "white"
+      document.getElementById("userPasswordInput").style.borderColor = "white"
 
-    document.getElementById("regPhoneNumber").value = ""
-    document.getElementById("regEmail").value = ""
-    document.getElementById("regOrgName").value = ""
-    document.getElementById("regPassword").value = ""
-    document.getElementById("regConfirmPassword").value = ""
+      document.getElementById("regPhoneNumber").value = ""
+      document.getElementById("regEmail").value = ""
+      document.getElementById("regOrgName").value = ""
+      document.getElementById("regPassword").value = ""
+      document.getElementById("regConfirmPassword").value = ""
+    }
   }
 
   const openRegistrationPanel = () => {
     Anime({
-      targets: document.getElementById("regPanel"),
+      targets: RegPanel,
       opacity: [0, 1],
       height: [0, 220],
       easing: "linear",
@@ -117,7 +127,7 @@ const Login = () => {
           alert(res.data.msg)
           localStorage.setItem("loggedIn", true)
           localStorage.setItem("userData", JSON.stringify(res.data.item))
-          window.location.href = `http://localhost:8000/admin`
+          navigate("/admin")
         } else {
           alert(res.data.msg)
         }
@@ -125,18 +135,20 @@ const Login = () => {
         alert("Oops, somthing went wrong!")
       }
     } else {
-      document.getElementById("userIdInput").style.borderColor = "red"
-      document.getElementById("userPasswordInput").style.borderColor = "red"
+      if (typeof window !== 'undefined') {
+        document.getElementById("userIdInput").style.borderColor = "red"
+        document.getElementById("userPasswordInput").style.borderColor = "red"
+      }
     }
   }
 
   return (
     <Container>
       <Constant>
-        {window.innerWidth <= 992 && (
+        {windowWidth <= 992 && (
           <Header onMenuStateChange={menuStateHandler} />
         )}
-        <Menu onMenuStateChange={menuState}/>
+        <Menu onMenuStateChange={menuState} />
       </Constant>
       <LoginPanel>
         <Input

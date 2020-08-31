@@ -6,15 +6,15 @@ const BasicCard = (props) => {
   if(props.status){
   return (
     <Card>
-      <ItemName>{props.item.itemName}</ItemName>
-      <ItemPrice>Rs {props.item.itemPrice} /-</ItemPrice>
+      <ItemName>{props.itemName}</ItemName>
+      <ItemPrice>Rs {props.itemPrice} /-</ItemPrice>
     </Card>
   )}
   else {
     return (
       <RedCard>
-        <ItemName>{props.item.itemName}</ItemName>
-        <ItemPrice>Rs {props.item.itemPrice} /-</ItemPrice>
+        <ItemName>{props.itemName}</ItemName>
+        <ItemPrice>Rs {props.itemPrice} /-</ItemPrice>
       </RedCard>
     )
   }

@@ -1,24 +1,23 @@
-import React from "react";
-import styled from "styled-components";
+import React from "react"
+import styled from "styled-components"
 
-const BasicCard = (props) => {
-
-  if(props.status){
-  return (
-    <Card>
-      <ItemName>{props.item.itemName}</ItemName>
-      <ItemPrice>Rs {props.item.itemPrice} /-</ItemPrice>
-    </Card>
-  )}
-  else {
+const BasicCard = props => {
+  if (props.status) {
+    return (
+      <Card>
+        <ItemName>{props.itemName}</ItemName>
+        <ItemPrice>Rs {props.itemPrice} /-</ItemPrice>
+      </Card>
+    )
+  } else {
     return (
       <RedCard>
-        <ItemName>{props.item.itemName}</ItemName>
-        <ItemPrice>Rs {props.item.itemPrice} /-</ItemPrice>
+        <ItemName>{props.itemName}</ItemName>
+        <ItemPrice>Rs {props.itemPrice} /-</ItemPrice>
       </RedCard>
     )
   }
-};
+}
 
 const Card = styled.li`
     position: relative;
@@ -47,6 +46,6 @@ const Card = styled.li`
   ItemPrice = styled.p`
     padding: 10px;
     float: right;
-  `;
+  `
 
-export default BasicCard;
+export default BasicCard
