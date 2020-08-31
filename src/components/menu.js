@@ -79,8 +79,8 @@ const Contain = styled.section`
     position: relative;
     width: 300px;
     background: rgba(0, 0, 0, 0.54);
-    height: ${windowWidth <= 992 ? "calc(100vh - 50px)" : "100vh"};
-    transform: ${windowWidth <= 992 && "translateX(-302)"};
+    height: ${window.innerWidth <= 992 ? "calc(100vh - 50px)" : "100vh"};
+    transform: ${window.innerWidth <= 992 && "translateX(-302)"};
   `,
   Nav = styled.nav`
     float: left;
