@@ -1,13 +1,21 @@
-import React from "react"
+import React, {useState} from "react"
+import Header from "../components/header"
+import Menu from "../components/menu"
+import layoutStyles from "./layout.model.css"
 
-const Layout = ({children}) => {
+const Layout = ({ children }) => {
+  const [menuState, setMenuState] = useState(false)
+
+  const menuStateHandler = () => {
+    menuState ? setMenuState(false) : setMenuState(true)
+  }
 
   return (
-    <>
-      <div style={{margin: 0, padding: 0}}>
-        <main>{children}</main>
-      </div>
-    </>
+    <section className={layoutStyles.container}>
+      <Header onMenuStateChange={menuStateHandler} />
+      <Menu onMenuStateChange={menuState} />
+      <main className={layoutStyles.main}>{children}</main>
+    </section>
   )
 }
 

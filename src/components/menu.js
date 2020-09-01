@@ -36,7 +36,7 @@ const Menu = props => {
       <Nav>
         <h3
           id="headerText"
-          style={{ fontSize: 16, color: "white", margin: "20px" }}
+          style={{ fontSize: 16, color: "white", margin: "20px", textTransform: 'uppercase' }}
         >
           Live safe. Serve effortless.
         </h3>
@@ -69,9 +69,9 @@ const Menu = props => {
 }
 
 const Contain = styled.section`
-    position: relative;
+    position: absolute;
     width: 300px;
-    background: rgba(0, 0, 0, 0.54);
+    background: rgba(0, 0, 0, 0.64);
     height: calc(100vh - 50px);
   `,
   Nav = styled.nav`

@@ -28,14 +28,13 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-your-fonts',
+      resolve: 'gatsby-plugin-web-font-loader',
       options: {
-        path: `${__dirname}/src/fonts/coversans/`,
-        fonts: [
-          `style.css`
-        ]
+        google: {
+          families: ['Open Sans',]
+        }
       }
-    },
+    }
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
