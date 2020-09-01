@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Header from "../components/header"
 import Menu from "../components/menu"
+import '../styles/index.scss'
+import '../styles/common.scss'
 
 const banner = require("../images/scanat-banner.jpg")
 
@@ -18,20 +20,20 @@ const IndexPage = () => {
   }
 
   return (
-    <Container>
-      <Constant>
+    <section className='container'>
+      <section className='constant'>
         {windowWidth <= 992 && (
           <Header onMenuStateChange={menuStateHandler} />
         )}
         <Menu onMenuStateChange={menuState} />
-      </Constant>
+      </section>
 
       <img
         src={banner}
         alt="Scan At Banner"
-        style={{ height: "90vh", alignSelf: "center", marginTop: "40px" }}
+        className='scanatBanner'
       />
-    </Container>
+    </section>
   )
 }
 

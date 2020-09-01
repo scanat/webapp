@@ -1,0 +1,11 @@
+.container{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    .scanatBanner{
+        height: "90vh";
+        align-self: "center";
+        margin-top: "40px";
+    }
+}
