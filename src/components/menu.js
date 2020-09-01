@@ -15,7 +15,7 @@ const Menu = props => {
     Anime({
       autoplay: true,
       targets: document.getElementById("menu"),
-      translateX: [-320, 0],
+      left: [-320, 0],
       easing: "easeInOutSine",
       duration: 600,
       direction: props.onMenuStateChange ? "normal" : "reverse",

@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import Header from "../components/header"
 import Menu from "../components/menu"
-import layoutStyles from "./layout.model.css"
+import layoutStyles from "./layout.module.css"
 
 const Layout = ({ children }) => {
   const [menuState, setMenuState] = useState(false)
