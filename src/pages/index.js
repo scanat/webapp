@@ -49,7 +49,7 @@ const Container = styled.section`
     height: 100vh;
   `,
   Img = styled.img`
-    height: 90vh;
+    width: 90%;
     align-self: center;
     margin-top: 40px;
   `
