@@ -1,0 +1,66 @@
+.loginPanel {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.34);
+  padding: 10px 20px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-width: 300px;
+  z-index: 1;
+}
+
+.inputSection {
+  margin: 10px 0;
+  border-bottom: white 1px solid;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  background: none;
+  color: white;
+  font-size: 15px;
+}
+
+.registrationPanel {
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  height: 0;
+  overflow: hidden;
+}
+
+.buttonReg {
+  background: #169188;
+  padding: 5px 10px;
+  border: gray 1px solid;
+  border-radius: 7px;
+  box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
+    inset -5px -5px 10px #169188;
+  -moz-box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
+    inset -5px -5px 10px #169188;
+  -webkit-box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
+    inset -5px -5px 10px #169188;
+  color: white;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+  -ms-flex-direction: row;
+  justify-content: space-around;
+  margin: 10px 0;
+}
+
+.buttonLogin {
+  width: 80px;
+  background: white;
+  padding: 5px 10px;
+  border: gray 1px solid;
+  border-radius: 10px;
+  box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px white;
+  -moz-box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
+    inset -5px -5px 10px white;
+  -webkit-box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
+    inset -5px -5px 10px white;
+}

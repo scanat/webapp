@@ -1,0 +1,26 @@
+.homeContainer {
+  width: 100%;
+  background: transparent;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.contentTopic {
+  margin: 20px 0;
+  color: #f3d200;
+  text-align: center;
+}
+
+.activeOptionButton {
+  margin: 5px 0;
+}
+
+.layoutName {
+  text-decoration: underline;
+  color: #169188;
+}
+
+.qrCodeSection{
+  display: flex;
+  justify-content: center;
+}

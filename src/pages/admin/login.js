@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react"
-import Header from "../../components/header"
-import Menu from "../../components/menu"
 import Anime from "animejs"
 import axios from "axios"
+import Container from "../../components/layout"
 import { navigate } from "gatsby"
-
-import styled from "styled-components"
+import loginStyles from "./login.module.css"
 
 const Login = () => {
   const [userId, setUserId] = useState("")
   const [pass, setPass] = useState("")
-  const [menuState, setMenuState] = useState(false)
   const [regState, setRegState] = useState(false)
   const [regdPhoneNumber, setRegdPhoneNumber] = useState("")
   const [regdEmail, setRegdEmail] = useState("")
@@ -19,29 +16,14 @@ const Login = () => {
   const [regdConfirmPassword, setRegdConfirmPassword] = useState("")
   const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
 
-  var windowWidth
-  useEffect(() => {
-    windowWidth = window.innerWidth
-  })
-
-  const menuStateHandler = () => {
-    menuState ? setMenuState(false) : setMenuState(true)
-  }
-
   useEffect(() => {
     if (localStorage.getItem("loggedIn")) {
       navigate("/admin")
     }
   })
 
-  useEffect(() => {
-    !menuState
-      ? (document.getElementById("menu").style.display = "none")
-      : (document.getElementById("menu").style.display = "block")
-  }, [menuState])
-
   const clearInput = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       document.getElementById("userIdInput").value = ""
       document.getElementById("userPasswordInput").value = ""
       document.getElementById("userIdInput").style.borderColor = "white"
@@ -57,7 +39,7 @@ const Login = () => {
 
   const openRegistrationPanel = () => {
     Anime({
-      targets: document.getElementById('regPanel'),
+      targets: document.getElementById("regPanel"),
       opacity: [0, 1],
       height: [0, 220],
       easing: "linear",
@@ -133,7 +115,7 @@ const Login = () => {
         alert("Oops, somthing went wrong!")
       }
     } else {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         document.getElementById("userIdInput").style.borderColor = "red"
         document.getElementById("userPasswordInput").style.borderColor = "red"
       }
@@ -142,38 +124,35 @@ const Login = () => {
 
   return (
     <Container>
-      <Constant>
-        {windowWidth <= 992 && (
-          <Header onMenuStateChange={menuStateHandler} />
-        )}
-        <Menu onMenuStateChange={menuState} />
-      </Constant>
-      <LoginPanel>
-        <Input
+      <section className={loginStyles.loginPanel}>
+        <input
+          className={loginStyles.inputSection}
           id="userIdInput"
           type="text"
-          placeholder="Enter your login id"
+          placeholder="Login id / Phone Number"
           inputMode="tel"
           onChange={event => setUserId(event.target.value)}
         />
-        <Input
+        <input
+          className={loginStyles.inputSection}
           id="userPasswordInput"
           type="password"
-          placeholder="********"
+          placeholder="pass*****word"
           onChange={event => setPass(event.target.value)}
         />
 
-        <ButtonContainer>
-          <Button type="button" onClick={processUserAuth}>
+        <section className={loginStyles.buttonContainer}>
+          <button className={loginStyles.buttonLogin} type="button" onClick={processUserAuth}>
             Submit
-          </Button>
-          <Button type="button" onClick={clearInput}>
+          </button>
+          <button className={loginStyles.buttonLogin} type="button" onClick={clearInput}>
             Reset
-          </Button>
-        </ButtonContainer>
+          </button>
+        </section>
 
-        <RegistrationPanel id="regPanel">
-          <Input
+        <section className={loginStyles.registrationPanel} id="regPanel">
+          <input
+            className={loginStyles.inputSection}
             id="regPhoneNumber"
             type="text"
             placeholder="Phone Number"
@@ -181,7 +160,8 @@ const Login = () => {
             onChange={event => setRegdPhoneNumber(event.target.value)}
           />
 
-          <Input
+          <input
+            className={loginStyles.inputSection}
             id="regEmail"
             type="text"
             placeholder="Email ID"
@@ -189,7 +169,8 @@ const Login = () => {
             onChange={event => setRegdEmail(event.target.value)}
           />
 
-          <Input
+          <input
+            className={loginStyles.inputSection}
             id="regOrgName"
             type="text"
             placeholder="Organization Name"
@@ -204,107 +185,33 @@ const Login = () => {
             <option value="Digital Rooms">Digital Rooms</option>
           </select>
 
-          <Input
+          <input
+            className={loginStyles.inputSection}
             id="regPassword"
             type="password"
             placeholder="Password"
             onChange={event => setRegdPassword(event.target.value)}
           />
 
-          <Input
+          <input
+            className={loginStyles.inputSection}
             id="regConfirmPassword"
             type="password"
             placeholder="Confirm Password"
             onChange={event => setRegdConfirmPassword(event.target.value)}
           />
-        </RegistrationPanel>
+        </section>
 
-        <ButtonReg
+        <button
+          className={loginStyles.buttonReg}
           type="button"
           onClick={regState ? sendRegDetails : openRegistrationPanel}
         >
           REGISTER NEW USER
-        </ButtonReg>
-      </LoginPanel>
+        </button>
+      </section>
     </Container>
   )
 }
-
-const Container = styled.section`
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex: 1;
-    background: transparent;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.1);
-  `,
-  Constant = styled.section`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 2;
-  `,
-  LoginPanel = styled.section`
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.54);
-    padding: 10px 20px;
-    display: flex;
-    flex-direction: column;
-    min-width: 250px;
-    max-width: 100%;
-    z-index: 1;
-  `,
-  Input = styled.input`
-    margin: 10px 0;
-    border-bottom: white 1px solid;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    background: none;
-    color: white;
-    font-size: 15px;
-  `,
-  ButtonContainer = styled.section`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    margin: 10px 0;
-  `,
-  Button = styled.button`
-    width: 80px;
-    background: white;
-    padding: 5px 10px;
-    border: gray 1px solid;
-    border-radius: 10px;
-    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
-      inset -5px -5px 10px white;
-    -moz-box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
-      inset -5px -5px 10px white;
-    -webkit-box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
-      inset -5px -5px 10px white;
-  `,
-  ButtonReg = styled.button`
-    background: #169188;
-    padding: 5px 10px;
-    border: gray 1px solid;
-    border-radius: 7px;
-    box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
-      inset -5px -5px 10px #169188;
-    -moz-box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
-      inset -5px -5px 10px #169188;
-    -webkit-box-shadow: inset 5px 5px 10px rgba(255, 255, 255, 0.2),
-      inset -5px -5px 10px #169188;
-    color: white;
-  `,
-  RegistrationPanel = styled.section`
-    padding: 10px 20px;
-    display: flex;
-    flex-direction: column;
-    height: 0;
-    overflow: hidden;
-  `
 
 export default Login

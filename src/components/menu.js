@@ -9,6 +9,8 @@ import {
 } from "@fortawesome/free-brands-svg-icons"
 import menuStyles from "./menu.module.css"
 
+import scanatlogo from '../images/scan_at_logo.png'
+
 const Menu = props => {
   useEffect(() => {
     Anime({
@@ -38,12 +40,15 @@ const Menu = props => {
           style={{
             fontSize: 16,
             color: "white",
-            margin: "20px",
+            margin: "16px",
             textTransform: "uppercase",
+            letterSpacing: '1px',
+            textDecoration:'underline'
           }}
         >
           Live safe. Serve effortless.
         </h3>
+        <img alt="Scan At Logo" src={scanatlogo} style={{width: '40%', marginLeft: '30%'}} />
         <ul>
           <li className={menuStyles.line}>
             <Link to="/" style={{ margin: `0 20px`, color: `white` }}>

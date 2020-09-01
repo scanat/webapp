@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
 import Card from "./card"
-import styled from "styled-components"
 import { QRCode } from "react-qrcode-logo"
 import { navigate } from "gatsby"
+import homeStyles from './home.module.css'
 
 const activeLayoutImage = require(`../../../images/basic-linear-layout.png`)
 const scanatlogo = require(`../../../images/scan_at_logo.png`)
@@ -40,8 +40,8 @@ const Home = () => {
   }
 
   return (
-    <Container>
-      <ContentTopic>Current Active Layout</ContentTopic>
+    <section className="homeContainer">
+      <h3 className={homeStyles.contentTopic}>Current Active Layout</h3>
 
       <Card>
         <img
@@ -59,22 +59,22 @@ const Home = () => {
             margin: "0 5px",
           }}
         >
-          <ActiveOptionButton type="button" onClick={redirectToLayout}>
+          <button className={homeStyles.activeOptionButton} type="button" onClick={redirectToLayout}>
             Modify Page
-          </ActiveOptionButton>
-          <ActiveOptionButton type="button" onClick={redirectToActiveDisplay}>
+          </button>
+          <button className={homeStyles.activeOptionButton} type="button" onClick={redirectToActiveDisplay}>
             {!qrActive ? <strike>View my page</strike> : "View my Page"}
-          </ActiveOptionButton>
-          <ActiveOptionButton
+          </button>
+          <button className={homeStyles.activeOptionButton}
             type="button"
             onClick={!qrActive && generateQrCode}
           >
             {qrActive ? <strike>Activate QR Code</strike> : "Activate QR Code"}
-          </ActiveOptionButton>
-          <LayoutName>Basic Linear Layout</LayoutName>
+          </button>
+          <h4 className={homeStyles.layoutName}>Basic Linear Layout</h4>
         </section>
       </Card>
-      <div id="qr_Code"></div>
+      <section className={homeStyles.qrCodeSection}>
       {qrActive && (
         <QRCode
           value={
@@ -89,26 +89,9 @@ const Home = () => {
           ecLevel="H"
         />
       )}
-    </Container>
+      </section>
+    </section>
   )
 }
-
-const Container = styled.section`
-    width: 100%;
-    background: transparent;
-    text-align: center;
-    margin-top: 60px;
-  `,
-  ContentTopic = styled.h3`
-    margin: 20px 0;
-    color: #f3d200;
-  `,
-  ActiveOptionButton = styled.button`
-    margin: 5px 0;
-  `,
-  LayoutName = styled.h4`
-    text-decoration: underline;
-    color: #169188;
-  `
 
 export default Home
