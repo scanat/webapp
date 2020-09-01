@@ -20,7 +20,7 @@ const Header = props => {
           color="white"
           onClick={() => props.onMenuStateChange()}
         />
-        {localStorage.getItem("loggedIn") && (
+        {typeof window !== 'undefined' &&  localStorage.getItem("loggedIn") && (
           <FontAwesomeIcon
             icon={faSignOutAlt}
             color="white"
