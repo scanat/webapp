@@ -26,10 +26,9 @@ const IndexPage = () => {
         <Menu onMenuStateChange={menuState} />
       </Constant>
 
-      <img
+      <Img
         src={banner}
         alt="Scan At Banner"
-        style={{ height: "90vh", alignSelf: "center", marginTop: "40px" }}
       />
     </Container>
   )
@@ -38,7 +37,9 @@ const IndexPage = () => {
 const Container = styled.section`
     display: flex;
     flex: 1;
+    -webkit-flex: 1;
     flex-direction: column;
+    -webkit-flex-direction: column;
   `,
   Constant = styled.section`
     position: fixed;
@@ -46,6 +47,11 @@ const Container = styled.section`
     left: 0;
     width: 100%;
     height: 100vh;
+  `,
+  Img = styled.img`
+    height: 90vh;
+    align-self: center;
+    margin-top: 40px;
   `
 
 export default IndexPage
