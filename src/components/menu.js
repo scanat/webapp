@@ -9,13 +9,7 @@ import {
   faPinterest,
 } from "@fortawesome/free-brands-svg-icons"
 
-var windowWidth
-
 const Menu = props => {
-
-  useEffect(() => {
-    windowWidth = window.innerWidth
-  })
 
   useEffect(() => {
     Anime({
@@ -78,8 +72,7 @@ const Contain = styled.section`
     position: relative;
     width: 300px;
     background: rgba(0, 0, 0, 0.54);
-    height: ${windowWidth <= 992 ? "calc(100vh - 50px)" : "100vh"};
-    transform: ${windowWidth <= 992 && "translateX(-302)"};
+    height: calc(100vh - 50px);
   `,
   Nav = styled.nav`
     float: left;
