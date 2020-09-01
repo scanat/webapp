@@ -7,11 +7,6 @@ const banner = require("../images/scanat-banner.jpg")
 
 const IndexPage = () => {
   const [menuState, setMenuState] = useState(false)
-  const [windowWidth, setWindowWidth] = useState()
-
-  useEffect(() => {
-    setWindowWidth(window.innerWidth)
-  }, [])
 
   const menuStateHandler = () => {
     menuState ? setMenuState(false) : setMenuState(true)
@@ -20,26 +15,20 @@ const IndexPage = () => {
   return (
     <Container>
       <Constant>
-        {windowWidth <= 992 && (
-          <Header onMenuStateChange={menuStateHandler} />
-        )}
+        <Header onMenuStateChange={menuStateHandler} />
         <Menu onMenuStateChange={menuState} />
       </Constant>
 
-      <Img
-        src={banner}
-        alt="Scan At Banner"
-      />
+      <Img src={banner} alt="Scan At Banner" />
     </Container>
   )
 }
 
 const Container = styled.section`
-    display: flex;
-    flex: 1;
-    -webkit-flex: 1;
-    flex-direction: column;
-    -webkit-flex-direction: column;
+    position: relative;
+    width: 100%;
+    float: left;
+    text-align: center;
   `,
   Constant = styled.section`
     position: fixed;
@@ -52,6 +41,7 @@ const Container = styled.section`
     width: 90%;
     align-self: center;
     margin-top: 40px;
+    margin-left: 5%;
   `
 
 export default IndexPage
