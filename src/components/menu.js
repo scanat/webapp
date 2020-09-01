@@ -1,5 +1,4 @@
 import React, { useEffect } from "react"
-import styled from "styled-components"
 import { Link } from "gatsby"
 import Anime from "animejs"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -8,9 +7,9 @@ import {
   faInstagram,
   faPinterest,
 } from "@fortawesome/free-brands-svg-icons"
+import menuStyles from "./menu.module.css"
 
 const Menu = props => {
-
   useEffect(() => {
     Anime({
       autoplay: true,
@@ -32,28 +31,33 @@ const Menu = props => {
   }, [props.onMenuStateChange])
 
   return (
-    <Contain id="menu">
-      <Nav>
+    <section className={menuStyles.contain} id="menu">
+      <nav className={menuStyles.navSection}>
         <h3
           id="headerText"
-          style={{ fontSize: 16, color: "white", margin: "20px", textTransform: 'uppercase' }}
+          style={{
+            fontSize: 16,
+            color: "white",
+            margin: "20px",
+            textTransform: "uppercase",
+          }}
         >
           Live safe. Serve effortless.
         </h3>
         <ul>
-          <Line>
+          <li className={menuStyles.line}>
             <Link to="/" style={{ margin: `0 20px`, color: `white` }}>
               - Home
             </Link>
-          </Line>
-          <Line>
+          </li>
+          <li className={menuStyles.line}>
             <Link to="/admin" style={{ margin: `0 20px`, color: `white` }}>
               - Manager Login
             </Link>
-          </Line>
+          </li>
         </ul>
-      </Nav>
-      <Foot>
+      </nav>
+      <section className={menuStyles.foot}>
         <Link to="/">
           <FontAwesomeIcon icon={faFacebook} color="white" size={"2x"} />
         </Link>
@@ -63,38 +67,9 @@ const Menu = props => {
         <Link to="/">
           <FontAwesomeIcon icon={faPinterest} color="white" size={"2x"} />
         </Link>
-      </Foot>
-    </Contain>
+      </section>
+    </section>
   )
 }
-
-const Contain = styled.section`
-    position: absolute;
-    width: 300px;
-    background: rgba(0, 0, 0, 0.64);
-    height: calc(100vh - 50px);
-  `,
-  Nav = styled.nav`
-    float: left;
-    width: 100%;
-    color: #f07f16;
-  `,
-  Line = styled.li`
-    width: 100%;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    &:hover {
-      background: #343c44;
-    }
-  `,
-  Foot = styled.section`
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
-    padding: 20px 0;
-  `
 
 export default Menu

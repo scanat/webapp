@@ -1,17 +1,17 @@
 import React from "react"
-import styled from "styled-components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
-import {navigate} from 'gatsby'
+import { navigate } from "gatsby"
+import headerStyles from "./header.module.css"
 
 const Header = props => {
   const logOut = () => {
-    navigate('/admin/login')
-    typeof window !== 'undefined' && localStorage.removeItem("loggedIn")
+    navigate("/admin/login")
+    typeof window !== "undefined" && localStorage.removeItem("loggedIn")
   }
 
   return (
-    <Head>
+    <header className={headerStyles.head}>
       <h3 style={{ color: "white" }}>Scan At</h3>
 
       <section>
@@ -20,7 +20,7 @@ const Header = props => {
           color="white"
           onClick={() => props.onMenuStateChange()}
         />
-        {typeof window !== 'undefined' &&  localStorage.getItem("loggedIn") && (
+        {typeof window !== "undefined" && localStorage.getItem("loggedIn") && (
           <FontAwesomeIcon
             icon={faSignOutAlt}
             color="white"
@@ -29,17 +29,8 @@ const Header = props => {
           />
         )}
       </section>
-    </Head>
+    </header>
   )
 }
-
-const Head = styled.header`
-  background: #169188;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  justify-content: space-between;
-`
 
 export default Header
