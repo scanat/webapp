@@ -7,7 +7,7 @@ import {navigate} from 'gatsby'
 const Header = props => {
   const logOut = () => {
     navigate('/admin/login')
-    localStorage.removeItem("loggedIn")
+    typeof window !== 'undefined' && localStorage.removeItem("loggedIn")
   }
 
   return (
