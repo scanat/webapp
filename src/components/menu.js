@@ -30,7 +30,7 @@ const Menu = props => {
       easing: "easeInOutQuad",
       direction: props.onMenuStateChange ? "normal" : "reverse",
     })
-  }, [props.onMenuStateChange])
+  }, [])
 
   return (
     <section className={menuStyles.contain} id="menu">
