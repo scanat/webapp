@@ -1,11 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
 import { navigate } from "gatsby"
 import headerStyles from "./header.module.css"
-import Button from "@material-ui/core/Button"
-
 import scanatlogo from "../images/scan_at_logo.png"
 
 const Header = props => {
@@ -26,10 +24,9 @@ const Header = props => {
       />
 
       <section className={headerStyles.headerRightContainer}>
-        <Button
-          variant="contained"
-          color="primary"
+        <section className={headerStyles.loginButton}
           style={{ borderRadius: "20px", background: "rgba(0, 0, 0, 0.34)" }}
+          // onClick={() => props.onHandleOpenModal()}
         >
           <FontAwesomeIcon icon={faUser} color="white" size="lg" />
           <label
@@ -43,17 +40,10 @@ const Header = props => {
           >
             Login
           </label>
-        </Button>
-        {/* <FontAwesomeIcon
-          icon={faBars}
-          color="white"
-          onClick={() => props.onMenuStateChange()}
-        /> */}
+        </section>
 
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ borderRadius: "20px", background: "rgba(255, 255, 255, 0.84)", marginLeft: '10px' }}
+        <section
+        className={headerStyles.signupButton}
         >
           <label
             style={{
@@ -66,7 +56,7 @@ const Header = props => {
           >
             Signup
           </label>
-        </Button>
+        </section>
 
         {typeof window !== "undefined" && localStorage.getItem("loggedIn") && (
           <FontAwesomeIcon

@@ -1,0 +1,24 @@
+.container{
+    width: 100%;
+    float: left;
+}
+.bannerIntro{
+    width: 100%;
+    float: left;
+    background: #169188;
+    padding: 40px 0;
+    text-align: center;
+}
+.bannerIntro h1{
+    font-size: 3em;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+}
+.bannerIntro h3{
+    font-weight: normal;
+}
+.reviewsContainer{
+    width: 100%;
+    float: left;
+}

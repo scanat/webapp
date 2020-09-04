@@ -17,6 +17,7 @@ const Search = () => {
           boxShadow: "2px 6px 6px 0px rgba(0,0,0,0.75)",
           MozBoxShadow: "2px 6px 6px 0px rgba(0,0,0,0.75)",
           WebkitBoxShadow: "2px 6px 6px 0px rgba(0,0,0,0.75)",
+          borderColor: "#169188"
         }}
         id="outlined-basic"
         label="Search"

@@ -1,0 +1,33 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+}
+.navContainer {
+  border-radius: 70px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 70px;
+}
+.button {
+  background: rgb(255, 255, 255);
+  text-align: center;
+  height: 100%;
+  position: relative;
+  width: 45px;
+  border: 1px black solid;
+  border-radius: 40px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+.button:hover{
+  background: '#169188';
+}
+.navImages {
+  width: 45px;
+  height: 45px;
+}

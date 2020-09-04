@@ -1,0 +1,43 @@
+.container {
+  width: 100%;
+  height: auto;
+  float: left;
+  text-align: center;
+  margin: 100px 0;
+}
+.stepsContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  margin: 40px auto;
+}
+.stepsHolder {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.stepImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  background: #169188;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 680px) {
+  .stepsContainer {
+    flex-direction: row;
+    -ms-flex-direction: row;
+    justify-content: space-around;
+  }
+  .stepsHolder{
+      width: 33.33%;
+  }
+}
