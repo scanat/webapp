@@ -29,7 +29,6 @@ const OrgDisplay = () => {
         `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/beta/items/get`,
         params
       )
-      alert(res.data.msg)
       setList(res.data.item)
     } catch (error) {
       console.log(error)

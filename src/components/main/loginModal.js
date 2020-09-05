@@ -4,6 +4,7 @@ import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Auth } from "aws-amplify"
 import { navigate } from "gatsby"
+import { setUser } from "../../utils/auth"
 
 const LoginModal = props => {
   const [userDetail, setUserDetail] = useState()
@@ -30,6 +31,7 @@ const LoginModal = props => {
           navigate("/")
           setProblem(false)
           setUserDetail(user)
+          setUser(user)
           props.onHandleLoginModal()
         }
       } catch (error) {
@@ -108,6 +110,7 @@ const LoginModal = props => {
         {resetMode ? (
           <section className={loginModalStyles.resetInputsContainer}>
             <h3 style={{ marginBottom: "20px", color: "#169188" }}>RESET</h3>
+            <label style={{ fontSize: 12 }}>Registered Email</label>
             <input
               className={loginModalStyles.input}
               id="userMail"
@@ -201,7 +204,7 @@ const LoginModal = props => {
               id="password"
               required
               type="password"
-              placeholder="pass*****word"
+              placeholder="password"
               onChange={event => setUserPass(event.target.value)}
             />
             {regSuccess && (
@@ -238,7 +241,10 @@ const LoginModal = props => {
         {resetMode ? (
           <p
             className={loginModalStyles.resetLabel}
-            onClick={() => setResetMode(false)}
+            onClick={() => {
+              setResetMode(false)
+              setResetVerify(false)
+            }}
           >
             Retry Login!
           </p>

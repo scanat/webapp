@@ -6,6 +6,7 @@
   align-items: center;
   padding: 0 20px;
   justify-content: space-between;
+  z-index: 10;
 }
 
 .logo {
@@ -46,8 +47,11 @@
   display: none;
   position: absolute;
   width: 100%;
-  background: white;
+  background: #90cac6;
   border-radius: 5px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .headerRightContainer li>ul>li{
   width: 90%;
@@ -58,12 +62,12 @@
   cursor: pointer;
 }
 .headerRightContainer li>ul>li:hover{
-  color: #169188;
+  color: #ffffff;
 }
 .headerRightContainer li>ul>li>a{
   color: black;
   cursor: pointer;
 }
 .headerRightContainer li>ul>li>a:hover{
-  color: #169188;
+  color: #ffffff;
 }

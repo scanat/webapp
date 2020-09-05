@@ -106,7 +106,7 @@ const Login = () => {
         if (res.status === 201) {
           alert(res.data.msg)
           localStorage.setItem("loggedIn", true)
-          localStorage.setItem("userData", JSON.stringify(res.data.item))
+          localStorage.setItem("subscriberData", JSON.stringify(res.data.item))
           navigate("/admin")
         } else {
           alert(res.data.msg)

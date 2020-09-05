@@ -16,7 +16,7 @@ const Basic = props => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  })
 
   // Fetch inital data if available
   const fetchData = async () => {
@@ -29,7 +29,6 @@ const Basic = props => {
         params
       )
       alert(res.data.msg)
-      console.log(res.data.item)
       setList(res.data.item)
     } catch (error) {
       console.log(error)

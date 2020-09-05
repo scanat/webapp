@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react"
-import Card from "./card"
 import { QRCode } from "react-qrcode-logo"
 import { navigate } from "gatsby"
-import homeStyles from './home.module.css'
+import homeStyles from "./home.module.css"
+import { faEdit, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons"
+import { faQrcode } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 const activeLayoutImage = require(`../../../images/basic-linear-layout.png`)
 const scanatlogo = require(`../../../images/scan_at_logo.png`)
+
+const Card = ({ children }) => {
+  return <section className={homeStyles.card}>{children}</section>
+}
 
 const Home = () => {
   const [qrActive, setQrActive] = useState(false)
@@ -21,9 +27,10 @@ const Home = () => {
 
   const generateQrCode = () => {
     if (typeof window !== "undefined") {
-      const orgName = JSON.parse(localStorage.getItem("userData"))
+      const orgName = JSON.parse(localStorage.getItem("subscriberData"))
         .organizationName
-      const number = JSON.parse(localStorage.getItem("userData")).phoneNumber
+      const number = JSON.parse(localStorage.getItem("subscriberData"))
+        .phoneNumber
       const no1 = number.slice(0, 5)
       const no2 = number.slice(5, 10)
       const rno1 = no1.split("").reverse().join("")
@@ -43,52 +50,97 @@ const Home = () => {
     <section className="homeContainer">
       <h3 className={homeStyles.contentTopic}>Current Active Layout</h3>
 
-      <Card>
-        <img
-          alt="Current Active Layout Temp"
-          src={activeLayoutImage}
-          onClick={redirectToLayout}
-        />
-        <section
-          style={{
-            display: "flex",
-            flex: 1,
-            flexDirection: "column",
-            WebkitFlexDirection: "column",
-            msFlexDirection: "column",
-            margin: "0 5px",
-          }}
-        >
-          <button className={homeStyles.activeOptionButton} type="button" onClick={redirectToLayout}>
-            Modify Page
-          </button>
-          <button className={homeStyles.activeOptionButton} type="button" onClick={redirectToActiveDisplay}>
-            {!qrActive ? <strike>View my page</strike> : "View my Page"}
-          </button>
-          <button className={homeStyles.activeOptionButton}
+      <section className={homeStyles.activeLayoutController}>
+        <Card>
+          <img
+            alt="Current Active Layout Temp"
+            src={activeLayoutImage}
+            onClick={redirectToLayout}
+          />
+          <h4 className={homeStyles.layoutName}>
+            {
+              JSON.parse(localStorage.getItem("subscriberData"))
+                .organizationName
+            }
+          </h4>
+        </Card>
+
+        <section className={homeStyles.layoutControllerContainer}>
+          <button
+            className={homeStyles.activeOptionButton}
             type="button"
-            onClick={!qrActive && generateQrCode}
+            onClick={redirectToLayout}
           >
-            {qrActive ? <strike>Activate QR Code</strike> : "Activate QR Code"}
+            <FontAwesomeIcon
+              icon={faEdit}
+              size="lg"
+              style={{ margin: "0 auto" }}
+              color="white"
+            />
           </button>
-          <h4 className={homeStyles.layoutName}>Basic Linear Layout</h4>
+          <button
+            className={homeStyles.activeOptionButton}
+            type="button"
+            onClick={qrActive ? redirectToActiveDisplay : () => alert('Generate QR code to view')}
+            style={{background: !qrActive && 'grey'}}
+          >
+            {!qrActive ? (
+              <FontAwesomeIcon
+                icon={faEyeSlash}
+                size="lg"
+                style={{ margin: "0 auto" }}
+                color="white"
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={faEye}
+                size="lg"
+                style={{ margin: "0 auto" }}
+                color="white"
+              />
+            )}
+          </button>
+          <button
+            className={homeStyles.activeOptionButton}
+            type="button"
+            onClick={generateQrCode}
+            disabled={qrActive && true}
+            style={{background: qrActive && 'grey'}}
+          >
+            <FontAwesomeIcon
+              icon={faQrcode}
+              size="2x"
+              style={{ margin: "0 auto" }}
+              color="white"
+            />
+          </button>
         </section>
-      </Card>
+      </section>
+
+      <p className={homeStyles.threeStepText}>
+        Modify - Generate QR - View Live
+      </p>
+
       <section className={homeStyles.qrCodeSection}>
-      {qrActive && (
-        <QRCode
-          value={
-            "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" +
-            orgActiveUrl
-          }
-          size={270}
-          logoImage={scanatlogo}
-          logoWidth={80}
-          qrStyle="dots"
-          enableCORS={true}
-          ecLevel="H"
-        />
-      )}
+        {qrActive && (
+          <>
+            <h3 className={homeStyles.contentTopic}>
+              <u>QR Code</u>
+            </h3>
+            <QRCode
+              value={
+                "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" +
+                orgActiveUrl
+              }
+              size={250}
+              logoImage={scanatlogo}
+              logoWidth={80}
+              qrStyle="dots"
+              enableCORS={true}
+              ecLevel="H"
+            />
+          </>
+        )}
       </section>
     </section>
   )

@@ -1,47 +1,23 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo.png"
-import { Auth } from "aws-amplify"
+import {getCurrentUser, logout, isLoggedIn} from '../utils/auth'
 
 const Header = props => {
-  const [userData, setUserData] = useState()
   const [subMenu, setSubMenu] = useState(false)
-
-  useEffect(() => {
-    func()
-  }, [props.loginStatus])
-
-  const func = async () => {
-    try {
-      const session = await Auth.currentSession()
-      const user = await Auth.currentAuthenticatedUser()
-      setUserData(user)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
   const toggleSubmenu = () => {
     subMenu ? setSubMenu(false) : setSubMenu(true)
   }
 
-  const logOut = async () => {
-    try {
-      const logout = await Auth.signOut()
-      navigate("/")
-      setUserData()
-    } catch (error) {
-      console.log(error)
-    }
+  const logOut = () => {
+    navigate('/')
   }
 
-  useEffect(() => {
-    func()
-  }, [])
 
   return (
     <header className={headerStyles.head}>
@@ -55,9 +31,9 @@ const Header = props => {
       />
 
       <ul className={headerStyles.headerRightContainer}>
-        {userData && (
+        {isLoggedIn() && (
           <li onClick={toggleSubmenu}>
-            Welcome, {userData.username}
+            Welcome, {getCurrentUser().username}
             <FontAwesomeIcon
               icon={faCaretDown}
               color="white"
@@ -71,11 +47,11 @@ const Header = props => {
               <li>
                 <Link to="/profile">My Profile</Link>
               </li>
-              <li onClick={logOut}>Logout</li>
+              <li onClick={() => logout(logOut)}>Logout</li>
             </ul>
           </li>
         )}
-        {!userData && (
+        {!isLoggedIn() && (
           <li>
             <section
               className={headerStyles.loginButton}
