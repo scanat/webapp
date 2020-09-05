@@ -22,3 +22,8 @@
     width: 100%;
     float: left;
 }
+/* Card Layout */
+.cardContainer{
+    background: white;
+    
+}

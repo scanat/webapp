@@ -1,0 +1,13 @@
+.container{
+    position: absolute;
+    left: 10px;
+    bottom: 20px;
+    background: white;
+    border-radius: 5px;
+    display: flex;
+    z-index: 10;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    border: #169188 1px solid;
+}

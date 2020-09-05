@@ -27,21 +27,43 @@
   box-shadow: 1px 1px 5px 0px rgba(255, 255, 255, 0.75);
 }
 
-.signupButton {
-  width: auto;
-  background: white;
-  border-radius: 18px;
-  padding: 2px 8px;
-  margin-left: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-}
-
 .headerRightContainer {
   display: flex;
+}
+
+.headerRightContainer>li{
+  float: left;
+  margin: 0 5px;
+  font-size: 16;
+  color: white;
+  position: relative;
+  cursor: pointer;
+}
+.headerRightContainer li:hover ul{
+  display: block;
+}
+.headerRightContainer li>ul{
+  display: none;
+  position: absolute;
+  width: 100%;
+  background: white;
+  border-radius: 5px;
+}
+.headerRightContainer li>ul>li{
+  width: 90%;
+  float: left;
+  text-align: right;
+  color: black;
+  margin: 5px 5%;
+  cursor: pointer;
+}
+.headerRightContainer li>ul>li:hover{
+  color: #169188;
+}
+.headerRightContainer li>ul>li>a{
+  color: black;
+  cursor: pointer;
+}
+.headerRightContainer li>ul>li>a:hover{
+  color: #169188;
 }

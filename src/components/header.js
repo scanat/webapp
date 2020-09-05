@@ -1,16 +1,47 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
-import { navigate } from "gatsby"
+import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo.png"
+import { Auth } from "aws-amplify"
 
 const Header = props => {
-  const logOut = () => {
-    navigate("/admin/login")
-    typeof window !== "undefined" && localStorage.removeItem("loggedIn")
+  const [userData, setUserData] = useState()
+  const [subMenu, setSubMenu] = useState(false)
+
+  useEffect(() => {
+    func()
+  }, [props.loginStatus])
+
+  const func = async () => {
+    try {
+      const session = await Auth.currentSession()
+      const user = await Auth.currentAuthenticatedUser()
+      setUserData(user)
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  const toggleSubmenu = () => {
+    subMenu ? setSubMenu(false) : setSubMenu(true)
+  }
+
+  const logOut = async () => {
+    try {
+      const logout = await Auth.signOut()
+      navigate("/")
+      setUserData()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    func()
+  }, [])
 
   return (
     <header className={headerStyles.head}>
@@ -23,50 +54,53 @@ const Header = props => {
         }}
       />
 
-      <section className={headerStyles.headerRightContainer}>
-        <section className={headerStyles.loginButton}
-          style={{ borderRadius: "20px", background: "rgba(0, 0, 0, 0.34)" }}
-          // onClick={() => props.onHandleOpenModal()}
-        >
-          <FontAwesomeIcon icon={faUser} color="white" size="lg" />
-          <label
-            style={{
-              color: "white",
-              marginLeft: "8px",
-              fontSize: "13px",
-              cursor: "pointer",
-              textTransform: "none",
-            }}
-          >
-            Login
-          </label>
-        </section>
-
-        <section
-        className={headerStyles.signupButton}
-        >
-          <label
-            style={{
-              color: "black",
-              marginLeft: "5px",
-              fontSize: "13px",
-              cursor: "pointer",
-              textTransform: "none",
-            }}
-          >
-            Signup
-          </label>
-        </section>
-
-        {typeof window !== "undefined" && localStorage.getItem("loggedIn") && (
-          <FontAwesomeIcon
-            icon={faSignOutAlt}
-            color="white"
-            onClick={logOut}
-            style={{ margin: "0 0 0 30px" }}
-          />
+      <ul className={headerStyles.headerRightContainer}>
+        {userData && (
+          <li onClick={toggleSubmenu}>
+            Welcome, {userData.username}
+            <FontAwesomeIcon
+              icon={faCaretDown}
+              color="white"
+              size="sm"
+              style={{ marginLeft: 5 }}
+            />
+            <ul style={{ display: subMenu ? "block" : "none" }}>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/profile">My Profile</Link>
+              </li>
+              <li onClick={logOut}>Logout</li>
+            </ul>
+          </li>
         )}
-      </section>
+        {!userData && (
+          <li>
+            <section
+              className={headerStyles.loginButton}
+              style={{
+                borderRadius: "20px",
+                background: "rgba(0, 0, 0, 0.34)",
+              }}
+              onClick={props.onHandleLoginModal}
+            >
+              <FontAwesomeIcon icon={faUser} color="white" size="lg" />
+              <label
+                style={{
+                  color: "white",
+                  marginLeft: "8px",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  textTransform: "none",
+                }}
+              >
+                Login
+              </label>
+            </section>
+          </li>
+        )}
+      </ul>
     </header>
   )
 }
