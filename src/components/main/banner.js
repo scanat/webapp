@@ -4,9 +4,13 @@ import BannerImage from "../../images/bannerimage.jpg"
 import Anime from "animejs"
 
 const Banner = () => {
-  const [smallScreen, setSmallScreen] = useState(true)
+  const [smallScreen, setSmallScreen] = useState()
+
   useEffect(() => {
-    window.innerWidth < 992 ? setSmallScreen(true) : setSmallScreen(false)
+    if (typeof window !== "undefined" ? true : false) {
+      window.innerWidth < 992 ? setSmallScreen(true) : setSmallScreen(false)
+    }
+    console.log(smallScreen)
     Anime({
       targets: document.getElementById("animatingBanner"),
       keyframes: [
