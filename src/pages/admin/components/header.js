@@ -3,7 +3,7 @@ import headerStyles from "./header.module.css"
 import { faEllipsisV, faQrcode, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
 import { faEdit, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { navigate } from "gatsby"
+import { navigate, Link } from "gatsby"
 
 const Navigation = () => {
   const [navOpen, setNavOpen] = useState(false)
@@ -22,7 +22,7 @@ const Navigation = () => {
   return (
     <ul className={headerStyles.adminNavigation}>
       <li onClick={openNavigation}>
-        <FontAwesomeIcon icon={faEllipsisV} style={{ width: "20px" }} />
+        <FontAwesomeIcon icon={faEllipsisV} style={{ width: "20px" }} color='#169188' />
         <ul
           className={headerStyles.submenu}
           style={{ display: navOpen ? "block" : "none" }}
@@ -49,7 +49,7 @@ const Navigation = () => {
 const Header = () => {
   return (
     <section className={headerStyles.container}>
-      <h3>Scan At</h3>
+      <Link to='/'><h3 className={headerStyles.topic}>Scan At</h3></Link>
       <Navigation />
     </section>
   )

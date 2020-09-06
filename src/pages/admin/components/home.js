@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react"
 import { QRCode } from "react-qrcode-logo"
-import { navigate } from "gatsby"
+import { navigate, Link } from "gatsby"
 import homeStyles from "./home.module.css"
 import { faEdit, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons"
 import { faQrcode } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { getCurrentUser } from "../../../utils/subsAuth"
 
 const activeLayoutImage = require(`../../../images/basic-linear-layout.png`)
 const scanatlogo = require(`../../../images/scan_at_logo.png`)
@@ -14,6 +15,7 @@ const Card = ({ children }) => {
 }
 
 const Home = () => {
+  const [userData, setUserData] = useState()
   const [qrActive, setQrActive] = useState(false)
   const [orgActiveUrl, setOrgActiveUrl] = useState("")
 
@@ -25,12 +27,14 @@ const Home = () => {
     qrActive && generateQrCode()
   }, [qrActive])
 
+  // useEffect(() => {
+  //   setUserData(JSON.parse(localStorage.getItem("subscriberData")))
+  // }, [])
+
   const generateQrCode = () => {
     if (typeof window !== "undefined") {
-      const orgName = JSON.parse(localStorage.getItem("subscriberData"))
-        .organizationName
-      const number = JSON.parse(localStorage.getItem("subscriberData"))
-        .phoneNumber
+      const orgName = getCurrentUser().organizationName
+      const number = getCurrentUser().phoneNumber
       const no1 = number.slice(0, 5)
       const no2 = number.slice(5, 10)
       const rno1 = no1.split("").reverse().join("")
@@ -45,6 +49,7 @@ const Home = () => {
   const redirectToActiveDisplay = () => {
     navigate(`/org-display?org=${orgActiveUrl}`)
   }
+  console.log(getCurrentUser())
 
   return (
     <section className="homeContainer">
@@ -57,12 +62,7 @@ const Home = () => {
             src={activeLayoutImage}
             onClick={redirectToLayout}
           />
-          <h4 className={homeStyles.layoutName}>
-            {
-              JSON.parse(localStorage.getItem("subscriberData"))
-                .organizationName
-            }
-          </h4>
+          <h4 className={homeStyles.layoutName}>{getCurrentUser().organizationName}</h4>
         </Card>
 
         <section className={homeStyles.layoutControllerContainer}>
@@ -81,8 +81,12 @@ const Home = () => {
           <button
             className={homeStyles.activeOptionButton}
             type="button"
-            onClick={qrActive ? redirectToActiveDisplay : () => alert('Generate QR code to view')}
-            style={{background: !qrActive && 'grey'}}
+            onClick={
+              qrActive
+                ? redirectToActiveDisplay
+                : () => alert("Generate QR code to view")
+            }
+            style={{ background: !qrActive && "grey" }}
           >
             {!qrActive ? (
               <FontAwesomeIcon
@@ -105,7 +109,7 @@ const Home = () => {
             type="button"
             onClick={generateQrCode}
             disabled={qrActive && true}
-            style={{background: qrActive && 'grey'}}
+            style={{ background: qrActive && "grey" }}
           >
             <FontAwesomeIcon
               icon={faQrcode}

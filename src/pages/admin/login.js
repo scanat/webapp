@@ -4,6 +4,7 @@ import axios from "axios"
 import Container from "../../components/layout"
 import { navigate } from "gatsby"
 import loginStyles from "./login.module.css"
+import { setUser } from "../../utils/subsAuth"
 
 const Login = () => {
   const [userId, setUserId] = useState("")
@@ -18,7 +19,7 @@ const Login = () => {
 
   useEffect(() => {
     if (localStorage.getItem("loggedIn")) {
-      navigate("/admin")
+      navigate("/admin/")
     }
   })
 
@@ -105,6 +106,7 @@ const Login = () => {
         )
         if (res.status === 201) {
           alert(res.data.msg)
+          setUser(res.data.item)
           localStorage.setItem("loggedIn", true)
           localStorage.setItem("subscriberData", JSON.stringify(res.data.item))
           navigate("/admin")

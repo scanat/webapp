@@ -6,6 +6,7 @@ import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo.png"
 import {getCurrentUser, logout, isLoggedIn} from '../utils/auth'
+import { Auth } from "aws-amplify"
 
 const Header = props => {
   const [subMenu, setSubMenu] = useState(false)
@@ -14,7 +15,8 @@ const Header = props => {
     subMenu ? setSubMenu(false) : setSubMenu(true)
   }
 
-  const logOut = () => {
+  const logOut = async () => {
+    await Auth.signOut()
     navigate('/')
   }
 

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Container from "../components/layout"
 import Banner from "../components/main/banner"
 import ModuleNavigation from "../components/main/moduleNavigation"

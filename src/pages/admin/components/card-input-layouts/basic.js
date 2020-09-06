@@ -16,7 +16,7 @@ const Basic = props => {
 
   useEffect(() => {
     fetchData()
-  })
+  }, [])
 
   // Fetch inital data if available
   const fetchData = async () => {
