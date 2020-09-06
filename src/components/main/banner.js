@@ -5,7 +5,7 @@ import BannerVideo from '../../images/homebanner.mp4'
 const Banner = () => {
     useEffect(() => {
         document.getElementById('video').play()
-    }, [])
+    })
     return(
         <section className={BannerStyles.container}>
             <video id="video" className={BannerStyles.videoBanner} autoPlay loop>
