@@ -3,6 +3,7 @@
   flex-direction: column;
   -ms-flex-direction: column;
   justify-content: center;
+  margin-top: 44px;
 }
 .card {
   position: relative;
@@ -37,7 +38,7 @@
     width: 100%;
     display: flex;
 }
-.userDetailsTable tr td:first-of-type{
+.userDetailsTable>tr>td:first-child{
     font-weight: bold;
 }
 .userDetailsTable tr td{

@@ -8,6 +8,7 @@
   min-width: 250px;
   max-width: 300px;
   z-index: 1;
+  margin-top: 50px;
 }
 
 .inputSection {
@@ -63,4 +64,9 @@
     inset -5px -5px 10px white;
   -webkit-box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2),
     inset -5px -5px 10px white;
+}
+
+.labels{
+  font-size: 0.8em;
+  margin: 5px 0;
 }

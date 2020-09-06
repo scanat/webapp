@@ -38,11 +38,7 @@ const UserDetails = () => {
       <section className={profileStyles.cardContainer}>
         <h1>
           <u style={{ margin: "0 50px" }}>Your Details</u>
-          <FontAwesomeIcon
-            icon={faUserEdit}
-            color="darkorange"
-            size="lg"
-          />
+          <FontAwesomeIcon icon={faUserEdit} color="darkorange" size="lg" />
         </h1>
         <table className={profileStyles.userDetailsTable}>
           <tr>
@@ -74,10 +70,12 @@ const OrderHistory = () => {
 export default function Profile() {
   return (
     <Layout>
-      <BusinessDeal />
-      <UserDetails />
-      <OrderHistory currentUser={getCurrentUser()} />
-      <section></section>
+      <section className={profileStyles.container}>
+        <BusinessDeal />
+        <UserDetails />
+        <OrderHistory currentUser={getCurrentUser()} />
+        <section></section>
+      </section>
     </Layout>
   )
 }

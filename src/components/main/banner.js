@@ -1,18 +1,57 @@
-import React, { useEffect } from 'react'
-import BannerStyles from './banner.module.css'
-import BannerVideo from '../../images/homebanner.mp4'
+import React, { useEffect } from "react"
+import BannerStyles from "./banner.module.css"
+import BannerImage from "../../images/bannerimage.jpg"
+import Anime from 'animejs'
 
 const Banner = () => {
+
     useEffect(() => {
-        document.getElementById('video').play()
+        Anime({
+            targets: document.getElementById('animatingBanner'),
+            keyframes: [
+                {
+                    translateX: 0,
+                    duration: 2000
+                },
+                {
+                    translateX: [0, '-50%'],
+                    duration: 2000
+                },
+                {
+                    translateX: '-50%',
+                    duration: 2000
+                },
+                {
+                    translateX: ['-50%', 0],
+                    duration: 2000
+                },
+                {
+                    translateX: 0,
+                    duration: 2000
+                }
+            ],
+            autoplay: true,
+            easing: 'easeInOutCubic',
+            loop: true,
+            direction: 'alternate'
+        })
     })
-    return(
+
+  if (typeof window !== "undefined") {
+    if (window.innerWidth >= 992) {
+      return (
         <section className={BannerStyles.container}>
-            <video id="video" className={BannerStyles.videoBanner} autoPlay loop>
-            <source src={BannerVideo} type="video/mp4" />
-            </video>
+          <img src={BannerImage} style={{ width: "100%", float: "left" }} />
         </section>
-    )
+      )
+    } else {
+      return (
+        <section className={BannerStyles.container}>
+          <img id='animatingBanner' src={BannerImage} style={{ width: "200%", float: "left" }} />
+        </section>
+      )
+    }
+  }
 }
 
 export default Banner

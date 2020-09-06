@@ -3,8 +3,3 @@
   overflow: hidden;
   margin-top: 44px;
 }
-.videoBanner {
-  float: left;
-  width: 125%;
-  transform: translateX(-10%);
-}

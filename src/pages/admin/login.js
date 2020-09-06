@@ -5,6 +5,7 @@ import Container from "../../components/layout"
 import { navigate } from "gatsby"
 import loginStyles from "./login.module.css"
 import { setUser } from "../../utils/subsAuth"
+import stateCityList from "../../pre-data/state-city.json"
 
 const Login = () => {
   const [userId, setUserId] = useState("")
@@ -16,12 +17,26 @@ const Login = () => {
   const [regdPassword, setRegdPassword] = useState("")
   const [regdConfirmPassword, setRegdConfirmPassword] = useState("")
   const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
+  const [selectedState, setSelectedState] = useState("Maharashtra")
+  const [cities, setCities] = useState([])
+  const [states, setStates] = useState([])
 
   useEffect(() => {
     if (localStorage.getItem("loggedIn")) {
       navigate("/admin/")
     }
-  })
+    stateCityList.forEach(element => {
+      setStates(Object.keys(element))
+    })
+    stateCityFormation("Maharashtra")
+  }, [])
+
+  const stateCityFormation = event => {
+    setSelectedState(event)
+    stateCityList.forEach(element => {
+      setCities(element[event])
+    })
+  }
 
   const clearInput = () => {
     if (typeof window !== "undefined") {
@@ -42,7 +57,7 @@ const Login = () => {
     Anime({
       targets: document.getElementById("regPanel"),
       opacity: [0, 1],
-      height: [0, 220],
+      height: [0, 380],
       easing: "linear",
       margin: [0, "10px 0"],
       duration: 600,
@@ -85,7 +100,7 @@ const Login = () => {
             alert(res.data.msg)
           }
         } catch (error) {
-          alert("Oops, somthing went wrong!")
+          alert(error.message)
         }
       } else {
         alert("Re-confirm password!")
@@ -144,10 +159,18 @@ const Login = () => {
         />
 
         <section className={loginStyles.buttonContainer}>
-          <button className={loginStyles.buttonLogin} type="button" onClick={processUserAuth}>
+          <button
+            className={loginStyles.buttonLogin}
+            type="button"
+            onClick={processUserAuth}
+          >
             Submit
           </button>
-          <button className={loginStyles.buttonLogin} type="button" onClick={clearInput}>
+          <button
+            className={loginStyles.buttonLogin}
+            type="button"
+            onClick={clearInput}
+          >
             Reset
           </button>
         </section>
@@ -161,7 +184,7 @@ const Login = () => {
             inputMode="tel"
             onChange={event => setRegdPhoneNumber(event.target.value)}
           />
-
+          <label className={loginStyles.labels}>Email-ID</label>
           <input
             className={loginStyles.inputSection}
             id="regEmail"
@@ -170,7 +193,7 @@ const Login = () => {
             inputMode="email"
             onChange={event => setRegdEmail(event.target.value)}
           />
-
+          <label className={loginStyles.labels}>Organization Name</label>
           <input
             className={loginStyles.inputSection}
             id="regOrgName"
@@ -178,15 +201,16 @@ const Login = () => {
             placeholder="Organization Name"
             onChange={event => setRegdOrgName(event.target.value)}
           />
-
+          <label className={loginStyles.labels}>Organization Category</label>
           <select
             id="regApplyFor"
             onChange={event => setRegdApplyFor(event.target.value)}
           >
             <option value="Digital Restaurant">Digital Restaurant</option>
             <option value="Digital Rooms">Digital Rooms</option>
+            <option value="Digital Stores">Digital Stores</option>
           </select>
-
+          <label className={loginStyles.labels}>Enter password</label>
           <input
             className={loginStyles.inputSection}
             id="regPassword"
@@ -194,7 +218,7 @@ const Login = () => {
             placeholder="Password"
             onChange={event => setRegdPassword(event.target.value)}
           />
-
+          <label className={loginStyles.labels}>Re-enter password</label>
           <input
             className={loginStyles.inputSection}
             id="regConfirmPassword"
@@ -202,6 +226,29 @@ const Login = () => {
             placeholder="Confirm Password"
             onChange={event => setRegdConfirmPassword(event.target.value)}
           />
+          <label className={loginStyles.labels}>Postal Address</label>
+          <input
+            className={loginStyles.inputSection}
+            id="addressline1"
+            type="text"
+            placeholder="House, Street Address, Locality"
+            onChange={event => setRegdOrgName(event.target.value)}
+          />
+          <label className={loginStyles.labels}>State</label>
+          <select
+            id="statesList"
+            onChange={event => stateCityFormation(event.target.value)}
+          >
+            {states.map(element => (
+              <option value={element}>{element}</option>
+            ))}
+          </select>
+          <label className={loginStyles.labels}>City</label>
+          <select id="cityList">
+            {cities.map(element => (
+              <option value={element.city}>{element.city}</option>
+            ))}
+          </select>
         </section>
 
         <button
