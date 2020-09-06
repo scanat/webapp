@@ -23,14 +23,15 @@ const Header = props => {
 
   return (
     <header className={headerStyles.head}>
-      <img
+      {/* <img
         className={headerStyles.logo}
         alt="Scan At Logo"
         src={scanatlogo}
         onClick={() => {
           navigate("/")
         }}
-      />
+      /> */}
+      <Link to='/'><h3 className={headerStyles.topic}>Scan At</h3></Link>
 
       <ul className={headerStyles.headerRightContainer}>
         {isLoggedIn() && (
@@ -64,17 +65,6 @@ const Header = props => {
               onClick={props.onHandleLoginModal}
             >
               <FontAwesomeIcon icon={faUser} color="white" size="lg" />
-              <label
-                style={{
-                  color: "white",
-                  marginLeft: "8px",
-                  fontSize: "13px",
-                  cursor: "pointer",
-                  textTransform: "none",
-                }}
-              >
-                Login
-              </label>
             </section>
           </li>
         )}

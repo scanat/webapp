@@ -139,7 +139,7 @@ const Login = () => {
           className={loginStyles.inputSection}
           id="userPasswordInput"
           type="password"
-          placeholder="pass*****word"
+          placeholder="password"
           onChange={event => setPass(event.target.value)}
         />
 
