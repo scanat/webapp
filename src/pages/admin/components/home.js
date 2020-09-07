@@ -49,7 +49,6 @@ const Home = () => {
   const redirectToActiveDisplay = () => {
     navigate(`/org-display?org=${orgActiveUrl}`)
   }
-  console.log(getCurrentUser())
 
   return (
     <section className="homeContainer">
@@ -133,7 +132,7 @@ const Home = () => {
             </h3>
             <QRCode
               value={
-                "https://master.d1ayuau7uprrnd.amplifyapp.com/org-display?org=" +
+                "https://master.d1o0chnm4q8480.amplifyapp.com/org-display?org=" +
                 orgActiveUrl
               }
               size={250}

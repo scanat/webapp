@@ -10,14 +10,19 @@ const OrgDisplay = () => {
   useEffect(() => {
     const fullUrl = window.location.href
     const param = fullUrl.split("?org=")[1]
-    const rparam = param.split("").reverse().join("")
-    const id = rparam.slice(0, 5) + rparam.slice(-5)
-
-    const dashReplace = param.split("-")
-    const tracedOrgName = dashReplace[1].split("%20").join(" ")
-    setOrgName(tracedOrgName)
-
-    getAllData(id)
+    if(param){
+      const rparam = param.split("").reverse().join("")
+      const id = rparam.slice(0, 5) + rparam.slice(-5)
+  
+      const dashReplace = param.split("-")
+      const tracedOrgName = dashReplace[1].split("%20").join(" ")
+      setOrgName(tracedOrgName)
+  
+      getAllData(id)
+    }
+    else{
+      alert("Oops! You might have missed the link!")
+    }
   }, [])
 
   const getAllData = async id => {
@@ -26,7 +31,7 @@ const OrgDisplay = () => {
         phoneNumber: id,
       }
       const res = await axios.post(
-        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/beta/items/get`,
+        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod/items/get`,
         params
       )
       setList(res.data.item)

@@ -19,7 +19,7 @@ const BasicCard = props => {
   }
 }
 
-const Card = styled.li`
+const Card = styled.section`
     position: relative;
     width: 90%;
     height: 50px;

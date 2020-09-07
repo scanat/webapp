@@ -6,6 +6,7 @@ import BasicListCard from "../card-layouts/basic-card"
 import styled from "styled-components"
 import axios from "axios"
 import { navigate } from "gatsby"
+import { getCurrentUser } from "../../../../utils/subsAuth"
 
 const Basic = props => {
   const [itemName, setItemName] = useState("")
@@ -21,11 +22,11 @@ const Basic = props => {
   // Fetch inital data if available
   const fetchData = async () => {
     try {
-      const params = {
-        phoneNumber: JSON.parse(localStorage.getItem("userData")).phoneNumber,
-      }
+      const params = JSON.stringify({
+        phoneNumber: getCurrentUser().phoneNumber,
+      })
       const res = await axios.post(
-        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/beta/items/get`,
+        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod/items/get`,
         params
       )
       alert(res.data.msg)
@@ -53,7 +54,7 @@ const Basic = props => {
       )
       setItemName("")
       setItemPrice("")
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         document.getElementById("item-name-input").value = ""
         document.getElementById("item-price-input").value = ""
       }
@@ -67,7 +68,7 @@ const Basic = props => {
     setItemPrice("")
     setChanging(false)
     setChosenItem()
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       document.getElementById("item-name-input").value = ""
       document.getElementById("item-price-input").value = ""
       document.getElementById("card-change-options").style.display = "none"
@@ -76,7 +77,7 @@ const Basic = props => {
 
   // Displaying the options to handle changes in the list
   const cardChangeOptionsHandler = (visibile, item) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       visibile
         ? (document.getElementById("card-change-options").style.display =
             "block")
@@ -97,7 +98,7 @@ const Basic = props => {
     newList[elementIndex].status = newListStatus ? false : true
     setList(newList)
     setChosenItem()
-    if (typeof window !== 'undefined')
+    if (typeof window !== "undefined")
       document.getElementById("card-change-options").style.display = "none"
   }
 
@@ -114,7 +115,7 @@ const Basic = props => {
 
   // Adding the chosen items to input
   const updateItemHandler = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setItemName(chosenItem.itemName)
       setItemPrice(chosenItem.itemPrice)
       document.getElementById("item-name-input").value = chosenItem.itemName
@@ -147,11 +148,11 @@ const Basic = props => {
   const uploadData = async () => {
     try {
       const params = {
-        phoneNumber: JSON.parse(localStorage.getItem("userData")).phoneNumber,
+        phoneNumber: getCurrentUser().phoneNumber,
         data: list,
       }
       const res = await axios.post(
-        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/beta/items/add`,
+        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod/items/add`,
         params
       )
       if (res.status === 201) {
@@ -230,7 +231,11 @@ const Basic = props => {
             onClick={() => cardChangeOptionsHandler(true, item)}
             key={item._id}
           >
-            <BasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
+            <BasicListCard
+              itemName={item.itemName}
+              itemPrice={item.itemPrice}
+              status={item.status}
+            />
           </ListItem>
         ))}
       </ListContainer>
