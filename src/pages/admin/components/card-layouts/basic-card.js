@@ -29,7 +29,7 @@ const Card = styled.section`
     box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
     list-style-type: none;
   `,
-  RedCard = styled.li`
+  RedCard = styled.section`
     position: relative;
     width: 90%;
     background: linear-gradient(315deg, #e6e6e6, red);
