@@ -132,7 +132,7 @@ const Home = () => {
             </h3>
             <QRCode
               value={
-                "https://master.d1o0chnm4q8480.amplifyapp.com/org-display?org=" +
+                "https://master.d1o0chnm4q8480.amplifyapp.com?org=" +
                 orgActiveUrl
               }
               size={250}

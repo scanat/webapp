@@ -10,19 +10,14 @@ const OrgDisplay = () => {
   useEffect(() => {
     const fullUrl = window.location.href
     const param = fullUrl.split("?org=")[1]
-    if(param){
-      const rparam = param.split("").reverse().join("")
-      const id = rparam.slice(0, 5) + rparam.slice(-5)
-  
-      const dashReplace = param.split("-")
-      const tracedOrgName = dashReplace[1].split("%20").join(" ")
-      setOrgName(tracedOrgName)
-  
-      getAllData(id)
-    }
-    else{
-      alert("Oops! You might have missed the link!")
-    }
+    const rparam = param.split("").reverse().join("")
+    const id = rparam.slice(0, 5) + rparam.slice(-5)
+
+    const dashReplace = param.split("-")
+    const tracedOrgName = dashReplace[1].split("%20").join(" ")
+    setOrgName(tracedOrgName)
+
+    getAllData(id)
   }, [])
 
   const getAllData = async id => {
@@ -42,12 +37,14 @@ const OrgDisplay = () => {
 
   return (
     <Container>
-        <OrgName>{orgName}</OrgName>
+      <OrgName>{orgName}</OrgName>
       {list.map(item => (
-        <ListItem
-          key={item._id}
-        >
-          <BasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
+        <ListItem key={item._id}>
+          <BasicListCard
+            itemName={item.itemName}
+            itemPrice={item.itemPrice}
+            status={item.status}
+          />
         </ListItem>
       ))}
     </Container>

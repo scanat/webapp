@@ -7,8 +7,21 @@ import ClientReview from "../components/main/clientreview"
 import { Router } from "@reach/router"
 import Profile from "./profile"
 import OrgDisplay from "./org-display"
+import { navigate } from "gatsby"
 
 const IndexPage = () => {
+
+  useEffect(() => {
+    const fullUrl = window.location.href
+    const param = fullUrl.split("?org=")[1]
+    if(param){
+      navigate('/org-display?org='+param)
+    }
+    else{
+      alert("Oops! You might have missed the link!")
+    }
+  }, [])
+
   return (
     <Container>
       <Router basepath="/app">
