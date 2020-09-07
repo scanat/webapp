@@ -3,7 +3,8 @@
   height: auto;
   float: left;
   text-align: center;
-  margin: 50px 0;
+  padding: 50px 0;
+  background: rgba(235, 231, 231, 0.5);
 }
 .stepsContainer {
   display: flex;
@@ -24,11 +25,16 @@
   text-align: center;
 }
 .stepImage {
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
-  background: #169188;
-  margin: 0 auto;
+  width: 280px;
+  margin: 10px auto 0 auto;
+}
+.hswImages{
+  width: 100%;
+}
+.stepsContent{
+  max-width: 260px;
+  text-align: center;
+  margin: 20px auto;
 }
 
 @media screen and (min-width: 680px) {

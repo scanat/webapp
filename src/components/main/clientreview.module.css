@@ -1,29 +1,68 @@
-.container{
-    width: 100%;
-    float: left;
+.container {
+  width: 100%;
+  float: left;
+  background: #1ab4aa;
 }
-.bannerIntro{
-    width: 100%;
-    float: left;
-    background: #169188;
-    padding: 40px 0;
-    text-align: center;
+.bannerIntro {
+  width: 100%;
+  float: left;
+  padding: 40px 0;
+  text-align: center;
 }
-.bannerIntro h1{
-    font-size: 3em;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: white;
+.bannerIntro h1 {
+  font-size: 3em;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
 }
-.bannerIntro h3{
-    font-weight: normal;
+.bannerIntro h3 {
+  font-weight: normal;
 }
-.reviewsContainer{
-    width: 100%;
-    float: left;
+.reviewsContainer {
+  width: 100%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  margin: 0 0 20px 0;
 }
+
 /* Card Layout */
-.cardContainer{
-    background: white;
-    
+.cardContainer {
+  width: 80%;
+  border-radius: 5px;
+  max-width: 280px;
+  margin: 20px auto;
+  text-align: center;
+  background: white;
+  -webkit-box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
+box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
+}
+.gist {
+  color: rgb(53, 53, 245);
+  font-size: 1em;
+  margin: 10px 10px;
+  text-align: center;
+}
+.content {
+  margin: 10px 10px;
+}
+.author {
+  font-size: 0.9em;
+  font-weight: bold;
+  margin: 10px 10px;
+}
+.starContainer {
+  display: flex;
+  justify-content: center;
+}
+.profilePic {
+  margin: 10px 0 40px 0;
+}
+@media screen and (min-width: 992px) {
+  .reviewsContainer {
+    flex-direction: row;
+    -ms-flex-direction: row;
+  }
 }

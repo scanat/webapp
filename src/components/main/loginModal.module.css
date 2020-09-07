@@ -8,6 +8,13 @@
   justify-content: center;
   z-index: 10;
 }
+.inputArea{
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .loginContainer {
   width: 270px;
   min-height: 350px;
@@ -30,19 +37,19 @@
 .loginButton {
   padding: 6px 8px;
   border-radius: 5px;
-  border: #169188 1px solid;
+  border: none;
   margin: 20px 0;
-  color: #169188;
+  background: #169188;
+  color: white;
   font-size: 1em;
   cursor: pointer;
 }
-.signupButton {
+.panelOpenButton{
   padding: 6px 8px;
   border-radius: 5px;
-  background: #169188;
-  border: none;
+  border: #169188 1px solid;
   margin: 20px 0;
-  color: white;
+  color: #169188;
   font-size: 1em;
   cursor: pointer;
 }
@@ -77,4 +84,7 @@
   -ms-flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.label{
+  font-size: 11px;
 }

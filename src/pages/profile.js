@@ -43,7 +43,7 @@ const UserDetails = () => {
         <table className={profileStyles.userDetailsTable}>
           <tr>
             <td>Username</td>
-            <td>{getCurrentUser().username}</td>
+            <td>{getCurrentUser().name}</td>
           </tr>
           <tr>
             <td>Email</td>

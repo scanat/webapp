@@ -10,7 +10,6 @@ const Banner = () => {
     if (typeof window !== "undefined" ? true : false) {
       window.innerWidth < 992 ? setSmallScreen(true) : setSmallScreen(false)
     }
-    console.log(smallScreen)
     Anime({
       targets: document.getElementById("animatingBanner"),
       keyframes: [

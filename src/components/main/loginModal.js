@@ -4,19 +4,12 @@ import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Auth } from "aws-amplify"
 import { navigate } from "gatsby"
-import { setUser } from "../../utils/auth"
+import { setUser, getCurrentUser, isLoggedIn } from "../../utils/auth"
+import SnackBar from "../snackBar"
 
-const LoginModal = props => {
-  const [userDetail, setUserDetail] = useState()
-  const [username, setUserName] = useState("")
-  const [userMail, setUserMail] = useState("")
-  const [password, setUserPass] = useState("")
-  const [userPhone, setUserPhone] = useState("")
-  const [regPanel, setRegPanel] = useState(false)
-  const [regSuccess, setRegSuccess] = useState(false)
-  const [problem, setProblem] = useState(false)
-  const [resetMode, setResetMode] = useState(false)
-  const [resetVerify, setResetVerify] = useState(false)
+const LoginSection = props => {
+  const [username, setUsername] = useState()
+  const [password, setPassword] = useState()
 
   const userLogin = async () => {
     if (
@@ -27,256 +20,335 @@ const LoginModal = props => {
     ) {
       try {
         const user = await Auth.signIn(username, password)
-        if (user) {
-          navigate("/")
-          setProblem(false)
-          setUserDetail(user)
-          setUser(user)
-          props.onHandleLoginModal()
-        }
+        setUser(user)
+        props.switchContent("Success", true)
+        navigate("/")
       } catch (error) {
-        props.onOpenSnack()
-        setUserDetail(error.message)
-        setProblem(true)
+        console.log(error)
+        props.switchContent(error.message, false)
       }
     } else {
-      props.onOpenSnack()
+      props.switchContent("Credentials are required!", false)
     }
   }
 
+  return (
+    <section className={loginModalStyles.inputArea}>
+      <h3 style={{ marginBottom: "20px", color: "#169188" }}>LOGIN</h3>
+      <input
+        id="loginId"
+        className={loginModalStyles.input}
+        required
+        type="text"
+        placeholder="Email"
+        onChange={event => setUsername(event.target.value)}
+      />
+      <input
+        className={loginModalStyles.input}
+        id="password"
+        required
+        type="password"
+        placeholder="password"
+        onChange={event => setPassword(event.target.value)}
+      />
+      <section className={loginModalStyles.buttonContainer}>
+        <button
+          className={loginModalStyles.loginButton}
+          type="submit"
+          onClick={userLogin}
+        >
+          Login
+        </button>
+        <button
+          className={loginModalStyles.panelOpenButton}
+          type="button"
+          onClick={() => props.switchPanel("reg")}
+        >
+          REGISTER
+        </button>
+      </section>
+      <p
+        className={loginModalStyles.resetLabel}
+        onClick={() => props.switchPanel("reset")}
+      >
+        Forgot Password?
+      </p>
+    </section>
+  )
+}
+
+const RegistrationSection = props => {
+  const [name, setName] = useState()
+  const [username, setUsername] = useState()
+  const [phoneNumber, setPhoneNumber] = useState()
+  const [password, setPassword] = useState()
+  const [confirmPass, setConfirmPass] = useState()
+
   const registerUser = async () => {
     if (
+      name !== null &&
+      name !== "" &&
       username !== null &&
       username !== "" &&
       password !== null &&
       password !== "" &&
-      userMail !== null &&
-      userMail !== "" &&
-      userPhone !== null &&
-      userPhone !== ""
+      phoneNumber !== null &&
+      phoneNumber !== "" &&
+      phoneNumber.length === 10
     ) {
-      try {
-        const user = await Auth.signUp({
-          username,
-          password,
-          attributes: {
-            email: userMail,
-          },
-        })
-        if (user) {
-          setProblem(false)
-          setRegSuccess(true)
-          setRegPanel(false)
-          document.getElementById("username").value = ""
-          document.getElementById("password").value = ""
+      if (password === confirmPass) {
+        try {
+          const user = await Auth.signUp({
+            username,
+            password,
+            attributes: {
+              email: username,
+              address: "",
+              name: name,
+              phone_number: `+91${phoneNumber}`,
+            },
+          })
+          props.switchPanel("login")
+          props.switchContent("User Created", true)
+        } catch (error) {
+          props.switchContent(error.message, false)
         }
-      } catch (error) {
-        props.onOpenSnack()
-        setUserDetail(error.message)
-        setProblem(true)
+      } else {
+        props.switchContent("Password miss-match", false)
       }
     } else {
-      props.onOpenSnack()
+      props.switchContent("Credentials are required!", false)
+    }
+  }
+
+  return (
+    <section className={loginModalStyles.inputArea}>
+      <h3 style={{ marginBottom: "20px", color: "#169188" }}>
+        REGISTER NEW USER
+      </h3>
+      <input
+        id="name"
+        className={loginModalStyles.input}
+        required
+        type="text"
+        placeholder="Your Name"
+        onChange={event => setName(event.target.value)}
+      />
+      <input
+        className={loginModalStyles.input}
+        id="email"
+        required
+        type="text"
+        inputMode="email"
+        placeholder="Email"
+        onChange={event => setUsername(event.target.value)}
+      />
+      <input
+        className={loginModalStyles.input}
+        id="phoneNumber"
+        required
+        type="text"
+        inputMode="tel"
+        placeholder="Phone Number (10)"
+        onChange={event => setPhoneNumber(event.target.value)}
+      />
+      <label className={loginModalStyles.label}>Alphanumeric (min 8 characters long)</label>
+      <input
+        className={loginModalStyles.input}
+        id="password"
+        required
+        type="password"
+        placeholder="password"
+        onChange={event => setPassword(event.target.value)}
+      />
+      <input
+        className={loginModalStyles.input}
+        id="password"
+        required
+        type="password"
+        placeholder="confirm password"
+        onChange={event => setConfirmPass(event.target.value)}
+      />
+      <section className={loginModalStyles.buttonContainer}>
+        <button
+          className={loginModalStyles.panelOpenButton}
+          type="submit"
+          onClick={() => props.switchPanel("login")}
+        >
+          Login
+        </button>
+        <button
+          className={loginModalStyles.loginButton}
+          type="button"
+          onClick={registerUser}
+        >
+          REGISTER
+        </button>
+      </section>
+    </section>
+  )
+}
+
+const ResetSection = props => {
+  const [email, setEmail] = useState()
+  const [username, setUsername] = useState()
+  const [code, setCode] = useState()
+  const [newPass, setNewPass] = useState()
+  const [verify, setVerify] = useState(false)
+
+  const sendVerificationCode = async () => {
+    try {
+      await Auth.forgotPassword(email)
+      setVerify(true)
+      props.switchContent(`Verification mail has been sent to ${email}`, true)
+    } catch (error) {
+      props.switchContent(error.message, false)
     }
   }
 
   const resetPassword = async () => {
     try {
-      await Auth.forgotPassword(userMail)
-      setResetVerify(true)
-      document.getElementById("userMail").value = ""
+      await Auth.forgotPasswordSubmit(username, code, newPass)
+      props.switchPanel("login")
+      props.switchContent("Password has been reset", true)
     } catch (error) {
-      console.log(error)
+      props.switchContent(error.message, false)
     }
   }
 
-  const resetVerifyHandler = async () => {
-    try {
-      await Auth.forgotPasswordSubmit(username, userPhone, password)
-      setResetVerify(false)
-      setResetMode(false)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  return (
+    <section className={loginModalStyles.inputArea}>
+      <h3 style={{ marginBottom: "20px", color: "#169188" }}>RESET</h3>
+      <label style={{ fontSize: 12 }}>Registered Email</label>
+      {!verify && (
+        <>
+          <input
+            className={loginModalStyles.input}
+            id="userMail"
+            required
+            type="text"
+            inputMode="email"
+            placeholder="Email"
+            onChange={event => setEmail(event.target.value)}
+          />
+          <button
+            className={loginModalStyles.panelOpenButton}
+            type="button"
+            onClick={sendVerificationCode}
+          >
+            Set new password
+          </button>
+        </>
+      )}
 
-  const openRegistrationPanel = () => {
-    setRegPanel(true)
+      {verify && (
+        <>
+          <input
+            className={loginModalStyles.input}
+            id="userName"
+            required
+            type="text"
+            placeholder="Email/Phone Number"
+            onChange={event => setUsername(event.target.value)}
+          />
+          <input
+            className={loginModalStyles.input}
+            id="verificationCode"
+            required
+            type="text"
+            inputMode="tel"
+            placeholder="Verification Code"
+            onChange={event => setCode(event.target.value)}
+          />
+          <input
+            className={loginModalStyles.input}
+            id="password"
+            required
+            type="password"
+            placeholder="New password"
+            onChange={event => setNewPass(event.target.value)}
+          />
+          <button
+            className={loginModalStyles.loginButton}
+            type="submit"
+            onClick={resetPassword}
+          >
+            RESET
+          </button>
+        </>
+      )}
+      <p
+        className={loginModalStyles.resetLabel}
+        onClick={() => props.switchPanel("login")}
+      >
+        Retry Login!
+      </p>
+    </section>
+  )
+}
+
+const LoginModal = props => {
+  const [panel, setPanel] = useState("login")
+  const [snackContent, setSnackContent] = useState()
+  const [snackError, setSnackError] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSnackContent()
+    }, 5000)
+  }, [snackContent, snackError])
+
+  useEffect(() => {
+    isLoggedIn() && props.onHandleLoginModal()
+  }, [])
+
+  const switchPanel = panel => {
+    setPanel(panel)
+  }
+  const switchContent = (content, err) => {
+    setSnackContent(content)
+    setSnackError(err)
   }
 
   return (
     <section className={loginModalStyles.container}>
       <section className={loginModalStyles.loginContainer}>
-        {resetMode ? (
-          <section className={loginModalStyles.resetInputsContainer}>
-            <h3 style={{ marginBottom: "20px", color: "#169188" }}>RESET</h3>
-            <label style={{ fontSize: 12 }}>Registered Email</label>
-            <input
-              className={loginModalStyles.input}
-              id="userMail"
-              required
-              type="text"
-              inputMode="email"
-              placeholder={resetVerify ? "Username" : "Email"}
-              onChange={event =>
-                resetVerify
-                  ? setUserName(event.target.value)
-                  : setUserMail(event.target.value)
-              }
-            />
-            {resetVerify ? (
-              <>
-                <input
-                  className={loginModalStyles.input}
-                  id="userMail"
-                  required
-                  type="text"
-                  inputMode="tel"
-                  placeholder="Verification Code"
-                  onChange={event => setUserPhone(event.target.value)}
-                />
-                <input
-                  className={loginModalStyles.input}
-                  id="password"
-                  required
-                  type="password"
-                  placeholder="New password"
-                  onChange={event => setUserPass(event.target.value)}
-                />
-              </>
-            ) : (
-              <p
-                style={{
-                  fontSize: 12,
-                  width: "80%",
-                  textAlign: "center",
-                  color: "green",
-                }}
-              >
-                A verification ID will be sent to your registered email
-              </p>
-            )}
-
-            <button
-              className={loginModalStyles.loginButton}
-              type="submit"
-              onClick={resetVerify ? resetVerifyHandler : resetPassword}
-            >
-              RESET
-            </button>
-          </section>
-        ) : (
-          <section className={loginModalStyles.loginInputsContainer}>
-            <h3 style={{ marginBottom: "20px", color: "#169188" }}>LOGIN</h3>
-            <input
-              id="username"
-              className={loginModalStyles.input}
-              required
-              type="text"
-              placeholder={regPanel ? "Create unique username" : "Username"}
-              onChange={event => setUserName(event.target.value)}
-            />
-            {regPanel && (
-              <>
-                <input
-                  className={loginModalStyles.input}
-                  id="userMail"
-                  required
-                  type="text"
-                  inputMode="email"
-                  placeholder="Email"
-                  onChange={event => setUserMail(event.target.value)}
-                />
-                <input
-                  className={loginModalStyles.input}
-                  id="userMail"
-                  required
-                  type="text"
-                  inputMode="tel"
-                  placeholder="Phone Number"
-                  onChange={event => setUserPhone(event.target.value)}
-                />
-              </>
-            )}
-
-            <input
-              className={loginModalStyles.input}
-              id="password"
-              required
-              type="password"
-              placeholder="password"
-              onChange={event => setUserPass(event.target.value)}
-            />
-            {regSuccess && (
-              <p style={{ fontSize: 12, color: "green", width: "80%" }}>
-                A verification mail has been sent over to your email, please
-                confirm!
-              </p>
-            )}
-            {problem && (
-              <p style={{ fontSize: 12, color: "red", textAlign: "center" }}>
-                {userDetail}
-              </p>
-            )}
-
-            <section className={loginModalStyles.buttonContainer}>
-              <button
-                className={loginModalStyles.loginButton}
-                type="submit"
-                onClick={userLogin}
-              >
-                Login
-              </button>
-              <button
-                className={loginModalStyles.signupButton}
-                type="button"
-                onClick={regPanel ? registerUser : openRegistrationPanel}
-              >
-                REGISTER
-              </button>
-            </section>
-          </section>
+        {panel === "login" && (
+          <LoginSection
+            switchPanel={panel => switchPanel(panel)}
+            switchContent={(content, err) => switchContent(content, err)}
+          />
         )}
 
-        {resetMode ? (
-          <p
-            className={loginModalStyles.resetLabel}
-            onClick={() => {
-              setResetMode(false)
-              setResetVerify(false)
-            }}
-          >
-            Retry Login!
-          </p>
-        ) : (
-          <p
-            className={loginModalStyles.resetLabel}
-            onClick={() => setResetMode(true)}
-          >
-            Forgot Password?
-          </p>
+        {panel === "reg" && (
+          <RegistrationSection
+            switchPanel={panel => switchPanel(panel)}
+            switchContent={(content, err) => switchContent(content, err)}
+          />
         )}
 
-        {/* Social Login Space */}
-        {/* <p>OR</p>
-        <section className={loginModalStyles.loginModesContainer}>
-          <FontAwesomeIcon icon={faGoogle} color="#169188" />
-          <FontAwesomeIcon icon={faFacebookF} color="#169188" />
-        </section> */}
+        {panel === "reset" && (
+          <ResetSection
+            switchPanel={panel => switchPanel(panel)}
+            switchContent={(content, err) => switchContent(content, err)}
+          />
+        )}
+
+        {snackContent && <SnackBar message={snackContent} err={snackError} />}
+
+        <section
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            background: "rgba(0, 0, 0, 0.7)",
+            zIndex: -1,
+          }}
+          onClick={props.onHandleLoginModal}
+        ></section>
       </section>
-
-      <section
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          background: "rgba(0, 0, 0, 0.7)",
-          zIndex: -1,
-        }}
-        onClick={props.onHandleLoginModal}
-      ></section>
     </section>
   )
 }
