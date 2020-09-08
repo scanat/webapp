@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
           onHandleLoginModal={closeLoginModal}
         />
       )}
-      <main style={{ marginBottom: 70 }} className={layoutStyles.main}>
+      <main className={layoutStyles.main}>
         {children}
       </main>
     </section>

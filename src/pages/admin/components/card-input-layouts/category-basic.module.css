@@ -1,0 +1,59 @@
+.container {
+  overflow: hidden;
+  position: relative;
+  float: left;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
+.itemControls {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  padding: 10px 0;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.listContainer {
+  width: 100%;
+  align-items: center;
+  overflow-x: scroll;
+  position: relative;
+}
+.input {
+  width: 90%;
+  border-radius: 5px;
+  font-size: 16px;
+  margin: 5px 5%;
+  border: none;
+  padding: 5px;
+}
+.greenCard {
+  position: relative;
+  width: 90%;
+  height: 50px;
+  background: linear-gradient(315deg, #e6e6e6, #dff4d0);
+  margin: 10px 5%;
+  border-radius: 10px;
+  box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
+  list-style-type: none;
+}
+.redCard {
+  position: relative;
+  width: 90%;
+  background: linear-gradient(315deg, #e6e6e6, red);
+  margin: 10px 5%;
+  border-radius: 10px;
+  box-shadow: -5px -5px 20px red, 7px 7px 20px #ffffff;
+  list-style-type: none;
+}
+.itemName {
+  float: left;
+  padding: 10px;
+  margin-right: 20px;
+}
+.itemPrice {
+  padding: 10px;
+  float: right;
+}

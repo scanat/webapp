@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import Card from "../card"
-import { IoIosCloseCircleOutline, IoIosRepeat } from "react-icons/io"
-import { FcAddRow } from "react-icons/fc"
-import { FaPlusCircle } from "react-icons/fa"
-import CategoryBasicListCard from "../card-layouts/category-basic-card"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faPlusSquare, faCheckCircle } from "@fortawesome/free-regular-svg-icons"
+import { faSyncAlt, faTimes, faNetworkWired, faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons"
 import styled from "styled-components"
+import categoryBasicStyles from "./category-basic.module.css"
 
 const Basic = props => {
   const [itemName, setItemName] = useState("")
@@ -131,23 +131,21 @@ const Basic = props => {
   }
 
   return (
-    <Container>
-      <AddCategory onClick={setSelectedCategory}>
-        <FaPlusCircle size={20} color="blue" />
-        <AddCategoryText>Add Category</AddCategoryText>
-      </AddCategory>
+    <section className={categoryBasicStyles.container}>
 
       <Card>
-        <InputContainer>
+        <section>
           <h3>{changing ? "Update Item" : "Add Item"}</h3>
-          <Input
+          <input
+            className={categoryBasicStyles.input}
             id="item-name-input"
             onKeyUp={event => setItemName(event.target.value)}
             type="text"
             name="itemname"
             placeholder="Item name"
           />
-          <Input
+          <input
+            className={categoryBasicStyles.input}
             id="item-price-input"
             onKeyUp={event => setItemPrice(event.target.value)}
             type="number"
@@ -159,27 +157,46 @@ const Basic = props => {
             style={{ width: "90%" }}
             onChange={selected => setCategory(selected.target.value)}
           >
-            {/* <option value="none">None</option> */}
             {categoryList.map(item => (
               <option value={item}>{item}</option>
             ))}
           </select>
-        </InputContainer>
+        </section>
 
-        <ItemControls>
-          <IoIosRepeat onClick={resetInputHandler} size={30} color="green" />
-          <FcAddRow
-            onClick={changing ? updateChangeHandler : addItemHandler}
-            size={30}
+        <section className={categoryBasicStyles.itemControls}>
+          <FontAwesomeIcon
+            icon={faSyncAlt}
+            onClick={resetInputHandler}
+            size="lg"
+            color="#169188"
           />
-        </ItemControls>
+          <FontAwesomeIcon
+            icon={changing ? faCheckCircle : faPlusSquare}
+            onClick={changing ? updateChangeHandler : addItemHandler}
+            size="lg"
+            color="#169188"
+          />
+          <FontAwesomeIcon
+            icon={faNetworkWired}
+            onClick={resetInputHandler}
+            size="lg"
+            color="#169188"
+          />
+          <FontAwesomeIcon
+            icon={faCloudUploadAlt}
+            onClick={list.length > 0 && uploadData}
+            size="lg"
+            color={list.length > 0 ? "#169188" : 'grey'}
+          />
+        </section>
       </Card>
 
-      <ListContainer>
+      <section className={categoryBasicStyles.listContainer}>
         <OptionsContainer id="card-change-options">
-          <IoIosCloseCircleOutline
-            color="white"
-            size={30}
+          <FontAwesomeIcon
+            icon={faTimes}
+            color="#e2e2e2"
+            size="2x"
             style={{ float: "right" }}
             onClick={() => cardChangeOptionsHandler(false, chosenItem)}
           />
@@ -197,57 +214,20 @@ const Basic = props => {
         </OptionsContainer>
 
         {list.map(item => (
-          <ListItem onClick={() => cardChangeOptionsHandler(true, item)}>
-            <CategoryBasicListCard itemName={item.itemName} itemPrice={item.itemPrice} status={item.status} />
-          </ListItem>
+          <section onClick={() => cardChangeOptionsHandler(true, item)}>
+            <CategoryBasicCard
+              itemName={item.itemName}
+              itemPrice={item.itemPrice}
+              status={item.status}
+            />
+          </section>
         ))}
-      </ListContainer>
-
-      {list.length > 0 && (
-        <UploadButtonContainer>
-          <UploadButton type="button" onClick={uploadData}>
-            Upload Data
-          </UploadButton>
-        </UploadButtonContainer>
-      )}
-    </Container>
+      </section>
+    </section>
   )
 }
 
-const Container = styled.section`
-    position: relative;
-    overflow: hidden;
-    float: left;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  `,
-  Input = styled.input`
-    width: 90%;
-    border-radius: 5px;
-    font-size: 16px;
-    margin: 5px 5%;
-    border: none;
-    padding: 5px;
-  `,
-  InputContainer = styled.section`
-    padding: 5px;
-  `,
-  ItemControls = styled.section`
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    padding: 5px;
-    align-items: center;
-    justify-content: center;
-  `,
-  ListContainer = styled.section`
-    width: 100%;
-    align-items: center;
-    overflow-x: scroll;
-    position: relative;
-  `,
-  OptionsContainer = styled.section`
+const OptionsContainer = styled.section`
     position: fixed;
     width: 100%;
     height: 100vh;
@@ -274,42 +254,21 @@ const Container = styled.section`
     background: white;
     border-radius: 10px;
     padding: 8px;
-  `,
-  UploadButtonContainer = styled.section`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: blue;
-    padding: 10px;
-  `,
-  UploadButton = styled.button`
-    width: 200px;
-    background: white;
-    padding: 5px;
-    font-size: 14px;
-    border: none;
-    border-radius: 10px;
-  `,
-  ListItem = styled.li``,
-  AddCategory = styled.section`
-    position: absolute;
-    top: 0;
-    right: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 1;
-  `,
-  AddCategoryText = styled.p`
-    background: yellow;
-    padding: 2px 5px;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: bold;
-
-    ${AddCategory}:hover & {
-      cursor: pointer;
-    }
   `
 
 export default Basic
+
+const CategoryBasicCard = props => {
+  return (
+    <section
+      className={
+        props.status
+          ? categoryBasicStyles.greenCard
+          : categoryBasicStyles.redCard
+      }
+    >
+      <p className={categoryBasicStyles.itemName}>{props.itemName}</p>
+      <p className={categoryBasicStyles.itemPrice}>Rs {props.itemPrice} /-</p>
+    </section>
+  )
+}

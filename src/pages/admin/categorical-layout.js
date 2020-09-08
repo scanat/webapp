@@ -1,21 +1,19 @@
 import React from "react"
 import styled from "styled-components"
 import CategoryBasicSystem from "./components/card-input-layouts/category-basic"
+import Layout from "./components/layout"
 
 const CategoricalLayout = () => {
   return (
-    <Container>
-      <OrganizationTitle>Chit Chaat Corner</OrganizationTitle>
-
-      <CategoryBasicSystem />
-    </Container>
+    <Layout>
+      <Container>
+        <CategoryBasicSystem />
+      </Container>
+    </Layout>
   )
 }
 
-const OrganizationTitle = styled.h2`
-    color: #f98a47;
-  `,
-  Container = styled.section`
+const Container = styled.section`
     position: relative;
     float: left;
     width: 100%;

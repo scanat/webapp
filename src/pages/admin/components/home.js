@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { QRCode } from "react-qrcode-logo"
-import { navigate, Link } from "gatsby"
+import { navigate } from "gatsby"
 import homeStyles from "./home.module.css"
 import { faEdit, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons"
 import { faQrcode } from "@fortawesome/free-solid-svg-icons"
@@ -15,7 +15,6 @@ const Card = ({ children }) => {
 }
 
 const Home = () => {
-  const [userData, setUserData] = useState()
   const [qrActive, setQrActive] = useState(false)
   const [orgActiveUrl, setOrgActiveUrl] = useState("")
 
@@ -27,27 +26,21 @@ const Home = () => {
     qrActive && generateQrCode()
   }, [qrActive])
 
-  // useEffect(() => {
-  //   setUserData(JSON.parse(localStorage.getItem("subscriberData")))
-  // }, [])
-
   const generateQrCode = () => {
     if (typeof window !== "undefined") {
-      const orgName = getCurrentUser().organizationName
-      const number = getCurrentUser().phoneNumber
-      const no1 = number.slice(0, 5)
-      const no2 = number.slice(5, 10)
-      const rno1 = no1.split("").reverse().join("")
-      const rno2 = no2.split("").reverse().join("")
-      const orgUrl = rno2 + "-" + orgName + "-" + rno1
+      var dataOrg = getCurrentUser().organizationName
+      var dataId = getCurrentUser().phoneNumber
+      var encodedOrg = window.btoa(dataOrg)
+      var encodedId = window.btoa(dataId)
+
+      setOrgActiveUrl(`org=${encodedOrg}&pn=${encodedId}`)
 
       setQrActive(true)
-      setOrgActiveUrl(orgUrl)
     }
   }
 
   const redirectToActiveDisplay = () => {
-    navigate(`/org-display?org=${orgActiveUrl}`)
+    navigate(`/live/org-display?${orgActiveUrl}`)
   }
 
   return (
@@ -61,7 +54,9 @@ const Home = () => {
             src={activeLayoutImage}
             onClick={redirectToLayout}
           />
-          <h4 className={homeStyles.layoutName}>{getCurrentUser().organizationName}</h4>
+          <h4 className={homeStyles.layoutName}>
+            {getCurrentUser().organizationName}
+          </h4>
         </Card>
 
         <section className={homeStyles.layoutControllerContainer}>
@@ -132,7 +127,7 @@ const Home = () => {
             </h3>
             <QRCode
               value={
-                "https://master.d1o0chnm4q8480.amplifyapp.com?org=" +
+                "https://master.d1o0chnm4q8480.amplifyapp.com/live/org-display?" +
                 orgActiveUrl
               }
               size={250}

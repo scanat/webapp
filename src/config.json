@@ -1,4 +1,5 @@
 {
+    "invokeUrl": "https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod",
     "cognito": {
         "REGION": "ap-south-1",
         "USER_POOL_ID": "ap-south-1_bj2T3xoTQ",

@@ -1,0 +1,72 @@
+.container {
+  float: left;
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
+  text-align: center;
+  background: whitesmoke;
+}
+.orgName {
+  color: #169188;
+  text-align: center;
+  margin: 20px 0;
+}
+.greenCard {
+  position: relative;
+  width: 90%;
+  height: 80px;
+  margin: 10px 5%;
+  border-radius: 5px;
+  background: white;
+  list-style-type: none;
+}
+.listContainer{
+  width: 100%;
+  float: left;
+  overflow: scroll;
+  margin-bottom: 20vh;
+}
+.orderListContainer{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  float: left;
+  overflow: scroll;
+  background: rgb(148, 175, 255);
+}
+.orderListTopShow{
+  width: 100%;
+  float: left;
+  position: relative;
+}
+.orderListPuller{
+  width: 100%;
+  float: left;
+  background: rgb(205, 218, 255);
+  border-bottom: seagreen 1px solid;
+}
+.itemName {
+  padding: 10px;
+  margin-right: 20px;
+}
+.itemPrice {
+  padding: 10px;
+  float: right;
+}
+.textContainers {
+  display: flex;
+  justify-content: space-between;
+}
+.itemControls {
+  width: 100%;
+  float: left;
+  display: flex;
+  padding: 10px 0;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.quantityText{
+  margin: 0 5px;
+}

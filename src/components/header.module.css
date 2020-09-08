@@ -32,6 +32,9 @@
 .headerRightContainer {
   display: flex;
 }
+.dropDownParent{
+  line-height: 44px;
+}
 
 .headerRightContainer>li{
   float: left;

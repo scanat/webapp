@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react"
 import Card from "../card"
-import { IoIosCloseCircleOutline, IoIosRepeat } from "react-icons/io"
-import { FcAddRow } from "react-icons/fc"
-import BasicListCard from "../card-layouts/basic-card"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faPlusSquare,
+  faCheckCircle,
+} from "@fortawesome/free-regular-svg-icons"
+import {
+  faSyncAlt,
+  faCloudUploadAlt,
+  faTrash,
+  faPencilAlt,
+  faToggleOn,
+  faToggleOff,
+} from "@fortawesome/free-solid-svg-icons"
 import styled from "styled-components"
 import axios from "axios"
 import { navigate } from "gatsby"
 import { getCurrentUser } from "../../../../utils/subsAuth"
+import config from "../../../../config.json"
+import basicStyles from "./basic.module.css"
 
 const Basic = props => {
   const [itemName, setItemName] = useState("")
@@ -25,10 +37,7 @@ const Basic = props => {
       const params = JSON.stringify({
         phoneNumber: getCurrentUser().phoneNumber,
       })
-      const res = await axios.post(
-        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod/items/get`,
-        params
-      )
+      const res = await axios.post(`${config.invokeUrl}/items/get`, params)
       alert(res.data.msg)
       setList(res.data.item)
     } catch (error) {
@@ -71,42 +80,21 @@ const Basic = props => {
     if (typeof window !== "undefined") {
       document.getElementById("item-name-input").value = ""
       document.getElementById("item-price-input").value = ""
-      document.getElementById("card-change-options").style.display = "none"
-    }
-  }
-
-  // Displaying the options to handle changes in the list
-  const cardChangeOptionsHandler = (visibile, item) => {
-    if (typeof window !== "undefined") {
-      visibile
-        ? (document.getElementById("card-change-options").style.display =
-            "block")
-        : (document.getElementById("card-change-options").style.display =
-            "none")
-
-      setChosenItem(item)
     }
   }
 
   // Toggling the active status of the item
-  const toggleItemHandler = () => {
-    const elementIndex = list.findIndex(
-      element => element._id === chosenItem._id
-    )
+  const toggleItemHandler = item => {
+    const elementIndex = list.findIndex(element => element._id === item._id)
     let newList = [...list]
     let newListStatus = newList[elementIndex].status
     newList[elementIndex].status = newListStatus ? false : true
     setList(newList)
-    setChosenItem()
-    if (typeof window !== "undefined")
-      document.getElementById("card-change-options").style.display = "none"
   }
 
   // Removing the item from the list
-  const removeItemHandler = () => {
-    const elementIndex = list.findIndex(
-      element => element._id === chosenItem._id
-    )
+  const removeItemHandler = item => {
+    const elementIndex = list.findIndex(element => element._id === item._id)
     let newList = [...list]
     var removedItem = newList.splice(elementIndex, 1)[0]
     setList(newList)
@@ -114,14 +102,14 @@ const Basic = props => {
   }
 
   // Adding the chosen items to input
-  const updateItemHandler = () => {
+  const updateItemHandler = item => {
+    setChosenItem(item)
     if (typeof window !== "undefined") {
-      setItemName(chosenItem.itemName)
-      setItemPrice(chosenItem.itemPrice)
-      document.getElementById("item-name-input").value = chosenItem.itemName
-      document.getElementById("item-price-input").value = chosenItem.itemPrice
+      setItemName(item.itemName)
+      setItemPrice(item.itemPrice)
+      document.getElementById("item-name-input").value = item.itemName
+      document.getElementById("item-price-input").value = item.itemPrice
       setChanging(true)
-      document.getElementById("card-change-options").style.display = "none"
     }
   }
 
@@ -143,18 +131,13 @@ const Basic = props => {
   }
 
   // Upload Data button press
-  // Sort all lists add, update and remove item from list for existing list and send through post
-  // Sort all lists for update and remove for fetched list and apply PATCH and DELETE API calls
   const uploadData = async () => {
     try {
       const params = {
         phoneNumber: getCurrentUser().phoneNumber,
         data: list,
       }
-      const res = await axios.post(
-        `https://dn5kjkew1c.execute-api.ap-south-1.amazonaws.com/prod/items/add`,
-        params
-      )
+      const res = await axios.post(`${config.invokeUrl}/items/add`, params)
       if (res.status === 201) {
         alert(res.data.msg)
         navigate("/admin")
@@ -167,115 +150,85 @@ const Basic = props => {
   }
 
   return (
-    <section
-      style={{
-        overflow: "hidden",
-        position: "relative",
-        float: "left",
-        display: "flex",
-        flex: 1,
-        flexDirection: "column",
-      }}
-    >
+    <section className={basicStyles.container}>
       <Card>
-        <InputContainer>
+        <section>
           <h3>{changing ? "Update Item" : "Add Item"}</h3>
-          <Input
+          <input
+            className={basicStyles.input}
             id="item-name-input"
             onKeyUp={event => setItemName(event.target.value)}
             type="text"
             name="itemname"
             placeholder="Item name"
           />
-          <Input
+          <input
+            className={basicStyles.input}
             id="item-price-input"
             onKeyUp={event => setItemPrice(event.target.value)}
             type="number"
             name="itemprice"
             placeholder="Item price"
           />
-        </InputContainer>
+        </section>
 
-        <ItemControls>
-          <IoIosRepeat onClick={resetInputHandler} size={30} color="green" />
-          <FcAddRow
-            onClick={changing ? updateChangeHandler : addItemHandler}
-            size={30}
+        <section className={basicStyles.itemControls}>
+          <FontAwesomeIcon
+            icon={faSyncAlt}
+            onClick={resetInputHandler}
+            size="lg"
+            color="#169188"
           />
-        </ItemControls>
+          <FontAwesomeIcon
+            icon={changing ? faCheckCircle : faPlusSquare}
+            onClick={changing ? updateChangeHandler : addItemHandler}
+            size="lg"
+            color="#169188"
+          />
+          <FontAwesomeIcon
+            icon={faCloudUploadAlt}
+            onClick={list.length > 0 && uploadData}
+            size="lg"
+            color={list.length > 0 ? "#169188" : "grey"}
+          />
+        </section>
       </Card>
 
-      <ListContainer>
-        <OptionsContainer id="card-change-options">
-          <IoIosCloseCircleOutline
-            color="white"
-            size={30}
-            style={{ float: "right" }}
-            onClick={() => cardChangeOptionsHandler(false, chosenItem)}
-          />
-          <OptionsHolder>
-            <CardHandlerButton type="button" onClick={removeItemHandler}>
-              Remove
-            </CardHandlerButton>
-            <CardHandlerButton type="button" onClick={updateItemHandler}>
-              Update
-            </CardHandlerButton>
-            <CardHandlerButton type="button" onClick={toggleItemHandler}>
-              Toggle availability
-            </CardHandlerButton>
-          </OptionsHolder>
-        </OptionsContainer>
-
+      <section className={basicStyles.listContainer}>
         {list.map(item => (
-          <ListItem
-            onClick={() => cardChangeOptionsHandler(true, item)}
-            key={item._id}
-          >
-            <BasicListCard
-              itemName={item.itemName}
-              itemPrice={item.itemPrice}
-              status={item.status}
-            />
-          </ListItem>
+          <section className={basicStyles.greenCard} key={item._id}>
+            <section className={basicStyles.textContainers}>
+              <p className={basicStyles.itemName}>{item.itemName}</p>
+              <p className={basicStyles.itemPrice}>Rs {item.itemPrice} /-</p>
+            </section>
+            <section className={basicStyles.itemControls}>
+              <FontAwesomeIcon
+                icon={faTrash}
+                onClick={() => removeItemHandler(item)}
+                size="lg"
+                color="#db2626"
+              />
+              <FontAwesomeIcon
+                icon={faPencilAlt}
+                onClick={() => updateItemHandler(item)}
+                size="lg"
+                color="grey"
+              />
+              <FontAwesomeIcon
+                icon={item.status ? faToggleOn : faToggleOff}
+                onClick={() => toggleItemHandler(item)}
+                size="lg"
+                color={item.status ? "green" : "#db2626"}
+              />
+            </section>
+          </section>
         ))}
-      </ListContainer>
-      {list.length > 0 && (
-        <UploadButtonContainer>
-          <UploadButton type="button" onClick={uploadData}>
-            Upload Data
-          </UploadButton>
-        </UploadButtonContainer>
-      )}
+      </section>
     </section>
   )
 }
 
-const Input = styled.input`
-    width: 90%;
-    border-radius: 5px;
-    font-size: 16px;
-    margin: 5px 5%;
-    border: none;
-    padding: 5px;
-  `,
-  InputContainer = styled.section`
-    padding: 0px;
-  `,
-  ItemControls = styled.section`
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    padding: 0px;
-    align-items: center;
-    justify-content: center;
-  `,
-  ListContainer = styled.section`
-    width: 100%;
-    align-items: center;
-    overflow-x: scroll;
-    position: relative;
-  `,
-  OptionsContainer = styled.section`
+const OptionsContainer = styled.section`
     position: fixed;
     width: 100%;
     height: 100vh;
@@ -302,22 +255,6 @@ const Input = styled.input`
     background: white;
     border-radius: 10px;
     padding: 8px;
-  `,
-  UploadButtonContainer = styled.section`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: blue;
-    padding: 10px;
-  `,
-  UploadButton = styled.button`
-    width: 200px;
-    background: white;
-    padding: 5px;
-    font-size: 14px;
-    border: none;
-    border-radius: 10px;
-  `,
-  ListItem = styled.li``
+  `
 
 export default Basic

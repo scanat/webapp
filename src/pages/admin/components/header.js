@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import headerStyles from "./header.module.css"
-import { faEllipsisV, faQrcode, faSignOutAlt } from "@fortawesome/free-solid-svg-icons"
+import { faEllipsisV, faQrcode, faSignOutAlt, faHome } from "@fortawesome/free-solid-svg-icons"
 import { faEdit, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { navigate, Link } from "gatsby"
@@ -27,6 +27,10 @@ const Navigation = () => {
           className={headerStyles.submenu}
           style={{ display: navOpen ? "block" : "none" }}
         >
+          <li onClick={() => navigate('/admin')}>
+            Home{" "}
+            <FontAwesomeIcon icon={faHome} style={{ marginLeft: "5px" }} />
+          </li>
           <li>
             Modify{" "}
             <FontAwesomeIcon icon={faEdit} style={{ marginLeft: "5px" }} />

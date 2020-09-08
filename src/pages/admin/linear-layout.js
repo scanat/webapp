@@ -2,24 +2,24 @@ import React, { useEffect } from "react"
 import styled from "styled-components"
 import BasicSystem from "./components/card-input-layouts/basic"
 import { navigate } from "gatsby"
+import Layout from "./components/layout"
 
 const LinearLayout = () => {
-
   useEffect(() => {
     if (
       !localStorage.getItem("loggedIn") ||
       localStorage.getItem("loggedIn") === null
     ) {
-      navigate('/admin/login')
+      navigate("/admin/login")
     }
   })
 
   return (
-    <Container>
-      <OrganizationTitle>Chit Chaat Corner</OrganizationTitle>
-
-      <BasicSystem />
-    </Container>
+    <Layout>
+      <Container>
+        <BasicSystem />
+      </Container>
+    </Layout>
   )
 }
 

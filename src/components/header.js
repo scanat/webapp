@@ -26,8 +26,8 @@ const Header = props => {
 
       <ul className={headerStyles.headerRightContainer}>
         {isLoggedIn() && (
-          <li onClick={toggleSubmenu}>
-            Welcome, {getCurrentUser().name}
+          <li className={headerStyles.dropDownParent} onClick={toggleSubmenu}>
+            Welcome, {String(getCurrentUser().name).split(" ")[0]}
             <FontAwesomeIcon
               icon={faCaretDown}
               color="white"
