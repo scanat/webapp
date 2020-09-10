@@ -1,0 +1,81 @@
+.head {
+  position: fixed;
+  width: 90%;
+  background: #169188;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 5%;
+  justify-content: space-between;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 30px;
+  cursor: pointer;
+}
+.topic{
+  color: white;
+}
+
+.loginButton {
+  width: auto;
+  background: rgba(0, 0, 0, 0.34);
+  border-radius: 18px;
+  padding: 2px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.loginButton label{
+  cursor: pointer;
+}
+
+.headerRightContainer {
+  display: flex;
+}
+.dropDownParent{
+  line-height: 44px;
+}
+
+.headerRightContainer>li{
+  float: left;
+  margin: 0 5px;
+  font-size: 16;
+  color: white;
+  position: relative;
+  cursor: pointer;
+}
+.headerRightContainer li>ul{
+  display: none;
+  position: absolute;
+  right: 0;
+  width: 150px;
+  background: #90cac6;
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.headerRightContainer li>ul>li{
+  width: 90%;
+  float: left;
+  text-align: right;
+  color: black;
+  margin: 5px 5%;
+  cursor: pointer;
+  line-height: 30px;
+}
+.headerRightContainer li>ul>li:hover{
+  color: #ffffff;
+}
+.headerRightContainer li>ul>li>a{
+  color: black;
+  cursor: pointer;
+}
+.headerRightContainer li>ul>li>a:hover{
+  color: #ffffff;
+}

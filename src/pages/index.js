@@ -1,22 +1,30 @@
-import React from "react"
-import { Link } from "gatsby"
+import React, { useEffect } from "react"
+import Container from "../components/layout"
+import Banner from "../components/main/banner"
+import DownloadApp from "../components/main/downloadApp"
+import ScanAtWorks from "../components/main/scanatworks"
+import ClientReview from "../components/main/clientreview"
+import { navigate } from "gatsby"
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const IndexPage = () => {
+  useEffect(() => {
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
+    const org = urlParams.get("org")
+    const pn = urlParams.get("pn")
+    if(org !== null && pn !== null){
+      navigate('/live/org-display?'+urlParams)
+    }
+  }, [])
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+  return (
+    <Container>
+      <Banner />
+      <ScanAtWorks />
+      <ClientReview />
+      {/* <DownloadApp /> */}
+    </Container>
+  )
+}
 
 export default IndexPage

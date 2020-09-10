@@ -1,42 +1,95 @@
-import { Link } from "gatsby"
-import PropTypes from "prop-types"
-import React from "react"
+import React, { useState } from "react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
+import { navigate, Link } from "gatsby"
+import headerStyles from "./header.module.css"
+import scanatlogo from "../images/scan_at_logo_white.png"
+import { getCurrentUser, logout, isLoggedIn } from "../utils/auth"
+import { Auth } from "aws-amplify"
+import {
+  faEllipsisV,
+  faSignOutAlt,
+  faHome,
+  faSignInAlt,
+} from "@fortawesome/free-solid-svg-icons"
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      background: `rebeccapurple`,
-      marginBottom: `1.45rem`,
-    }}
-  >
-    <div
-      style={{
-        margin: `0 auto`,
-        maxWidth: 960,
-        padding: `1.45rem 1.0875rem`,
-      }}
-    >
-      <h1 style={{ margin: 0 }}>
-        <Link
-          to="/"
-          style={{
-            color: `white`,
-            textDecoration: `none`,
-          }}
+const Header = props => {
+  const [subMenu, setSubMenu] = useState(false)
+  const [routeDir, setRouteDir] = useState("Scan At")
+
+  const toggleSubmenu = () => {
+    subMenu ? setSubMenu(false) : setSubMenu(true)
+  }
+
+  const logOut = async () => {
+    await Auth.signOut()
+    navigate("/")
+  }
+
+  return (
+    <header className={headerStyles.head}>
+      <Link to="/">
+        <img
+          className={headerStyles.logo}
+          src={scanatlogo}
+          alt="Scan At Logo White"
+        />
+      </Link>
+      <h3 className={headerStyles.topic}>Scan At</h3>
+
+      <ul className={headerStyles.headerRightContainer}>
+        <li
+          className={headerStyles.dropDownParent}
+          onClick={toggleSubmenu}
+          onMouseOver={() => setSubMenu(true)}
+          onMouseLeave={() => setSubMenu(false)}
         >
-          {siteTitle}
-        </Link>
-      </h1>
-    </div>
-  </header>
-)
-
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
-
-Header.defaultProps = {
-  siteTitle: ``,
+          <FontAwesomeIcon
+            icon={isLoggedIn() ? faUserCircle : faEllipsisV}
+            style={{ width: "20px" }}
+            color="white"
+            size="lg"
+          />
+          <ul
+            className={headerStyles.submenu}
+            style={{ display: subMenu ? "block" : "none" }}
+          >
+            <li>
+              <Link to="/">
+                Home{" "}
+                <FontAwesomeIcon icon={faHome} style={{ marginLeft: "5px" }} />
+              </Link>
+            </li>
+            <li>
+              <Link to={isLoggedIn() ? "/profile" : "/"}>
+                {isLoggedIn()
+                  ? String(getCurrentUser().name).split(" ")[0]
+                  : "Profile"}
+                <FontAwesomeIcon icon={faUser} style={{ marginLeft: "5px" }} />
+              </Link>
+            </li>
+            {isLoggedIn() ? (
+              <li onClick={() => logout(logOut)}>
+                Logout{" "}
+                <FontAwesomeIcon
+                  icon={faSignOutAlt}
+                  style={{ marginLeft: "5px" }}
+                />
+              </li>
+            ) : (
+              <li onClick={props.onHandleLoginModal}>
+                Login{" "}
+                <FontAwesomeIcon
+                  icon={faSignInAlt}
+                  style={{ marginLeft: "5px" }}
+                />
+              </li>
+            )}
+          </ul>
+        </li>
+      </ul>
+    </header>
+  )
 }
 
 export default Header

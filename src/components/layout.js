@@ -1,51 +1,45 @@
-/**
- * Layout component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.org/docs/use-static-query/
- */
+import React, { useState } from "react"
+import Header from "../components/header"
+import layoutStyles from "./layout.module.css"
+import LoginModal from "./main/loginModal"
+import Footer from "./footer"
+import Amplify from 'aws-amplify'
+import config from '../config.json'
 
-import React from "react"
-import PropTypes from "prop-types"
-import { useStaticQuery, graphql } from "gatsby"
-
-import Header from "./header"
-import "./layout.css"
+Amplify.configure({
+  Auth: {
+    mandatorySignIn: true,
+    region: config.cognito.REGION,
+    userPoolId: config.cognito.USER_POOL_ID,
+    userPoolWebClientId: config.cognito.APP_CLIENT_ID
+  }
+})
 
 const Layout = ({ children }) => {
-  const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
-      site {
-        siteMetadata {
-          title
-        }
-      }
-    }
-  `)
+  const [login, setLogin] = useState(false)
+
+  const loginModal = () => {
+    setLogin(true)
+  }
+
+  const closeLoginModal = () => {
+    setLogin(false)
+  }
 
   return (
-    <>
-      <Header siteTitle={data.site.siteMetadata.title} />
-      <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: 960,
-          padding: `0 1.0875rem 1.45rem`,
-        }}
-      >
-        <main>{children}</main>
-        <footer>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
-        </footer>
-      </div>
-    </>
+    <section className={layoutStyles.container}>
+      <Header onHandleLoginModal={loginModal} loginStatus={login} />
+      {login && (
+        <LoginModal
+          onHandleLoginModal={closeLoginModal}
+        />
+      )}
+      <main className={layoutStyles.main}>
+        {children}
+      </main>
+        <Footer className={layoutStyles.footer} />
+    </section>
   )
-}
-
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
 }
 
 export default Layout
