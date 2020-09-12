@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Header from "../components/header"
 import layoutStyles from "./layout.module.css"
 import LoginModal from "./main/loginModal"
-import SnackBar from "./snackBar"
+import Footer from "./footer"
 import Amplify from 'aws-amplify'
 import config from '../config.json'
 
@@ -37,6 +37,7 @@ const Layout = ({ children }) => {
       <main className={layoutStyles.main}>
         {children}
       </main>
+        <Footer className={layoutStyles.footer} />
     </section>
   )
 }

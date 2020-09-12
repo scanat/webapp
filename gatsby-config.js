@@ -24,14 +24,14 @@ module.exports = {
         background_color: `white`,
         theme_color: `#169188`,
         display: `minimal-ui`,
-        icon: `src/images/scan_at_logo.png`, // This path is relative to the root of the site.
+        icon: `src/images/scan_at_logo_textless.png`, // This path is relative to the root of the site.
       },
     },
     {
       resolve: 'gatsby-plugin-web-font-loader',
       options: {
         google: {
-          families: ['Roboto',]
+          families: ['Roboto']
         }
       }
     }

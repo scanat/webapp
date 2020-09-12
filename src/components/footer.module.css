@@ -1,0 +1,36 @@
+.container{
+    width: 100%;
+    float: left;
+    background: #1b2c39;
+}
+.footer1{
+    display: flex;
+    padding: 5px 5%;
+}
+.logo{
+    width: 80px;
+}
+.footer2{
+    display: flex;
+    padding: 5px 5%;
+}
+.footer2>ul{
+    display: grid;
+    width: 100%;
+    float: left;
+    grid-template-columns: auto auto auto auto;
+}
+.footer2>ul>li{
+    max-width: 90%;
+}
+.footer2>ul>li>a{
+    color: white;
+    line-height: 25px;
+    max-width: 25%;
+    font-size: 0.9em;
+}
+@media screen and (min-width: 992px){
+    .footer2>ul{
+        grid-template-columns: auto auto auto auto auto auto;
+    }
+}

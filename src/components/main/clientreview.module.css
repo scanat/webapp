@@ -1,7 +1,7 @@
 .container {
   width: 100%;
   float: left;
-  background: #1ab4aa;
+  background: rgba(22, 145, 136, 0.6);
 }
 .bannerIntro {
   width: 100%;
@@ -12,11 +12,12 @@
 .bannerIntro h1 {
   font-size: 3em;
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 900;
   color: white;
 }
 .bannerIntro h3 {
   font-weight: normal;
+  color: black;
 }
 .reviewsContainer {
   width: 100%;
@@ -24,32 +25,33 @@
   display: flex;
   flex-direction: column;
   -ms-flex-direction: column;
-  margin: 0 0 20px 0;
+  margin: 0 0 60px 0;
 }
 
 /* Card Layout */
 .cardContainer {
   width: 80%;
-  border-radius: 5px;
-  max-width: 280px;
-  margin: 20px auto;
+  border-radius: 10%;
+  max-width: 250px;
+  margin: 40px auto;
   text-align: center;
   background: white;
-  -webkit-box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
-box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 45px 47px 35px -17px #169188;
+  -moz-box-shadow: 45px 47px 35px -17px #169188;
+  box-shadow: 30px 30px 20px -10px #169188;
 }
 .gist {
-  color: rgb(53, 53, 245);
-  font-size: 1em;
+  color: #4479a3;
+  font-size: 0.9em;
   margin: 10px 10px;
   text-align: center;
 }
 .content {
   margin: 10px 10px;
+  font-size: 0.8em;
 }
 .author {
-  font-size: 0.9em;
+  font-size: 0.8em;
   font-weight: bold;
   margin: 10px 10px;
 }
@@ -57,8 +59,21 @@ box-shadow: 5px 6px 12px 0px rgba(0,0,0,0.75);
   display: flex;
   justify-content: center;
 }
+.profilePicContainer{
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 10px auto 20px auto;
+  overflow: hidden;
+}
 .profilePic {
-  margin: 10px 0 40px 0;
+  margin: 10px 0 20px 0;
+}
+.picture{
+  height: 100%;
+  object-fit: fill;
+  -o-object-fit: fill;
 }
 @media screen and (min-width: 992px) {
   .reviewsContainer {

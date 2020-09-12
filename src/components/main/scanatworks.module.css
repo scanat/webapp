@@ -6,12 +6,21 @@
   padding: 50px 0;
   background: rgba(235, 231, 231, 0.5);
 }
+.topic{
+  text-align: left;
+  margin: 10px 5%;
+  font-size: 1.4em;
+}
+.desc{
+  text-align: left;
+  margin: 10px 5%;
+}
 .stepsContainer {
   display: flex;
-  width: 100%;
+  width: 90%;
   flex-direction: column;
   -ms-flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
   margin: 40px auto;
 }
@@ -25,14 +34,14 @@
   text-align: center;
 }
 .stepImage {
-  width: 280px;
+  width: 100%;
   margin: 10px auto 0 auto;
 }
 .hswImages{
   width: 100%;
 }
 .stepsContent{
-  max-width: 260px;
+  max-width: 80%;
   text-align: center;
   margin: 20px auto;
 }
@@ -45,5 +54,12 @@
   }
   .stepsHolder{
       width: 33.33%;
+  }
+  .topic{
+    font-size: 1.6em;
+    margin-left: 5%;
+  }
+  .desc{
+    margin-left: 5%;
   }
 }

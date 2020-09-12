@@ -7,8 +7,8 @@ import hswImage3 from "../../images/hsw3.png"
 const ScanatWorks = () => {
   return (
     <section className={scanatWorkStyles.container}>
-      <h3>How Scan At Works</h3>
-      <p>Ordering online has never been this easy</p>
+      <h3 className={scanatWorkStyles.topic}>How Scan At Works</h3>
+      <p className={scanatWorkStyles.desc}>Ordering online has never been this easy</p>
 
       <section className={scanatWorkStyles.stepsContainer}>
         <section className={scanatWorkStyles.stepsHolder}>
@@ -20,7 +20,7 @@ const ScanatWorks = () => {
             />
           </section>
           <p className={scanatWorkStyles.stepsContent}>
-            Download the application and <b>Explore our services</b>
+            Download the application and <br /><b>Explore our services</b>
           </p>
         </section>
 
@@ -33,7 +33,7 @@ const ScanatWorks = () => {
             />
           </section>
           <p className={scanatWorkStyles.stepsContent}>
-            Browse through <b>Lists of services</b>
+            Browse throughout our <br /><b>List of services</b>
           </p>
         </section>
 
@@ -46,7 +46,7 @@ const ScanatWorks = () => {
             />
           </section>
           <p className={scanatWorkStyles.stepsContent}>
-            Get updated at at all times, <b>At Real time</b>
+            Stay updated at at all times, <br /><b>At real time</b>
           </p>
         </section>
       </section>

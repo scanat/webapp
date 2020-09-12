@@ -2,17 +2,29 @@ import React from "react"
 import clientReviewStyles from "./clientreview.module.css"
 import { faStar, faUserCircle } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import Carousel from "react-elastic-carousel"
 
 const CardLayout = props => {
   return (
     <section className={clientReviewStyles.cardContainer}>
-      <FontAwesomeIcon
-        className={clientReviewStyles.profilePic}
-        icon={faUserCircle}
-        color="#169188"
-        size="8x"
-      />
-      <p className={clientReviewStyles.gist}>"{props.gist}"</p>
+      <section className={clientReviewStyles.profilePicContainer}>
+        {props.profile !== "" ? (
+          <img
+            className={clientReviewStyles.picture}
+            src={props.profile}
+            alt="Profile Pic Scan At"
+          />
+        ) : (
+          <FontAwesomeIcon
+            className={clientReviewStyles.profilePic}
+            icon={faUserCircle}
+            color="#169188"
+            size="8x"
+          />
+        )}
+      </section>
+
+      <p className={clientReviewStyles.gist}>{props.gist}</p>
       <section className={clientReviewStyles.starContainer}>
         {props.rating >= 1 && <FontAwesomeIcon icon={faStar} color="#ffd700" />}
         {props.rating >= 2 && <FontAwesomeIcon icon={faStar} color="#ffd700" />}
@@ -36,14 +48,26 @@ const ClientReview = () => {
         <h3>Explore Scan At through our network of mates</h3>
       </section>
       <section className={clientReviewStyles.reviewsContainer}>
-        {reviews.map(element => (
-          <CardLayout
-            rating={element.rating}
-            gist={element.gist}
-            content={element.content}
-            author={element.author}
-          />
-        ))}
+        <Carousel
+          itemsToShow={1}
+          verticalMode={false}
+          enableAutoPlay={true}
+          pagination={false}
+          autoPlaySpeed={5000}
+          focusOnSelect={true}
+          
+          
+        >
+          {reviews.map(element => (
+            <CardLayout
+              rating={element.rating}
+              gist={element.gist}
+              content={element.content}
+              author={element.author}
+              profile={element.profile}
+            />
+          ))}
+        </Carousel>
       </section>
     </section>
   )
@@ -58,6 +82,8 @@ let reviews = [
     content:
       "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
     author: "Chit Chaat Corner",
+    profile:
+      "https://www.irreverentgent.com/wp-content/uploads/2018/03/Awesome-Profile-Pictures-for-Guys-look-away2.jpg",
   },
   {
     gist: "Highly Recommended",
@@ -65,6 +91,8 @@ let reviews = [
     content:
       "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
     author: "Chit Chaat Corner",
+    profile:
+      "https://media.glamour.com/photos/5695aa8e93ef4b09520dfd8f/master/w_400%2Cc_limit/sex-love-life-2009-12-1207-01_profile_pic_li.jpg",
   },
   {
     gist: "Highly Recommended",
@@ -72,6 +100,7 @@ let reviews = [
     content:
       "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
     author: "Chit Chaat Corner",
+    profile: "",
   },
   {
     gist: "Highly Recommended",
@@ -79,5 +108,6 @@ let reviews = [
     content:
       "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
     author: "Chit Chaat Corner",
+    profile: "",
   },
 ]

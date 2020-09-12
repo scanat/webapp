@@ -8,11 +8,16 @@
   padding: 0 5%;
   justify-content: space-between;
   z-index: 10;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
-  height: 100%;
+  width: 30px;
   cursor: pointer;
+}
+.topic{
+  color: white;
 }
 
 .loginButton {
@@ -44,9 +49,6 @@
   position: relative;
   cursor: pointer;
 }
-.headerRightContainer li:hover ul{
-  display: block;
-}
 .headerRightContainer li>ul{
   display: none;
   position: absolute;
@@ -65,6 +67,7 @@
   color: black;
   margin: 5px 5%;
   cursor: pointer;
+  line-height: 30px;
 }
 .headerRightContainer li>ul>li:hover{
   color: #ffffff;
@@ -75,7 +78,4 @@
 }
 .headerRightContainer li>ul>li>a:hover{
   color: #ffffff;
-}
-.topic{
-  color: white;
 }

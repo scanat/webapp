@@ -4,7 +4,7 @@ import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Auth } from "aws-amplify"
 import { navigate } from "gatsby"
-import { setUser, getCurrentUser, isLoggedIn } from "../../utils/auth"
+import { setUser, isLoggedIn, getCurrentUser } from "../../utils/auth"
 import SnackBar from "../snackBar"
 
 const LoginSection = props => {
@@ -23,8 +23,9 @@ const LoginSection = props => {
         setUser(user)
         props.switchContent("Success", true)
         navigate("/")
+        props.closeLoginModal()
+        console.log(getCurrentUser())
       } catch (error) {
-        console.log(error)
         props.switchContent(error.message, false)
       }
     } else {
@@ -152,7 +153,9 @@ const RegistrationSection = props => {
         placeholder="Phone Number (10)"
         onChange={event => setPhoneNumber(event.target.value)}
       />
-      <label className={loginModalStyles.label}>Alphanumeric (min 8 characters long)</label>
+      <label className={loginModalStyles.label}>
+        Alphanumeric (min 8 characters long)
+      </label>
       <input
         className={loginModalStyles.input}
         id="password"
@@ -317,6 +320,7 @@ const LoginModal = props => {
           <LoginSection
             switchPanel={panel => switchPanel(panel)}
             switchContent={(content, err) => switchContent(content, err)}
+            closeLoginModal={() => props.onHandleLoginModal()}
           />
         )}
 

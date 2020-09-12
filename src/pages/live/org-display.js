@@ -21,14 +21,11 @@ const OrgDisplay = () => {
   useEffect(() => {
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
-    const org = urlParams.get("org")
+    setOrgName(urlParams.get("org"))
     const pn = urlParams.get("pn")
 
-    if (org !== null && org !== "" && pn !== null && pn !== "") {
-      var decodedOrg = window.atob(org)
+    if (pn !== null && pn !== "") {
       var decodedPn = window.atob(pn)
-
-      setOrgName(decodedOrg)
 
       getAllData(decodedPn)
     } else {
@@ -44,7 +41,7 @@ const OrgDisplay = () => {
       duration: 1000,
       easing: "linear",
       autoplay: true,
-      direction: orderListPulled ? 'forwards' : 'reverse'
+      direction: orderListPulled ? "forwards" : "reverse",
     })
   }, [orderListPulled])
 

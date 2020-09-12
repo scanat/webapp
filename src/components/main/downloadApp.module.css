@@ -1,0 +1,22 @@
+.container{
+    width: 100%;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100px;
+}
+.content{
+    width: 100%;
+    float: left;
+    text-align: center;
+}
+.topic{
+    font-size: 1.8em;
+    margin: 5px 0;
+}
+.desc{
+    margin: 10x 0;
+}
