@@ -6,7 +6,7 @@ import Carousel from "react-elastic-carousel"
 
 const CardLayout = props => {
   return (
-    <section className={clientReviewStyles.cardContainer}>
+    <section key={props.id} className={clientReviewStyles.cardContainer}>
       <section className={clientReviewStyles.profilePicContainer}>
         {props.profile !== "" ? (
           <img
@@ -55,11 +55,10 @@ const ClientReview = () => {
           pagination={false}
           autoPlaySpeed={5000}
           focusOnSelect={true}
-          
-          
         >
-          {reviews.map(element => (
+          {reviews.map((element, index) => (
             <CardLayout
+              id={index}
               rating={element.rating}
               gist={element.gist}
               content={element.content}

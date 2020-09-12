@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
@@ -15,7 +15,11 @@ import {
 
 const Header = props => {
   const [subMenu, setSubMenu] = useState(false)
-  const [routeDir, setRouteDir] = useState("Scan At")
+  const [user , setUser] = useState({})
+
+  useEffect(() => {
+    setUser()
+  }, [getCurrentUser()])
 
   const toggleSubmenu = () => {
     subMenu ? setSubMenu(false) : setSubMenu(true)
@@ -63,7 +67,7 @@ const Header = props => {
             <li>
               <Link to={isLoggedIn() ? "/profile" : "/"}>
                 {isLoggedIn()
-                  ? String(getCurrentUser().name).split(" ")[0]
+                  ? String(getCurrentUser()["custom:nick_name"]).split(" ")[0]
                   : "Profile"}
                 <FontAwesomeIcon icon={faUser} style={{ marginLeft: "5px" }} />
               </Link>

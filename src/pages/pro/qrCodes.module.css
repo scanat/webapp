@@ -1,0 +1,46 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding-top: 10px;
+  background: whitesmoke;
+}
+.qrHolder {
+  margin: 10px 0;
+}
+.topic {
+  color: #169188;
+  margin: 10px 0;
+}
+.generateQrSection {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.generateButton {
+  width: 60%;
+  margin: 10px auto;
+  padding: 5px;
+  border: none;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.input {
+  width: 50px;
+  margin: 10px auto;
+  padding: 10px;
+  text-align: center;
+}
+.infoText{
+    margin: 40px 10% 20px 10%;
+    font-size: 10px;
+}

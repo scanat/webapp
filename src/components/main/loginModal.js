@@ -6,6 +6,8 @@ import { Auth } from "aws-amplify"
 import { navigate } from "gatsby"
 import { setUser, isLoggedIn, getCurrentUser } from "../../utils/auth"
 import SnackBar from "../snackBar"
+import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons"
+import stateCityList from "../../pre-data/state-city.json"
 
 const LoginSection = props => {
   const [username, setUsername] = useState()
@@ -41,7 +43,7 @@ const LoginSection = props => {
         className={loginModalStyles.input}
         required
         type="text"
-        placeholder="Email"
+        placeholder="Email/Username"
         onChange={event => setUsername(event.target.value)}
       />
       <input
@@ -82,35 +84,59 @@ const RegistrationSection = props => {
   const [name, setName] = useState()
   const [username, setUsername] = useState()
   const [phoneNumber, setPhoneNumber] = useState()
-  const [password, setPassword] = useState()
-  const [confirmPass, setConfirmPass] = useState()
+  const [password, setPassword] = useState("")
+  const [confirmPass, setConfirmPass] = useState("")
+  const [registrationPhase, setRegistrationPhase] = useState(1)
+  const [gpsLocale, setGpsLocale] = useState("")
+  const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
+  const [selectedState, setSelectedState] = useState("Maharashtra")
+  const [selectedCity, setSelectedCity] = useState("Mumbai")
+  const [regdPostalAddress, setRegdPostalAddress] = useState("")
+  const [regdPostalCode, setRegdPostalCode] = useState("")
+  const [cities, setCities] = useState([])
+  const [states, setStates] = useState([])
+  const [regdOrgName, setRegdOrgName] = useState("")
+  const [regdEmail, setRegdEmail] = useState("")
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      gpsevent => setGpsLocale(gpsevent),
+      () => props.switchContent("User location failed!", false)
+    )
+  }, [])
 
   const registerUser = async () => {
-    if (
-      name !== null &&
-      name !== "" &&
-      username !== null &&
-      username !== "" &&
-      password !== null &&
-      password !== "" &&
-      phoneNumber !== null &&
-      phoneNumber !== "" &&
-      phoneNumber.length === 10
-    ) {
+    if (password && confirmPass) {
       if (password === confirmPass) {
+        let websiteOrgName = regdOrgName.replace(new RegExp(" ", "g"), "")
+        console.log(password)
         try {
           const user = await Auth.signUp({
-            username,
-            password,
+            username: username,
+            password: password,
             attributes: {
-              email: username,
-              address: "",
-              name: name,
+              email: regdEmail,
               phone_number: `+91${phoneNumber}`,
+              name: regdOrgName,
+              address: gpsLocale
+                ? "Lat " +
+                  gpsLocale.coords.latitude +
+                  " Long " +
+                  gpsLocale.coords.longitude
+                : "",
+              picture: "",
+              website: "?org=" + websiteOrgName + "&pn=" + btoa(phoneNumber),
+              "custom:nick_name": name,
+              "custom:address_line_1": regdPostalAddress,
+              "custom:postal_code": regdPostalCode,
+              "custom:city": selectedCity,
+              "custom:state": selectedState,
+              "custom:category": regdApplyFor
             },
           })
           props.switchPanel("login")
-          props.switchContent("User Created", true)
+          props.switchContent("SUCCESS", true)
+          props.switchContent("VERIFY REGISTERED EMAIL", true)
         } catch (error) {
           props.switchContent(error.message, false)
         }
@@ -122,72 +148,276 @@ const RegistrationSection = props => {
     }
   }
 
+  const checkPhase1 = () => {
+    if (
+      String(name).length > 0 &&
+      String(username).length > 0 &&
+      String(phoneNumber).length > 0
+    ) {
+      if (String(phoneNumber).length === 10) setRegistrationPhase(2)
+      else {
+        props.switchContent("Check input", false)
+      }
+    } else {
+      props.switchContent("Fields can not be empty", false)
+    }
+  }
+  const checkPhase2 = () => {
+    if (
+      String(regdOrgName).length > 0 &&
+      String(regdApplyFor).length > 0 &&
+      String(regdPostalAddress).length > 0 &&
+      String(regdPostalCode).length > 0 &&
+      String(selectedState).length > 0 &&
+      String(selectedCity).length > 0
+    ) {
+      if (isAlphanumeric(regdOrgName)) {
+        if (String(regdPostalCode).length === 6) {
+          if (regdPostalAddress.length < 256) {
+            setRegistrationPhase(3)
+          } else {
+            props.switchContent("Address too long!", false)
+          }
+        } else {
+          props.switchContent("Enter a valid postal code!", false)
+        }
+      } else {
+        props.switchContent(
+          "Only letters and digits are allowed for orgaanization name",
+          false
+        )
+      }
+    } else {
+      props.switchContent("Fields can not be empty", false)
+    }
+  }
+
+  const isAlphanumeric = inputtxt => {
+    if (inputtxt.match("^[0-9a-zA-Z]")) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const stateCityFormation = event => {
+    setSelectedState(event)
+    stateCityList.forEach(element => {
+      setCities(element[event])
+    })
+    setSelectedCity(stateCityList[0][selectedState][0].city)
+  }
+
+  useEffect(() => {
+    stateCityList.forEach(element => {
+      setStates(Object.keys(element))
+    })
+    stateCityFormation("Maharashtra")
+  }, [])
+
   return (
     <section className={loginModalStyles.inputArea}>
-      <h3 style={{ marginBottom: "20px", color: "#169188" }}>
-        REGISTER NEW USER
-      </h3>
-      <input
-        id="name"
-        className={loginModalStyles.input}
-        required
-        type="text"
-        placeholder="Your Name"
-        onChange={event => setName(event.target.value)}
-      />
-      <input
-        className={loginModalStyles.input}
-        id="email"
-        required
-        type="text"
-        inputMode="email"
-        placeholder="Email"
-        onChange={event => setUsername(event.target.value)}
-      />
-      <input
-        className={loginModalStyles.input}
-        id="phoneNumber"
-        required
-        type="text"
-        inputMode="tel"
-        placeholder="Phone Number (10)"
-        onChange={event => setPhoneNumber(event.target.value)}
-      />
-      <label className={loginModalStyles.label}>
-        Alphanumeric (min 8 characters long)
-      </label>
-      <input
-        className={loginModalStyles.input}
-        id="password"
-        required
-        type="password"
-        placeholder="password"
-        onChange={event => setPassword(event.target.value)}
-      />
-      <input
-        className={loginModalStyles.input}
-        id="password"
-        required
-        type="password"
-        placeholder="confirm password"
-        onChange={event => setConfirmPass(event.target.value)}
-      />
-      <section className={loginModalStyles.buttonContainer}>
-        <button
-          className={loginModalStyles.panelOpenButton}
-          type="submit"
-          onClick={() => props.switchPanel("login")}
-        >
-          Login
-        </button>
-        <button
-          className={loginModalStyles.loginButton}
-          type="button"
-          onClick={registerUser}
-        >
-          REGISTER
-        </button>
-      </section>
+      {registrationPhase === 1 && (
+        <>
+          <h3 className={loginModalStyles.topic}>REGISTER NEW SUBSCRIBER</h3>
+          <label className={loginModalStyles.label}>Your Name</label>
+          <input
+            id="name"
+            className={loginModalStyles.input}
+            required
+            type="text"
+            placeholder="Your Name"
+            onChange={event => setName(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>Business Email</label>
+          <input
+            className={loginModalStyles.input}
+            id="email"
+            required
+            type="text"
+            inputMode="email"
+            placeholder="Email"
+            onChange={event => setRegdEmail(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>Business Phone Number</label>
+          <input
+            className={loginModalStyles.input}
+            id="phoneNumber"
+            required
+            type="text"
+            inputMode="tel"
+            placeholder="Phone Number (10)"
+            onChange={event => setPhoneNumber(event.target.value)}
+          />
+
+          <section className={loginModalStyles.buttonContainer}>
+            <button
+              className={loginModalStyles.panelOpenButton}
+              type="submit"
+              onClick={() => props.switchPanel("login")}
+            >
+              Login
+            </button>
+            <button
+              className={loginModalStyles.loginButton}
+              type="button"
+              onClick={checkPhase1}
+            >
+              PROCEED
+            </button>
+          </section>
+        </>
+      )}
+      {registrationPhase === 2 && (
+        <>
+          <h3 className={loginModalStyles.topic}>REGISTER ORGANIZATION</h3>
+          <section style={{ width: "100%" }}>
+            <FontAwesomeIcon
+              icon={faArrowAltCircleLeft}
+              size="lg"
+              color="#169188"
+              style={{ marginBottom: "10px" }}
+              onClick={() => setRegistrationPhase(1)}
+            />
+          </section>
+
+          <label className={loginModalStyles.label}>Organization Name</label>
+          <input
+            className={loginModalStyles.input}
+            id="regOrgName"
+            type="text"
+            placeholder="(Alpha Numeric)"
+            onChange={event => setRegdOrgName(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>
+            Organization Category
+          </label>
+          <select
+            id="regApplyFor"
+            onChange={event => setRegdApplyFor(event.target.value)}
+            className={loginModalStyles.selectDropDown}
+          >
+            <option value="Digital Restaurant">Digital Restaurant</option>
+            <option value="Digital Rooms">Digital Rooms</option>
+            <option value="Digital Stores">Digital Stores</option>
+          </select>
+          <label className={loginModalStyles.label}>Postal Address</label>
+          <input
+            className={loginModalStyles.input}
+            id="postalAddress"
+            type="text"
+            placeholder="House, Street Address, Locality"
+            onChange={event => setRegdPostalAddress(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>Postal/Zip Code</label>
+          <input
+            className={loginModalStyles.input}
+            id="postalCode"
+            type="text"
+            placeholder="Postal Code / Zip Code"
+            onChange={event => setRegdPostalCode(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>State</label>
+          <select
+            id="statesList"
+            onChange={event => stateCityFormation(event.target.value)}
+            className={loginModalStyles.selectDropDown}
+          >
+            {states.map(element => (
+              <option value={element}>{element}</option>
+            ))}
+          </select>
+          <label className={loginModalStyles.label}>City</label>
+          <select
+            id="cityList"
+            onChange={event => setSelectedCity(event.target.value)}
+            className={loginModalStyles.selectDropDown}
+          >
+            {cities.map(element => (
+              <option value={element.city}>{element.city}</option>
+            ))}
+          </select>
+          <section className={loginModalStyles.buttonContainer}>
+            <button
+              className={loginModalStyles.panelOpenButton}
+              type="submit"
+              onClick={() => props.switchPanel("login")}
+            >
+              Login
+            </button>
+            <button
+              className={loginModalStyles.loginButton}
+              type="button"
+              onClick={checkPhase2}
+            >
+              PROCEED
+            </button>
+          </section>
+        </>
+      )}
+      {registrationPhase === 3 && (
+        <>
+          <h3 className={loginModalStyles.topic}>SET A PASSCODE</h3>
+          <section style={{ width: "100%" }}>
+            <FontAwesomeIcon
+              icon={faArrowAltCircleLeft}
+              size="lg"
+              color="#169188"
+              style={{ marginBottom: "10px" }}
+              onClick={() => setRegistrationPhase(2)}
+            />
+          </section>
+          <label className={loginModalStyles.label}>Login username</label>
+          <input
+            className={loginModalStyles.input}
+            id="username"
+            required
+            placeholder="Unique Username"
+            onChange={event => setUsername(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>Password</label>
+          <input
+            className={loginModalStyles.input}
+            id="password"
+            required
+            type="password"
+            placeholder="password"
+            onChange={event => setPassword(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>Re-enter Password</label>
+          <input
+            className={loginModalStyles.input}
+            id="password"
+            required
+            type="password"
+            placeholder="confirm password"
+            onChange={event => setConfirmPass(event.target.value)}
+          />
+          <label className={loginModalStyles.label}>
+            *Uppercase
+            <br />
+            *Lowercase
+            <br />
+            *Min 8 Characters
+          </label>
+          <section className={loginModalStyles.buttonContainer}>
+            <button
+              className={loginModalStyles.panelOpenButton}
+              type="submit"
+              onClick={() => props.switchPanel("login")}
+            >
+              Login
+            </button>
+            <button
+              className={loginModalStyles.loginButton}
+              type="button"
+              onClick={registerUser}
+            >
+              REGISTER
+            </button>
+          </section>
+        </>
+      )}
     </section>
   )
 }
