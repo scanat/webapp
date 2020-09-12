@@ -73,7 +73,7 @@ const QrCodes = () => {
     <Layout>
       <section className={qrStyles.container}>
         <h1 className={qrStyles.topic}>My Portfolio QR</h1>
-        <p>Right click or Long press on QR codes</p>
+        <p>Right click or Long press on QR Codes</p>
         <section className={qrStyles.qrHolder}>
           <QRCode
             value={portfolioUrl}
