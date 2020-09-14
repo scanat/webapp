@@ -35,7 +35,10 @@
 }
 .card {
   position: relative;
-  max-width: 300px;
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
   padding: 5px 10px;
   background: linear-gradient(315deg, #ffffff, #91f8f1);
   border-radius: 10px;
@@ -43,5 +46,26 @@
   -moz-box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
   box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
   text-align: center;
-  margin: 0 10px;
+  margin: 10px auto;
+}
+.downloadLink {
+  color: grey;
+  cursor: pointer;
+  margin: 10px 0;
+}
+@media screen and (min-width: 992px){
+  .qrGridContainer {
+    width: 100%;
+    float: left;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 991px){
+  .qrGridContainer {
+    width: 100%;
+    float: left;
+    display: grid;
+    grid-template-columns: auto auto auto;
+  }
 }

@@ -14,8 +14,8 @@ const Footer = () => {
                 <ul>
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/">About Scan At</Link></li>
-                    <li><Link to="/">For Users</Link></li>
-                    <li><Link to="/">For Partners</Link></li>
+                    <li><a href="https://www.scanat.in/">For Users</a></li>
+                    <li><a href="https://subscriber.scanat.in/">For Partners</a></li>
                 </ul>
             </section>
         </section>

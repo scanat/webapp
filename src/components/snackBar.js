@@ -18,6 +18,7 @@ const SnackBar = props => {
         type='button'
         style={{ margin: "0 5px" }}
         onClick={closeSnackBar}
+        onMouseUp={closeSnackBar}
       />
     </section>
   )

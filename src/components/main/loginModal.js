@@ -10,15 +10,12 @@ import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons"
 import stateCityList from "../../pre-data/state-city.json"
 
 const LoginSection = props => {
-  const [username, setUsername] = useState()
-  const [password, setPassword] = useState()
+  const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
 
   const userLogin = async () => {
     if (
-      username !== null &&
-      username !== "" &&
-      password !== null &&
-      password !== ""
+      username !== null && password !== null
     ) {
       try {
         const user = await Auth.signIn(username, password)
@@ -59,6 +56,7 @@ const LoginSection = props => {
           className={loginModalStyles.loginButton}
           type="submit"
           onClick={userLogin}
+          onMouseUp={userLogin}
         >
           Login
         </button>
@@ -66,6 +64,7 @@ const LoginSection = props => {
           className={loginModalStyles.panelOpenButton}
           type="button"
           onClick={() => props.switchPanel("reg")}
+          onMouseUp={() => props.switchPanel("reg")}
         >
           REGISTER
         </button>
@@ -73,6 +72,7 @@ const LoginSection = props => {
       <p
         className={loginModalStyles.resetLabel}
         onClick={() => props.switchPanel("reset")}
+        onMouseUp={() => props.switchPanel("reset")}
       >
         Forgot Password?
       </p>
@@ -101,7 +101,8 @@ const RegistrationSection = props => {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       gpsevent => setGpsLocale(gpsevent),
-      () => props.switchContent("User location failed!", false)
+      () => props.switchContent("User location failed!", false),
+      {enableHighAccuracy:true, maximumAge: 10000}
     )
   }, [])
 
@@ -255,6 +256,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
+              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -262,6 +264,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={checkPhase1}
+              onMouseUp={checkPhase1}
             >
               PROCEED
             </button>
@@ -278,6 +281,7 @@ const RegistrationSection = props => {
               color="#169188"
               style={{ marginBottom: "10px" }}
               onClick={() => setRegistrationPhase(1)}
+              onMouseUp={() => setRegistrationPhase(1)}
             />
           </section>
 
@@ -342,6 +346,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
+              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -349,6 +354,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={checkPhase2}
+              onMouseUp={checkPhase2}
             >
               PROCEED
             </button>
@@ -365,6 +371,7 @@ const RegistrationSection = props => {
               color="#169188"
               style={{ marginBottom: "10px" }}
               onClick={() => setRegistrationPhase(2)}
+              onMouseUp={() => setRegistrationPhase(2)}
             />
           </section>
           <label className={loginModalStyles.label}>Login username</label>
@@ -405,6 +412,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
+              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -412,6 +420,7 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={registerUser}
+              onMouseUp={registerUser}
             >
               REGISTER
             </button>
@@ -468,6 +477,7 @@ const ResetSection = props => {
             className={loginModalStyles.panelOpenButton}
             type="button"
             onClick={sendVerificationCode}
+            onMouseUp={sendVerificationCode}
           >
             Set new password
           </button>
@@ -505,6 +515,7 @@ const ResetSection = props => {
             className={loginModalStyles.loginButton}
             type="submit"
             onClick={resetPassword}
+            onMouseUp={resetPassword}
           >
             RESET
           </button>
@@ -513,6 +524,7 @@ const ResetSection = props => {
       <p
         className={loginModalStyles.resetLabel}
         onClick={() => props.switchPanel("login")}
+        onMouseUp={() => props.switchPanel("login")}
       >
         Retry Login!
       </p>
@@ -581,6 +593,7 @@ const LoginModal = props => {
             zIndex: -1,
           }}
           onClick={props.onHandleLoginModal}
+          onMouseUp={props.onHandleLoginModal}
         ></section>
       </section>
     </section>

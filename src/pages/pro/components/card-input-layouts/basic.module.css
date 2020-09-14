@@ -5,15 +5,17 @@
   position: relative;
   float: left;
   display: flex;
+  align-items: center;
   flex-direction: column;
   -ms-flex-direction: column;
   background: whitesmoke;
 }
 .card {
-  position: relative;
+  position: fixed;
   max-width: 300px;
   width: 90%;
-  padding: 5px 10px;
+  z-index: 2;
+  padding: 5px 5%;
   background: linear-gradient(315deg, #dbdbdb, #f3f3f3);
   margin: 10px auto;
   border-radius: 10px;
@@ -41,8 +43,8 @@
 .listContainer {
   width: 100%;
   align-items: center;
-  overflow-y: scroll;
   position: relative;
+  margin-top: 180px;
 }
 .greenCard {
   position: relative;
@@ -64,4 +66,15 @@
 .textContainers {
   display: flex;
   justify-content: space-between;
+}
+.controlItem{
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.controlItemLabel{
+  font-size: 10px;
 }

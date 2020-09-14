@@ -10,37 +10,39 @@ const Banner = () => {
     if (typeof window !== "undefined" ? true : false) {
       window.innerWidth < 992 ? setSmallScreen(true) : setSmallScreen(false)
     }
-
-    Anime({
-      targets: document.getElementById("animatingBanner"),
-      keyframes: [
-        {
-          translateX: 0,
-          duration: 2000,
-        },
-        {
-          translateX: [0, "-50%"],
-          duration: 2000,
-        },
-        {
-          translateX: "-50%",
-          duration: 2000,
-        },
-        {
-          translateX: ["-50%", 0],
-          duration: 2000,
-        },
-        {
-          translateX: 0,
-          duration: 2000,
-        },
-      ],
-      autoplay: true,
-      easing: "easeInOutCubic",
-      loop: true,
-      direction: "alternate",
-    })
   }, [])
+
+  Anime({
+    targets:
+      typeof window !== "undefined" &&
+      document.getElementById("animatingBanner"),
+    keyframes: [
+      {
+        translateX: 0,
+        duration: 2000,
+      },
+      {
+        translateX: [0, "-50%"],
+        duration: 2000,
+      },
+      {
+        translateX: "-50%",
+        duration: 2000,
+      },
+      {
+        translateX: ["-50%", 0],
+        duration: 2000,
+      },
+      {
+        translateX: 0,
+        duration: 2000,
+      },
+    ],
+    autoplay: true,
+    easing: "easeInOutCubic",
+    loop: true,
+    direction: "alternate",
+  })
 
   return (
     <section className={BannerStyles.container}>

@@ -14,7 +14,11 @@ export default function Profile() {
       return (
         <section className={profileStyles.portalContainer}>
           <UserDetails />
-          <section className={profileStyles.closeClickSection} onClick={props.switchPortal}></section>
+          <section
+            className={profileStyles.closeClickSection}
+            onClick={props.switchPortal}
+            onMouseUp={props.switchPortal}
+          ></section>
         </section>
       )
     return null
@@ -23,7 +27,7 @@ export default function Profile() {
   const navigateToLive = () => {
     if (typeof window !== "undefined") {
       var dataOrg = getCurrentUser().name
-      var dataId = String(getCurrentUser().phone_number).replace('+91', "")
+      var dataId = String(getCurrentUser().phone_number).replace("+91", "")
       console.log(dataOrg + dataId)
       var encodedOrg = window.btoa(dataOrg)
       var encodedId = window.btoa(dataId)
@@ -50,26 +54,43 @@ export default function Profile() {
             <section
               className={profileStyles.cardChild}
               onClick={() => openPortal("details")}
+              onMouseUp={() => openPortal("details")}
             >
               <h1 className={profileStyles.cardTopic}>User Details</h1>
             </section>
           </ProfileCard>
           <ProfileCard>
-            <section className={profileStyles.cardChild} onClick={() => navigate('/pro/components/card-input-layouts/basic')}>
+            <section
+              className={profileStyles.cardChild}
+              onClick={() =>
+                navigate("/pro/components/card-input-layouts/basic")
+              }
+              onMouseUp={() =>
+                navigate("/pro/components/card-input-layouts/basic")
+              }
+            >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} Products
               </h1>
             </section>
           </ProfileCard>
           <ProfileCard>
-            <section className={profileStyles.cardChild} onClick={navigateToLive}>
+            <section
+              className={profileStyles.cardChild}
+              onClick={navigateToLive}
+              onMouseUp={navigateToLive}
+            >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} Live
               </h1>
             </section>
           </ProfileCard>
           <ProfileCard>
-            <section className={profileStyles.cardChild} onClick={() => navigate('/pro/qrCodes')}>
+            <section
+              className={profileStyles.cardChild}
+              onClick={() => navigate("/pro/qrCodes")}
+              onMouseUp={() => navigate("/pro/qrCodes")}
+            >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} QR Codes
               </h1>

@@ -1,28 +1,12 @@
 import React from "react"
 import clientReviewStyles from "./clientreview.module.css"
-import { faStar, faUserCircle } from "@fortawesome/free-solid-svg-icons"
+import { faStar, faEllipsisH } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Carousel from "react-elastic-carousel"
 
 const CardLayout = props => {
   return (
     <section key={props.id} className={clientReviewStyles.cardContainer}>
-      <section className={clientReviewStyles.profilePicContainer}>
-        {props.profile !== "" ? (
-          <img
-            className={clientReviewStyles.picture}
-            src={props.profile}
-            alt="Profile Pic Scan At"
-          />
-        ) : (
-          <FontAwesomeIcon
-            className={clientReviewStyles.profilePic}
-            icon={faUserCircle}
-            color="#169188"
-            size="8x"
-          />
-        )}
-      </section>
 
       <p className={clientReviewStyles.gist}>{props.gist}</p>
       <section className={clientReviewStyles.starContainer}>
@@ -51,10 +35,12 @@ const ClientReview = () => {
         <Carousel
           itemsToShow={1}
           verticalMode={false}
-          enableAutoPlay={true}
-          pagination={false}
-          autoPlaySpeed={5000}
+          pagination={true}
+          renderPagination={() => (
+            <FontAwesomeIcon icon={faEllipsisH} size='lg' color="grey" />
+          )}
           focusOnSelect={true}
+          showArrows={false}
         >
           {reviews.map((element, index) => (
             <CardLayout
@@ -79,7 +65,7 @@ let reviews = [
     gist: "Highly Recommended",
     rating: 5,
     content:
-      "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
+      "Its giving a great experience, plus its safe and smooth, goodwork!",
     author: "Chit Chaat Corner",
     profile:
       "https://www.irreverentgent.com/wp-content/uploads/2018/03/Awesome-Profile-Pictures-for-Guys-look-away2.jpg",
@@ -87,8 +73,7 @@ let reviews = [
   {
     gist: "Highly Recommended",
     rating: 5,
-    content:
-      "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
+    content: "Placing order in seconds, cool.",
     author: "Chit Chaat Corner",
     profile:
       "https://media.glamour.com/photos/5695aa8e93ef4b09520dfd8f/master/w_400%2Cc_limit/sex-love-life-2009-12-1207-01_profile_pic_li.jpg",
@@ -96,16 +81,14 @@ let reviews = [
   {
     gist: "Highly Recommended",
     rating: 5,
-    content:
-      "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
+    content: "Its a one stop shop i must say",
     author: "Chit Chaat Corner",
     profile: "",
   },
   {
     gist: "Highly Recommended",
     rating: 5,
-    content:
-      "Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet, Lorem Ipsum dolor sit amet",
+    content: "Probably the best app, automating lifestyle.",
     author: "Chit Chaat Corner",
     profile: "",
   },

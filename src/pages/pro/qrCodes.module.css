@@ -12,6 +12,11 @@
 }
 .qrHolder {
   margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .topic {
   color: #169188;
@@ -40,7 +45,11 @@
   padding: 10px;
   text-align: center;
 }
-.infoText{
-    margin: 40px 10% 20px 10%;
-    font-size: 10px;
+.infoText {
+  margin: 40px 10% 20px 10%;
+  font-size: 10px;
+}
+.downloadLink {
+  color: grey;
+  cursor: pointer;
 }

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
-import scanatlogo from "../images/scan_at_logo_white.png"
+import scanatlogo from "../images/scan_at_logo_textless.png"
 import { getCurrentUser, logout, isLoggedIn } from "../utils/auth"
 import { Auth } from "aws-amplify"
 import {
@@ -15,7 +15,13 @@ import {
 
 const Header = props => {
   const [subMenu, setSubMenu] = useState(false)
-  const [user , setUser] = useState({})
+  const [user, setUser] = useState({})
+
+  useEffect(() => {
+    document
+      .getElementById("dropDownParent")
+      .addEventListener("toggle", toggleSubmenu)
+  }, [subMenu])
 
   useEffect(() => {
     setUser()
@@ -42,12 +48,7 @@ const Header = props => {
       <h3 className={headerStyles.topic}>Scan At</h3>
 
       <ul className={headerStyles.headerRightContainer}>
-        <li
-          className={headerStyles.dropDownParent}
-          onClick={toggleSubmenu}
-          onMouseOver={() => setSubMenu(true)}
-          onMouseLeave={() => setSubMenu(false)}
-        >
+        <li id="dropDownParent" className={headerStyles.dropDownParent}>
           <FontAwesomeIcon
             icon={isLoggedIn() ? faUserCircle : faEllipsisV}
             style={{ width: "20px" }}
@@ -73,7 +74,10 @@ const Header = props => {
               </Link>
             </li>
             {isLoggedIn() ? (
-              <li onClick={() => logout(logOut)}>
+              <li
+                onClick={() => logout(logOut)}
+                onMouseUp={() => logout(logOut)}
+              >
                 Logout{" "}
                 <FontAwesomeIcon
                   icon={faSignOutAlt}
@@ -81,7 +85,10 @@ const Header = props => {
                 />
               </li>
             ) : (
-              <li onClick={props.onHandleLoginModal}>
+              <li
+                onClick={props.onHandleLoginModal}
+                onMouseUp={props.onHandleLoginModal}
+              >
                 Login{" "}
                 <FontAwesomeIcon
                   icon={faSignInAlt}

@@ -100,16 +100,20 @@ const UserDetails = () => {
 
   return (
     <DetailsCard>
-      <section id='cardContainer' className={detailStyles.cardContainer}>
+      <section id="cardContainer" className={detailStyles.cardContainer}>
         <h1>
           <u style={{ fontSize: "1.4em", margin: "10px 30px" }}>Your Details</u>
           <FontAwesomeIcon
             icon={faUserEdit}
             color={enableEdit ? "#db2626" : "green"}
             size="lg"
-            onClick={toggleEnableEdit}
+            onMouseDown={toggleEnableEdit}
+            textAnchor="Some"
             className={detailStyles.editAttributeButton}
           />
+          <label onMouseDown={toggleEnableEdit}>
+            Update
+          </label>
         </h1>
 
         <section className={detailStyles.detailsContainer}>
@@ -172,6 +176,7 @@ const UserDetails = () => {
             <button
               type="button"
               onClick={changeUserAttributes}
+              onMouseUp={changeUserAttributes}
               className={detailStyles.button}
             >
               <FontAwesomeIcon
@@ -211,6 +216,7 @@ const UserDetails = () => {
           <button
             type="button"
             onClick={passCode ? changeUserPassword : () => setPassCode(true)}
+            onMouseUp={passCode ? changeUserPassword : () => setPassCode(true)}
             className={detailStyles.button}
           >
             <FontAwesomeIcon

@@ -6,7 +6,9 @@ import { getCurrentUser } from "../../utils/auth"
 import axios from "axios"
 import SnackBar from "../../components/snackBar"
 import config from "../../config.json"
-import { navigate } from "gatsby"
+import { navigate, Link } from "gatsby"
+
+import scanatlogo from "../../images/scan_at_logo.png"
 
 const QrCodes = () => {
   const [portfolioUrl, setPortfolioUrl] = useState()
@@ -22,10 +24,19 @@ const QrCodes = () => {
 
   useEffect(() => {
     setPortfolioUrl(
-      `https://www.scanat.in/live/org-display${getCurrentUser().website}`
+      `https://www.scanat.in/portfolio${getCurrentUser().website}`
     )
     getSubscribersQrs()
   }, [])
+
+  const downloadHomeQr = () => {
+    if (typeof window !== "undefined") {
+      var canvas = document.querySelectorAll("#react-qrcode-logo")
+      document
+        .getElementById("downloadHomeLink")
+        .setAttribute("href", canvas[1].toDataURL("image/png"))
+    }
+  }
 
   const getSubscribersQrs = async () => {
     try {
@@ -73,23 +84,43 @@ const QrCodes = () => {
     <Layout>
       <section className={qrStyles.container}>
         <h1 className={qrStyles.topic}>My Portfolio QR</h1>
-        <p>Right click or Long press on QR Codes</p>
+        <a
+          className={qrStyles.downloadLink}
+          id="downloadHomeLink"
+          download={getCurrentUser().name + " Portfolio QR"}
+          onClick={downloadHomeQr}
+        >
+          <u>Download QR Code</u>
+        </a>
         <section className={qrStyles.qrHolder}>
           <QRCode
             value={portfolioUrl}
             size={250}
-            // logoImage={scanatlogo}
-            // logoWidth={80}
+            logoImage={scanatlogo}
+            logoWidth={80}
             qrStyle="dots"
             enableCORS={true}
             ecLevel="H"
           />
+
+          <section hidden>
+            <QRCode
+              value={portfolioUrl}
+              size={500}
+              logoImage={scanatlogo}
+              logoWidth={100}
+              qrStyle="dots"
+              enableCORS={true}
+              ecLevel="H"
+            />
+          </section>
+
           <button
             className={qrStyles.generateButton}
             type="button"
             onClick={() => navigate("/pro/viewQr")}
           >
-            View my generated QRs
+            View my {noQrs} generated QRs
           </button>
         </section>
         <h1 className={qrStyles.topic}>Generate QRs</h1>

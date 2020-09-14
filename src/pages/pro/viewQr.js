@@ -21,12 +21,21 @@ const ViewQr = () => {
   const [snackContent, setSnackContent] = useState()
   const [snackError, setSnackError] = useState(false)
   const [noQrs, setNoQrs] = useState()
+  const [qrId, setQrId] = useState()
+  const [qrs, setQrs] = useState([])
   const liveUrl = "https://www.scanat.in/live/org-display"
 
   useEffect(() => {
     setTimeout(() => {
       setSnackContent()
     }, 5000)
+    var canvas = document.querySelectorAll(
+      "#downloadableQrs #react-qrcode-logo"
+    )
+
+    for (let i = 0; i < noQrs; i++) {
+      qrs.push(canvas[i].toDataURL("image/png"))
+    }
   }, [snackContent, snackError])
 
   const switchContent = (content, err) => {
@@ -54,6 +63,29 @@ const ViewQr = () => {
       setNoQrs(null)
     }
   }
+
+  const downloadAllQr = () => {
+    if (typeof window !== "undefined") {
+      qrs.map(async (dUrl, index) => {
+        await fetch(dUrl)
+          .then(resp => resp.blob())
+          .then(blob => {
+            var fileName = getCurrentUser().name + " " + index
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.style.display = "none"
+            a.href = url
+            a.download = fileName
+            document.body.appendChild(a)
+            a.click()
+            window.URL.revokeObjectURL(url)
+            document.body.removeChild(a)
+          })
+          .catch(() => {})
+      })
+    }
+  }
+
   return (
     <Layout>
       <section className={viewQrStyles.container}>
@@ -70,20 +102,38 @@ const ViewQr = () => {
         )}
         {typeof noQrs === "number" && (
           <>
-          <p className={viewQrStyles.desc}>You can left click or long press on individual QR codes to save the images</p>
+            <p className={viewQrStyles.desc}>
+              You can left click on individual QR codes to save the images
+            </p>
+            <a
+              className={viewQrStyles.downloadLink}
+              id="downloadHomeLink"
+              download={getCurrentUser().name + " QR" + qrId}
+              onClick={downloadAllQr}
+            >
+              <u>Download All QR Codes</u>
+            </a>
             <section className={viewQrStyles.qrGridContainer}>
               {[...Array(noQrs)].map((element, index) => (
                 <Card>
                   <QRCode
-                    value={`${liveUrl}${getCurrentUser().website}&id=${index+1}`}
-                    size={150}
-                    // logoImage={scanatlogo}
-                    // logoWidth={80}
+                    value={`${liveUrl}${getCurrentUser().website}&id=${index}`}
+                    size={100}
                     qrStyle="dots"
                     enableCORS={true}
                     ecLevel="H"
                   />
-                  <p>QR Index - {index+1}</p>
+                  <section id="downloadableQrs" hidden>
+                    <QRCode
+                      value={`${liveUrl}${
+                        getCurrentUser().website
+                      }&id=${index}`}
+                      size={500}
+                      qrStyle="dots"
+                      enableCORS={true}
+                      ecLevel="H"
+                    />
+                  </section>
                 </Card>
               ))}
             </section>
