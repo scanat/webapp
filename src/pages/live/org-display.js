@@ -21,20 +21,18 @@ const OrgDisplay = () => {
 
   useEffect(() => {
     const queryString = window.location.search
-    setOrgName("Chit Chaat Corner")
-    getAllData("9330638399")
-    // const urlParams = new URLSearchParams(queryString)
-    // setOrgName(urlParams.get("org"))
-    // const pn = urlParams.get("pn")
+    const urlParams = new URLSearchParams(queryString)
+    setOrgName(urlParams.get("org"))
+    const pn = urlParams.get("pn")
 
-    // if (pn !== null && pn !== "") {
-    //   var decodedPn = window.atob(pn)
+    if (pn !== null && pn !== "") {
+      var decodedPn = window.atob(pn)
 
-    //   getAllData(decodedPn)
-    // } else {
-    //   alert("Oops the link failed!")
-    //   navigate("/")
-    // }
+      getAllData(decodedPn)
+    } else {
+      alert("Oops the link failed!")
+      navigate("/")
+    }
   }, [])
 
   useEffect(() => {
@@ -61,7 +59,6 @@ const OrgDisplay = () => {
           list.push(dataItem)
         }
       })
-      console.log(list)
       navigate(typeof window !== "undefined" && window.location.search)
     } catch (error) {
       console.log(error)
