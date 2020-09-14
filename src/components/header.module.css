@@ -1,7 +1,7 @@
 .head {
   position: fixed;
   width: 90%;
-  background: #169188;
+  background: rgba(0, 0, 0, 0.8);
   height: 44px;
   display: flex;
   align-items: center;
@@ -13,8 +13,9 @@
 }
 
 .logo {
-  width: 30px;
+  width: 38px;
   cursor: pointer;
+  margin-top: 2px;
 }
 .topic{
   color: white;
@@ -39,6 +40,9 @@
 }
 .dropDownParent{
   line-height: 44px;
+}
+.dropDownParent:hover ul{
+  display: block !important;
 }
 
 .headerRightContainer>li{

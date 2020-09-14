@@ -8,16 +8,11 @@ import { setUser, isLoggedIn, getCurrentUser } from "../../utils/auth"
 import SnackBar from "../snackBar"
 
 const LoginSection = props => {
-  const [username, setUsername] = useState()
-  const [password, setPassword] = useState()
+  const [username, setUsername] = useState(null)
+  const [password, setPassword] = useState(null)
 
   const userLogin = async () => {
-    if (
-      username !== null &&
-      username !== "" &&
-      password !== null &&
-      password !== ""
-    ) {
+    if (username !== null && password !== null) {
       try {
         const user = await Auth.signIn(username, password)
         setUser(user)
@@ -79,43 +74,43 @@ const LoginSection = props => {
 }
 
 const RegistrationSection = props => {
-  const [name, setName] = useState()
-  const [username, setUsername] = useState()
-  const [phoneNumber, setPhoneNumber] = useState()
-  const [password, setPassword] = useState()
-  const [confirmPass, setConfirmPass] = useState()
+  const [name, setName] = useState(null)
+  const [username, setUsername] = useState(null)
+  const [phoneNumber, setPhoneNumber] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [confirmPass, setConfirmPass] = useState(null)
 
   const registerUser = async () => {
     if (
       name !== null &&
-      name !== "" &&
       username !== null &&
-      username !== "" &&
       password !== null &&
-      password !== "" &&
-      phoneNumber !== null &&
-      phoneNumber !== "" &&
-      phoneNumber.length === 10
+      phoneNumber !== null
     ) {
-      if (password === confirmPass) {
-        try {
-          const user = await Auth.signUp({
-            username,
-            password,
-            attributes: {
-              email: username,
-              address: "",
-              name: name,
-              phone_number: `+91${phoneNumber}`,
-            },
-          })
-          props.switchPanel("login")
-          props.switchContent("User Created", true)
-        } catch (error) {
-          props.switchContent(error.message, false)
+      if (String(phoneNumber).length === 10) {
+        if (password === confirmPass) {
+          try {
+            const user = await Auth.signUp({
+              username,
+              password,
+              attributes: {
+                email: username,
+                address: "",
+                name: name,
+                phone_number: `+91${phoneNumber}`,
+              },
+            })
+            props.switchPanel("login")
+            props.switchContent("User Created", true)
+          } catch (error) {
+            props.switchContent(error.message, false)
+          }
+        } else {
+          props.switchContent("Password miss-match", false)
         }
-      } else {
-        props.switchContent("Password miss-match", false)
+      }
+      else{
+        props.switchContent("Please check your phone number", false)
       }
     } else {
       props.switchContent("Credentials are required!", false)

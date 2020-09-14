@@ -1,9 +1,9 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
-import scanatlogo from "../images/scan_at_logo_white.png"
+import scanatlogo from "../images/scan_at_logo_textless.png"
 import { getCurrentUser, logout, isLoggedIn } from "../utils/auth"
 import { Auth } from "aws-amplify"
 import {
@@ -15,7 +15,17 @@ import {
 
 const Header = props => {
   const [subMenu, setSubMenu] = useState(false)
-  const [routeDir, setRouteDir] = useState("Scan At")
+  const [user, setUser] = useState({})
+
+  useEffect(() => {
+    document
+      .getElementById("dropDownParent")
+      .addEventListener("toggle", toggleSubmenu)
+  }, [subMenu])
+
+  useEffect(() => {
+    setUser()
+  }, [getCurrentUser()])
 
   const toggleSubmenu = () => {
     subMenu ? setSubMenu(false) : setSubMenu(true)
@@ -38,12 +48,7 @@ const Header = props => {
       <h3 className={headerStyles.topic}>Scan At</h3>
 
       <ul className={headerStyles.headerRightContainer}>
-        <li
-          className={headerStyles.dropDownParent}
-          onClick={toggleSubmenu}
-          onMouseOver={() => setSubMenu(true)}
-          onMouseLeave={() => setSubMenu(false)}
-        >
+        <li id="dropDownParent" className={headerStyles.dropDownParent}>
           <FontAwesomeIcon
             icon={isLoggedIn() ? faUserCircle : faEllipsisV}
             style={{ width: "20px" }}

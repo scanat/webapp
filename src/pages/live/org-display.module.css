@@ -5,6 +5,7 @@
   background: transparent;
   text-align: center;
   background: whitesmoke;
+  margin-top: 50px;
 }
 .orgName {
   color: #169188;
@@ -23,7 +24,6 @@
 .listContainer{
   width: 100%;
   float: left;
-  overflow: scroll;
   margin-bottom: 20vh;
 }
 .orderListContainer{
@@ -33,7 +33,7 @@
   width: 100%;
   height: 40px;
   float: left;
-  overflow: scroll;
+  overflow-y: scroll;
   background: rgb(148, 175, 255);
 }
 .orderListTopShow{
@@ -67,6 +67,100 @@
   align-items: center;
   justify-content: space-evenly;
 }
+.OrderItemControls{
+  margin: 0 10px;
+  float: right;
+}
 .quantityText{
   margin: 0 5px;
+}
+.orderedQuantity{
+  color: grey;
+  font-size: 14px;
+  margin: 0 10px;
+}
+.confirmSection{
+  width: 90%;
+  float: left;
+  background: whitesmoke;
+  padding: 10px 5%;
+  display: flex;
+  justify-content: center;
+}
+.confirmButton{
+  font-size: 14px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background: crimson;
+  color: whitesmoke;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+}
+.billContainer{
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+.billHolder{
+  width: 280px;
+  background: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.orderItems{
+  width: 90%;
+  float: left;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px rgb(207, 207, 207) dashed;
+  margin: 10px 5%;
+}
+.orderItemName{
+  max-width: 60%;
+  text-align: left;
+}
+.qtyLabel{
+  font-size: 13px;
+  margin-left: 10px;
+}
+.orderFinalItems{
+  width: 90%;
+  float: left;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px grey solid;
+  margin: 20px 5%;
+}
+.confirmTopic{
+  color: #169188;
+  margin: 20px 0;
+}
+.requestButton{
+  font-size: 14px;
+  padding: 10px;
+  border: none;
+  background: crimson;
+  color: whitesmoke;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+}
+.infoText{
+  font-size: 12px;
+  margin: 10px 5px;
 }

@@ -17,7 +17,7 @@
 }
 .bannerIntro h3 {
   font-weight: normal;
-  color: black;
+  color: #0d5752;
 }
 .reviewsContainer {
   width: 100%;
@@ -30,15 +30,15 @@
 
 /* Card Layout */
 .cardContainer {
-  width: 80%;
-  border-radius: 10%;
+  width: 200px;
+  border-radius: 20px;
   max-width: 250px;
   margin: 40px auto;
   text-align: center;
   background: white;
-  -webkit-box-shadow: 45px 47px 35px -17px #169188;
-  -moz-box-shadow: 45px 47px 35px -17px #169188;
-  box-shadow: 30px 30px 20px -10px #169188;
+  -webkit-box-shadow: 4px 4px 15px 0px rgba(22, 145, 136, 1);
+  -moz-box-shadow: 4px 4px 15px 0px rgba(22, 145, 136, 1);
+  box-shadow: 4px 4px 15px 0px rgba(22, 145, 136, 1);
 }
 .gist {
   color: #4479a3;
