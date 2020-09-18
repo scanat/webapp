@@ -4,7 +4,7 @@ import displayStyles from "./org-display.module.css"
 import { navigate } from "gatsby"
 import config from "../../config.json"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCartPlus, faCaretUp } from "@fortawesome/free-solid-svg-icons"
+import { faCartPlus, faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons"
 import {
   faPlusSquare,
   faMinusSquare,
@@ -14,6 +14,9 @@ import Layout from "../../components/layout"
 
 const OrgDisplay = () => {
   const [list, setList] = useState([])
+  const [filteredList, setFilteredList] = useState([])
+  const [categoryList, setCategoryList] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState("All")
   const [orderList, setOrderList] = useState([])
   const [orgName, setOrgName] = useState("")
   const [confirmOrder, setConfirmOrder] = useState(false)
@@ -38,8 +41,8 @@ const OrgDisplay = () => {
   useEffect(() => {
     Anime({
       targets: document.getElementById("orderListContainer"),
-      height: ["40px", "200px"],
-      duration: 1000,
+      height: ["20px", "400px"],
+      duration: 500,
       easing: "linear",
       autoplay: true,
       direction: orderListPulled ? "forwards" : "reverse",
@@ -52,7 +55,8 @@ const OrgDisplay = () => {
         phoneNumber: id,
       }
       const res = await axios.post(`${config.invokeUrl}/items/get`, params)
-      res.data.item.map(dataItem => {
+      setCategoryList(res.data.data.categories)
+      res.data.data.data.map(dataItem => {
         if (dataItem.status) {
           dataItem.qty = 1
           dataItem.ordered = false
@@ -96,6 +100,37 @@ const OrgDisplay = () => {
     // setOrderList(tempOrderList)
   }
 
+  // Clear Filtered List wrt item
+  const clearFilteredList = item => {
+    var tempList = [...filteredList]
+    filteredList.map(itemData => {
+      if (itemData.category === item) {
+        tempList.pop(itemData)
+      }
+    })
+    setFilteredList(tempList)
+    setFilteredList(null)
+    console.log(filteredList)
+  }
+
+  // Filtered Categorical List formation
+  const filterCategoricalList = item => {
+
+    if (item === "Category") {
+      setSelectedCategory("All")
+    }
+    else{
+      setSelectedCategory(item)
+      var tempList = []
+      list.map(itemData => {
+        if (itemData.category === item) {
+          tempList.push(itemData)
+        }
+      })
+      setFilteredList(tempList)
+    }
+  }
+
   const toggleConfirmOrder = () => {
     setConfirmOrder(!confirmOrder)
   }
@@ -104,46 +139,98 @@ const OrgDisplay = () => {
     <Layout>
       <section className={displayStyles.container}>
         <h1 className={displayStyles.orgName}>{orgName}</h1>
+
+        <section className={displayStyles.menuNav}>
+          <ul>
+            {categoryList.map(item => (
+              <li onClick={() => filterCategoricalList(item)}>
+                {item === "Category" ? "All" : item}
+              </li>
+            ))}
+          </ul>
+        </section>
         <section className={displayStyles.listContainer}>
-          {list.map((item, index) => (
-            <section className={displayStyles.greenCard} key={item._id}>
-              <section className={displayStyles.textContainers}>
-                <p className={displayStyles.itemName}>{item.itemName}</p>
-                <p className={displayStyles.itemPrice}>
-                  Rs {item.itemPrice} /-
-                </p>
-              </section>
-              <section className={displayStyles.itemControls}>
-                <FontAwesomeIcon
-                  icon={faCartPlus}
-                  onClick={() =>
-                    !item.ordered
-                      ? addItemToList(item)
-                      : removeItemFromList(index)
-                  }
-                  size="lg"
-                  color={!item.ordered ? "green" : "#db2626"}
-                />
-                <section>
+          <h1 className={displayStyles.categoryTopic}>{selectedCategory}</h1>
+          {selectedCategory !== "All" &&
+            filteredList.map((item, index) => (
+              <section className={displayStyles.greenCard} key={item._id}>
+                <section className={displayStyles.textContainers}>
+                  <p className={displayStyles.itemName}>{item.itemName}</p>
+                  <p className={displayStyles.itemPrice}>
+                    Rs {item.itemPrice} /-
+                  </p>
+                </section>
+                <section className={displayStyles.itemControls}>
                   <FontAwesomeIcon
-                    icon={faMinusSquare}
-                    onClick={() => item.qty > 1 && decQty(index)}
+                    icon={faCartPlus}
+                    onClick={() =>
+                      !item.ordered
+                        ? addItemToList(item)
+                        : removeItemFromList(index)
+                    }
                     size="lg"
-                    color="#db2626"
+                    color={!item.ordered ? "green" : "#db2626"}
                   />
-                  <label className={displayStyles.quantityText}>
-                    {item.qty}
-                  </label>
-                  <FontAwesomeIcon
-                    icon={faPlusSquare}
-                    onClick={() => incQty(index)}
-                    size="lg"
-                    color="green"
-                  />
+                  <section>
+                    <FontAwesomeIcon
+                      icon={faMinusSquare}
+                      onClick={() => item.qty > 1 && decQty(index)}
+                      size="lg"
+                      color="#db2626"
+                    />
+                    <label className={displayStyles.quantityText}>
+                      {item.qty}
+                    </label>
+                    <FontAwesomeIcon
+                      icon={faPlusSquare}
+                      onClick={() => incQty(index)}
+                      size="lg"
+                      color="green"
+                    />
+                  </section>
                 </section>
               </section>
-            </section>
-          ))}
+            ))}
+          {selectedCategory === "All" &&
+            list.map((item, index) => (
+              <section className={displayStyles.greenCard} key={item._id}>
+                <section className={displayStyles.textContainers}>
+                  <p className={displayStyles.itemName}>{item.itemName}</p>
+                  <p className={displayStyles.itemPrice}>
+                    Rs {item.itemPrice} /-
+                  </p>
+                </section>
+                <section className={displayStyles.itemControls}>
+                  <FontAwesomeIcon
+                    icon={faCartPlus}
+                    onClick={() =>
+                      !item.ordered
+                        ? addItemToList(item)
+                        : removeItemFromList(index)
+                    }
+                    size="lg"
+                    color={!item.ordered ? "green" : "#db2626"}
+                  />
+                  <section>
+                    <FontAwesomeIcon
+                      icon={faMinusSquare}
+                      onClick={() => item.qty > 1 && decQty(index)}
+                      size="lg"
+                      color="#db2626"
+                    />
+                    <label className={displayStyles.quantityText}>
+                      {item.qty}
+                    </label>
+                    <FontAwesomeIcon
+                      icon={faPlusSquare}
+                      onClick={() => incQty(index)}
+                      size="lg"
+                      color="green"
+                    />
+                  </section>
+                </section>
+              </section>
+            ))}
         </section>
 
         {orderList.length > 0 && (
@@ -157,10 +244,10 @@ const OrgDisplay = () => {
                 onClick={() => setOrderListPulled(!orderListPulled)}
               >
                 <FontAwesomeIcon
-                  icon={faCaretUp}
+                  icon={orderListPulled ? faCaretDown : faCaretUp}
                   onClick={() => setOrderListPulled(!orderListPulled)}
                   size="lg"
-                  color="#169188"
+                  color="white"
                 />
               </section>
             </section>
@@ -232,7 +319,8 @@ const ConfirmOrder = props => {
         {props.orderList.map(item => (
           <section className={displayStyles.orderItems}>
             <p className={displayStyles.orderItemName}>
-              <b>{item.itemName}</b> <label className={displayStyles.qtyLabel}>x {item.qty}</label>
+              <b>{item.itemName}</b>{" "}
+              <label className={displayStyles.qtyLabel}>x {item.qty}</label>
             </p>
             <p>{item.itemPrice * item.qty}/-</p>
           </section>
@@ -250,7 +338,7 @@ const ConfirmOrder = props => {
           * All prices are inclusive of GST <br />
           <u>We will pass on your order with the reception</u>
         </p>
-        <button type="button" className={displayStyles.requestButton} >
+        <button type="button" className={displayStyles.requestButton}>
           Request Order
         </button>
       </secion>
