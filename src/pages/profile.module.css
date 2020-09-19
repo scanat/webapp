@@ -18,6 +18,9 @@
   margin: 15px auto;
   border-radius: 10px;
   text-align: center;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .cardChild{
   display: flex;
@@ -28,6 +31,7 @@
 }
 .cardTopic{
   font-size: 1em;
+  color: #169188;
 }
 .portalContainer{
   width: 100%;

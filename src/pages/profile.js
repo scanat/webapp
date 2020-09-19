@@ -28,11 +28,9 @@ export default function Profile() {
     if (typeof window !== "undefined") {
       var dataOrg = getCurrentUser().name
       var dataId = String(getCurrentUser().phone_number).replace("+91", "")
-      console.log(dataOrg + dataId)
-      var encodedOrg = window.btoa(dataOrg)
       var encodedId = window.btoa(dataId)
 
-      const orgActiveUrl = `https://www.scanat.in/live/org-display?org=${encodedOrg}&pn=${encodedId}`
+      const orgActiveUrl = `https://www.scanat.in?org=${dataOrg}&pn=${encodedId}`
 
       window.location.href = orgActiveUrl
     }
@@ -54,7 +52,6 @@ export default function Profile() {
             <section
               className={profileStyles.cardChild}
               onClick={() => openPortal("details")}
-              onMouseUp={() => openPortal("details")}
             >
               <h1 className={profileStyles.cardTopic}>User Details</h1>
             </section>
@@ -63,10 +60,7 @@ export default function Profile() {
             <section
               className={profileStyles.cardChild}
               onClick={() =>
-                navigate("/pro/components/card-input-layouts/basic")
-              }
-              onMouseUp={() =>
-                navigate("/pro/components/card-input-layouts/basic")
+                navigate("/pro/components/card-input-layouts/category-basic")
               }
             >
               <h1 className={profileStyles.cardTopic}>
@@ -78,7 +72,6 @@ export default function Profile() {
             <section
               className={profileStyles.cardChild}
               onClick={navigateToLive}
-              onMouseUp={navigateToLive}
             >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} Live
@@ -89,7 +82,6 @@ export default function Profile() {
             <section
               className={profileStyles.cardChild}
               onClick={() => navigate("/pro/qrCodes")}
-              onMouseUp={() => navigate("/pro/qrCodes")}
             >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} QR Codes

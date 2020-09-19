@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import viewQrStyles from "./viewQr.module.css"
 import Layout from "../../components/layout"
-import { QRCode } from "react-qrcode-logo"
+import { QRCode, IProps } from "react-qrcode-logo"
 import { getCurrentUser } from "../../utils/auth"
 import axios from "axios"
 import SnackBar from "../../components/snackBar"
@@ -12,6 +12,7 @@ import {
   faCaretLeft,
   faCaretSquareLeft,
 } from "@fortawesome/free-solid-svg-icons"
+import Sticker from "../../images/sticker.png"
 
 const Card = ({ children }) => {
   return <section className={viewQrStyles.card}>{children}</section>
@@ -22,20 +23,12 @@ const ViewQr = () => {
   const [snackError, setSnackError] = useState(false)
   const [noQrs, setNoQrs] = useState()
   const [qrId, setQrId] = useState()
-  const [qrs, setQrs] = useState([])
   const liveUrl = "https://www.scanat.in/live/org-display"
 
   useEffect(() => {
     setTimeout(() => {
       setSnackContent()
     }, 5000)
-    var canvas = document.querySelectorAll(
-      "#downloadableQrs #react-qrcode-logo"
-    )
-
-    for (let i = 0; i < noQrs; i++) {
-      qrs.push(canvas[i].toDataURL("image/png"))
-    }
   }, [snackContent, snackError])
 
   const switchContent = (content, err) => {
@@ -64,25 +57,49 @@ const ViewQr = () => {
     }
   }
 
-  const downloadAllQr = () => {
-    if (typeof window !== "undefined") {
-      qrs.map(async (dUrl, index) => {
-        await fetch(dUrl)
-          .then(resp => resp.blob())
-          .then(blob => {
-            var fileName = getCurrentUser().name + " " + index
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.style.display = "none"
-            a.href = url
-            a.download = fileName
-            document.body.appendChild(a)
-            a.click()
-            window.URL.revokeObjectURL(url)
-            document.body.removeChild(a)
-          })
-          .catch(() => {})
+  const downloadDynamicQrs = () => {
+    for (let j = 0; j < noQrs; j++) {
+      let p = new Promise((resolve, reject) => {
+        var image = new Image()
+        image.src = Sticker
+
+        var qr = new Image()
+        qr.src = document
+          .querySelectorAll("#downloadableQrs #react-qrcode-logo")
+          [j].toDataURL("image/png")
+
+        qr.onload = () => {
+          var canvas = document.createElement("canvas"),
+            ctx = canvas.getContext("2d")
+          canvas.width = 648
+          canvas.height = 432
+
+          ctx.drawImage(image, 0, 0, 648, 432)
+          ctx.drawImage(qr, 240, 30, 380, 380)
+
+          downloadAllQr(canvas.toDataURL("image/png"), j)
+        }
       })
+    }
+  }
+
+  const downloadAllQr = async (dUrl, index) => {
+    if (typeof window !== "undefined") {
+      await fetch(dUrl)
+        .then(resp => resp.blob())
+        .then(blob => {
+          var fileName = getCurrentUser().name + " " + index
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.style.display = "none"
+          a.href = url
+          a.download = fileName
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
+        })
+        .catch(() => {})
     }
   }
 
@@ -100,6 +117,7 @@ const ViewQr = () => {
             </p>
           </section>
         )}
+        <section id="someId"></section>
         {typeof noQrs === "number" && (
           <>
             <p className={viewQrStyles.desc}>
@@ -109,7 +127,7 @@ const ViewQr = () => {
               className={viewQrStyles.downloadLink}
               id="downloadHomeLink"
               download={getCurrentUser().name + " QR" + qrId}
-              onClick={downloadAllQr}
+              onClick={downloadDynamicQrs}
             >
               <u>Download All QR Codes</u>
             </a>
@@ -118,7 +136,7 @@ const ViewQr = () => {
                 <Card>
                   <QRCode
                     value={`${liveUrl}${getCurrentUser().website}&id=${index}`}
-                    size={100}
+                    size={134}
                     qrStyle="dots"
                     enableCORS={true}
                     ecLevel="H"
@@ -128,7 +146,7 @@ const ViewQr = () => {
                       value={`${liveUrl}${
                         getCurrentUser().website
                       }&id=${index}`}
-                      size={500}
+                      size={380}
                       qrStyle="dots"
                       enableCORS={true}
                       ecLevel="H"

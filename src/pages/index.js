@@ -7,15 +7,6 @@ import ClientReview from "../components/main/clientreview"
 import { navigate } from "gatsby"
 
 const IndexPage = () => {
-  useEffect(() => {
-    const queryString = window.location.search
-    const urlParams = new URLSearchParams(queryString)
-    const org = urlParams.get("org")
-    const pn = urlParams.get("pn")
-    if(org !== null && pn !== null){
-      navigate('/live/org-display?'+urlParams)
-    }
-  }, [])
 
   return (
     <Container>

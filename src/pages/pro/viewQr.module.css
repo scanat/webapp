@@ -53,6 +53,9 @@
   cursor: pointer;
   margin: 10px 0;
 }
+canvas{
+  background-image: url('../../images/sticker.png');
+}
 @media screen and (min-width: 992px){
   .qrGridContainer {
     width: 100%;

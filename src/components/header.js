@@ -52,7 +52,7 @@ const Header = props => {
           <FontAwesomeIcon
             icon={isLoggedIn() ? faUserCircle : faEllipsisV}
             style={{ width: "20px" }}
-            color="white"
+            color="#169188"
             size="lg"
           />
           <ul

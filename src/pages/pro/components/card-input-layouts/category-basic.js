@@ -1,15 +1,33 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faPlusSquare, faCheckCircle } from "@fortawesome/free-regular-svg-icons"
-import { faSyncAlt, faTimes, faNetworkWired, faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons"
-import styled from "styled-components"
+import {
+  faPlusSquare,
+  faCheckCircle,
+} from "@fortawesome/free-regular-svg-icons"
+import {
+  faSyncAlt,
+  faNetworkWired,
+  faCloudUploadAlt,
+  faTrash,
+  faPencilAlt,
+  faToggleOn,
+  faToggleOff,
+} from "@fortawesome/free-solid-svg-icons"
 import categoryBasicStyles from "./category-basic.module.css"
+import axios from "axios"
+import { navigate } from "gatsby"
+import { getCurrentUser } from "../../../../utils/auth"
+import config from "../../../../config.json"
+import SnackBar from "../../../../components/snackBar"
+import Layout from "../../../../components/layout"
 
-const Card = (props) => {
-  return <section className={categoryBasicStyles.card}>{props.children}</section>;
-};
+const Card = props => {
+  return (
+    <section className={categoryBasicStyles.card}>{props.children}</section>
+  )
+}
 
-const Basic = props => {
+const CategoryBasic = props => {
   const [itemName, setItemName] = useState("")
   const [itemPrice, setItemPrice] = useState("")
   const [category, setCategory] = useState("None")
@@ -17,6 +35,37 @@ const Basic = props => {
   const [list, setList] = useState([])
   const [chosenItem, setChosenItem] = useState()
   const [categoryList, setCategoryList] = useState(["Category"])
+  const [snackContent, setSnackContent] = useState()
+  const [snackError, setSnackError] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSnackContent()
+    }, 5000)
+  }, [snackContent, snackError])
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  // Fetch inital data if available
+  const fetchData = async () => {
+    try {
+      const params = JSON.stringify({
+        phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
+      })
+      const res = await axios.post(`${config.userDataAPI}/items/get`, params)
+      res.data.data.data.map(element => {
+        if(categoryList.indexOf(element.category)<0){
+          categoryList.push(element.category)
+        }
+      });
+      switchContent("Found Items", true)
+      setList(res.data.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const setSelectedCategory = () => {
     let newCategoryName = prompt("Add a category to the list!")
@@ -44,8 +93,10 @@ const Basic = props => {
       )
       setItemName("")
       setItemPrice("")
-      document.getElementById("item-name-input").value = ""
-      document.getElementById("item-price-input").value = ""
+      if (typeof window !== "undefined") {
+        document.getElementById("item-name-input").value = ""
+        document.getElementById("item-price-input").value = ""
+      }
     }
   }
 
@@ -55,38 +106,39 @@ const Basic = props => {
     setItemPrice("")
     setChanging(false)
     setChosenItem()
-    document.getElementById("item-name-input").value = ""
-    document.getElementById("item-price-input").value = ""
-    document.getElementById("card-change-options").style.display = "none"
-  }
-
-  // Displaying the options to handle changes in the list
-  const cardChangeOptionsHandler = (visibile, item) => {
-    visibile
-      ? (document.getElementById("card-change-options").style.display = "block")
-      : (document.getElementById("card-change-options").style.display = "none")
-
-    setChosenItem(item)
+    if (typeof window !== "undefined") {
+      document.getElementById("item-name-input").value = ""
+      document.getElementById("item-price-input").value = ""
+    }
   }
 
   // Toggling the active status of the item
-  const toggleItemHandler = () => {
-    const elementIndex = list.findIndex(
-      element => element._id === chosenItem._id
-    )
+  const toggleItemHandler = item => {
+    const elementIndex = list.findIndex(element => element._id === item._id)
     let newList = [...list]
     let newListStatus = newList[elementIndex].status
     newList[elementIndex].status = newListStatus ? false : true
     setList(newList)
-    setChosenItem()
-    document.getElementById("card-change-options").style.display = "none"
   }
 
   // Removing the item from the list
-  const removeItemHandler = () => {
-    const elementIndex = list.findIndex(
-      element => element._id === chosenItem._id
-    )
+  const removeItemHandler = item => {
+    const confirmDelete =
+      typeof window !== "undefined" &&
+      window.confirm(
+        "Are you sure to delete item? Alternatively you can toggle OFF the item."
+      )
+    confirmDelete
+      ? deleteItem(item)
+      : switchContent(
+          "Toggling items hide the items visibility in your menu",
+          true
+        )
+  }
+
+  // delete Item Function
+  const deleteItem = item => {
+    const elementIndex = list.findIndex(element => element._id === item._id)
     let newList = [...list]
     var removedItem = newList.splice(elementIndex, 1)[0]
     setList(newList)
@@ -94,15 +146,15 @@ const Basic = props => {
   }
 
   // Adding the chosen items to input
-  const updateItemHandler = () => {
-    setItemName(chosenItem.itemName)
-    setItemPrice(chosenItem.itemPrice)
-    setCategory(chosenItem.category)
-    document.getElementById("item-category-input").value = chosenItem.category
-    document.getElementById("item-name-input").value = chosenItem.itemName
-    document.getElementById("item-price-input").value = chosenItem.itemPrice
-    setChanging(true)
-    document.getElementById("card-change-options").style.display = "none"
+  const updateItemHandler = item => {
+    setChosenItem(item)
+    if (typeof window !== "undefined") {
+      setItemName(item.itemName)
+      setItemPrice(item.itemPrice)
+      document.getElementById("item-name-input").value = item.itemName
+      document.getElementById("item-price-input").value = item.itemPrice
+      setChanging(true)
+    }
   }
 
   // Updating the item finally
@@ -124,154 +176,150 @@ const Basic = props => {
   }
 
   // Upload Data button press
-  // Sort all lists add, update and remove item from list for existing list and send through post
-  // Sort all lists for update and remove for fetched list and apply PATCH and DELETE API calls
   const uploadData = async () => {
-    // var paramString = getURL();
-    // var searchParams = new URLSearchParams(paramString);
-    // var userId = searchParams.get("/linear-layout?id");
-    // alert(userId)
+    try {
+      const params = {
+        phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
+        data: list,
+        categories: categoryList
+      }
+      const res = await axios.post(`${config.userDataAPI}/items/add`, params)
+      switchContent(res.data.msg, true)
+      setTimeout(() => {
+        navigate("/profile")
+      }, 2000)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const switchContent = (content, err) => {
+    setSnackContent(content)
+    setSnackError(err)
   }
 
   return (
-    <section className={categoryBasicStyles.container}>
-
-      <Card>
-        <section>
-          <h3>{changing ? "Update Item" : "Add Item"}</h3>
-          <input
-            className={categoryBasicStyles.input}
-            id="item-name-input"
-            onKeyUp={event => setItemName(event.target.value)}
-            type="text"
-            name="itemname"
-            placeholder="Item name"
-          />
-          <input
-            className={categoryBasicStyles.input}
-            id="item-price-input"
-            onKeyUp={event => setItemPrice(event.target.value)}
-            type="number"
-            name="itemprice"
-            placeholder="Item price"
-          />
-          <select
-            id="item-category-input"
-            style={{ width: "90%" }}
-            onChange={selected => setCategory(selected.target.value)}
-          >
-            {categoryList.map(item => (
-              <option value={item}>{item}</option>
-            ))}
-          </select>
-        </section>
-
-        <section className={categoryBasicStyles.itemControls}>
-          <FontAwesomeIcon
-            icon={faSyncAlt}
-            onClick={resetInputHandler}
-            size="lg"
-            color="#169188"
-          />
-          <FontAwesomeIcon
-            icon={changing ? faCheckCircle : faPlusSquare}
-            onClick={changing ? updateChangeHandler : addItemHandler}
-            size="lg"
-            color="#169188"
-          />
-          <FontAwesomeIcon
-            icon={faNetworkWired}
-            onClick={resetInputHandler}
-            size="lg"
-            color="#169188"
-          />
-          <FontAwesomeIcon
-            icon={faCloudUploadAlt}
-            onClick={list.length > 0 && uploadData}
-            size="lg"
-            color={list.length > 0 ? "#169188" : 'grey'}
-          />
-        </section>
-      </Card>
-
-      <section className={categoryBasicStyles.listContainer}>
-        <OptionsContainer id="card-change-options">
-          <FontAwesomeIcon
-            icon={faTimes}
-            color="#e2e2e2"
-            size="2x"
-            style={{ float: "right" }}
-            onClick={() => cardChangeOptionsHandler(false, chosenItem)}
-          />
-          <OptionsHolder>
-            <CardHandlerButton type="button" onClick={removeItemHandler}>
-              Remove
-            </CardHandlerButton>
-            <CardHandlerButton type="button" onClick={updateItemHandler}>
-              Update
-            </CardHandlerButton>
-            <CardHandlerButton type="button" onClick={toggleItemHandler}>
-              Toggle availability
-            </CardHandlerButton>
-          </OptionsHolder>
-        </OptionsContainer>
-
-        {list.map(item => (
-          <section onClick={() => cardChangeOptionsHandler(true, item)}>
-            <CategoryBasicCard
-              itemName={item.itemName}
-              itemPrice={item.itemPrice}
-              status={item.status}
+    <Layout>
+      <section className={categoryBasicStyles.container}>
+        <Card>
+          <section>
+            <h3>{changing ? "Update Item" : "Add Item"}</h3>
+            <input
+              className={categoryBasicStyles.input}
+              id="item-name-input"
+              onKeyUp={event => setItemName(event.target.value)}
+              type="text"
+              name="itemname"
+              placeholder="Item name"
             />
+            <input
+              className={categoryBasicStyles.input}
+              id="item-price-input"
+              onKeyUp={event => setItemPrice(event.target.value)}
+              type="number"
+              name="itemprice"
+              placeholder="Item price"
+            />
+            <select
+              id="item-category-input"
+              style={{ width: "90%" }}
+              onChange={selected => setCategory(selected.target.value)}
+            >
+              {categoryList.map(item => (
+                <option value={item}>{item}</option>
+              ))}
+            </select>
           </section>
-        ))}
+
+          <section className={categoryBasicStyles.itemControls}>
+            <section className={categoryBasicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={faSyncAlt}
+                onClick={resetInputHandler}
+                size="lg"
+                color="#169188"
+              />
+              <label className={categoryBasicStyles.controlItemLabel}>
+                Reset
+              </label>
+            </section>
+            <section className={categoryBasicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={changing ? faCheckCircle : faPlusSquare}
+                onClick={changing ? updateChangeHandler : addItemHandler}
+                size="lg"
+                color="#169188"
+              />
+              <label className={categoryBasicStyles.controlItemLabel}>
+                Add Item
+              </label>
+            </section>
+            <section className={categoryBasicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={faNetworkWired}
+                onClick={setSelectedCategory}
+                size="lg"
+                color="#169188"
+              />
+              <label className={categoryBasicStyles.controlItemLabel}>
+                Add Category
+              </label>
+            </section>
+            <section className={categoryBasicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={faCloudUploadAlt}
+                onClick={list.length > 0 && uploadData}
+                size="lg"
+                color={list.length > 0 ? "#169188" : "grey"}
+              />
+              <label className={categoryBasicStyles.controlItemLabel}>
+                Upload
+              </label>
+            </section>
+          </section>
+        </Card>
+
+        <section className={categoryBasicStyles.listContainer}>
+          {list.map(item => (
+            <section className={categoryBasicStyles.greenCard} key={item._id}>
+              <section className={categoryBasicStyles.textContainers}>
+                <p className={categoryBasicStyles.itemName}>{item.itemName}</p>
+                <p className={categoryBasicStyles.itemPrice}>
+                  Rs {item.itemPrice} /-
+                </p>
+              </section>
+              <label className={categoryBasicStyles.categoryName}>
+                <u>Category</u> : {item.category}
+              </label>
+              <section className={categoryBasicStyles.itemControls}>
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  onClick={() => removeItemHandler(item)}
+                  onMouseUp={() => removeItemHandler(item)}
+                  size="lg"
+                  color="#db2626"
+                />
+                <FontAwesomeIcon
+                  icon={faPencilAlt}
+                  onClick={() => updateItemHandler(item)}
+                  onMouseUp={() => updateItemHandler(item)}
+                  size="lg"
+                  color="grey"
+                />
+                <FontAwesomeIcon
+                  icon={item.status ? faToggleOn : faToggleOff}
+                  onMouseDown={() => toggleItemHandler(item)}
+                  size="lg"
+                  color={item.status ? "green" : "#db2626"}
+                />
+              </section>
+            </section>
+          ))}
+        </section>
       </section>
-    </section>
+      {snackContent && <SnackBar message={snackContent} err={snackError} />}
+    </Layout>
   )
 }
 
-const OptionsContainer = styled.section`
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    display: none;
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.4);
-  `,
-  OptionsHolder = styled.section`
-    display: flex;
-    flex-direction: column;
-    width: 70%;
-    margin: 20px 15%;
-    z-index: 2;
-    background: transparent;
-    border-radius: 10px;
-    border: white 4px solid;
-    padding: 20px;
-  `,
-  CardHandlerButton = styled.button`
-    width: 80%;
-    margin: 5px 10%;
-    font-size: 0.8em;
-    border: none;
-    background: white;
-    border-radius: 10px;
-    padding: 8px;
-  `
-
-export default Basic
-
-const CategoryBasicCard = props => {
-  return (
-    <section
-      className={
-        props.status
-          ? categoryBasicStyles.greenCard
-          : categoryBasicStyles.redCard
-      }
-    >
-      <p className={categoryBasicStyles.itemName}>{props.itemName}</p>
-      <p className={categoryBasicStyles.itemPrice}>Rs {props.itemPrice} /-</p>
-    </section>
-  )
-}
+export default CategoryBasic
