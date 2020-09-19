@@ -4,13 +4,18 @@ import displayStyles from "./org-display.module.css"
 import { navigate } from "gatsby"
 import config from "../../config.json"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCartPlus, faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons"
+import {
+  faCartPlus,
+  faCaretUp,
+  faCaretDown,
+} from "@fortawesome/free-solid-svg-icons"
 import {
   faPlusSquare,
   faMinusSquare,
 } from "@fortawesome/free-regular-svg-icons"
 import Anime from "animejs"
 import Layout from "../../components/layout"
+import { getCurrentUser } from "../../utils/auth"
 
 const OrgDisplay = () => {
   const [list, setList] = useState([])
@@ -19,6 +24,8 @@ const OrgDisplay = () => {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [orderList, setOrderList] = useState([])
   const [orgName, setOrgName] = useState("")
+  const [subscriberPhoneNumber, setSubscriberPhoneNumber] = useState("")
+  const [qrId, setQrId] = useState("")
   const [confirmOrder, setConfirmOrder] = useState(false)
   const [orderListPulled, setOrderListPulled] = useState(false)
 
@@ -27,11 +34,15 @@ const OrgDisplay = () => {
     const urlParams = new URLSearchParams(queryString)
     setOrgName(urlParams.get("org"))
     const pn = urlParams.get("pn")
+    const id = urlParams.get("id")
 
-    if (pn !== null && pn !== "") {
-      var decodedPn = window.atob(pn)
+    setQrId(id)
 
-      getAllData(decodedPn)
+    if (pn.length > 0) {
+    var decodedPn = window.atob(pn)
+
+    setSubscriberPhoneNumber(decodedPn)
+    getAllData(decodedPn)
     } else {
       alert("Oops the link failed!")
       navigate("/")
@@ -82,19 +93,21 @@ const OrgDisplay = () => {
     setList(tempList)
   }
 
-  const incQty = id => {
-    var tempList = [...list]
+  const incQty = (givenList, id) => {
+    var tempList = [...givenList]
     tempList[id].qty += 1
-    setList(tempList)
+    givenList === list ?
+    setList(tempList) : setFilteredList(tempList)
     // var tempOrderList = [...orderList]
     // tempOrderList[id].itemPrice *= tempOrderList[id].qty
     // setOrderList(tempOrderList)
   }
 
-  const decQty = id => {
-    var tempList = [...list]
+  const decQty = (givenList, id) => {
+    var tempList = [...givenList]
     tempList[id].qty -= 1
-    setList(tempList)
+    givenList === list ?
+    setList(tempList) : setFilteredList(tempList)
     // var tempOrderList = [...orderList]
     // tempOrderList[id].itemPrice *= tempOrderList[id].qty
     // setOrderList(tempOrderList)
@@ -115,11 +128,9 @@ const OrgDisplay = () => {
 
   // Filtered Categorical List formation
   const filterCategoricalList = item => {
-
     if (item === "Category") {
       setSelectedCategory("All")
-    }
-    else{
+    } else {
       setSelectedCategory(item)
       var tempList = []
       list.map(itemData => {
@@ -174,7 +185,7 @@ const OrgDisplay = () => {
                   <section>
                     <FontAwesomeIcon
                       icon={faMinusSquare}
-                      onClick={() => item.qty > 1 && decQty(index)}
+                      onClick={() => item.qty > 1 && decQty(filteredList, index)}
                       size="lg"
                       color="#db2626"
                     />
@@ -183,7 +194,7 @@ const OrgDisplay = () => {
                     </label>
                     <FontAwesomeIcon
                       icon={faPlusSquare}
-                      onClick={() => incQty(index)}
+                      onClick={() => incQty(filteredList, index)}
                       size="lg"
                       color="green"
                     />
@@ -214,7 +225,7 @@ const OrgDisplay = () => {
                   <section>
                     <FontAwesomeIcon
                       icon={faMinusSquare}
-                      onClick={() => item.qty > 1 && decQty(index)}
+                      onClick={() => item.qty > 1 && decQty(list, index)}
                       size="lg"
                       color="#db2626"
                     />
@@ -223,7 +234,7 @@ const OrgDisplay = () => {
                     </label>
                     <FontAwesomeIcon
                       icon={faPlusSquare}
-                      onClick={() => incQty(index)}
+                      onClick={() => incQty(list, index)}
                       size="lg"
                       color="green"
                     />
@@ -292,6 +303,8 @@ const OrgDisplay = () => {
       {confirmOrder && (
         <ConfirmOrder
           orderList={orderList}
+          qrId={qrId}
+          subscriberPhoneNumber={subscriberPhoneNumber}
           switchConfirmOrder={toggleConfirmOrder}
         />
       )}
@@ -302,12 +315,46 @@ const OrgDisplay = () => {
 export default OrgDisplay
 
 const ConfirmOrder = props => {
+  const [message, setMessage] = useState("")
   const calculateTotal = () => {
     var total = 0
     props.orderList.forEach(item => {
       total += Number(item.itemPrice) * item.qty
     })
     return total
+  }
+
+  const sendOrderRequest = async () => {
+    try {
+      const params = {
+        subscriberPhoneNumber: props.subscriberPhoneNumber,
+        userPhoneNumber: getCurrentUser().phone_number,
+        data: props.orderList,
+        qrId: props.qrId + "",
+        reqMessage: message
+      }
+      const res = await axios.post(`${config.userDataAPI}/orders/add`, params)
+
+      sendOrderCopy(res.data.orderId)
+      // props.switchConfirmOrder
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const sendOrderCopy = async (orderId) => {
+    try {
+      const params = {
+        phoneNumber: "+91"+props.subscriberPhoneNumber,
+        orderId: orderId
+      }
+      const res = await axios.post(`${config.userDataAPI}/orders/addcopy`, params)
+      console.log(res)
+
+      // props.switchConfirmOrder
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -334,11 +381,24 @@ const ConfirmOrder = props => {
           </p>
         </section>
 
+        <section>
+          <input
+            type="textarea"
+            placeholder="Any special requests..."
+            className={displayStyles.message}
+            onChange={e => setMessage(e.target.value)}
+          />
+        </section>
+
         <p className={displayStyles.infoText}>
-          * All prices are inclusive of GST <br />
+          * All prices are exclusive of GST <br />
           <u>We will pass on your order with the reception</u>
         </p>
-        <button type="button" className={displayStyles.requestButton}>
+        <button
+          type="button"
+          className={displayStyles.requestButton}
+          onClick={sendOrderRequest}
+        >
           Request Order
         </button>
       </secion>

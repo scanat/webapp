@@ -196,3 +196,7 @@
   z-index: 5;
   text-align: left;
 }
+.message{
+  padding: 5px;
+  width: 80%;
+}
