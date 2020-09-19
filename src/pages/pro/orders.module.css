@@ -1,0 +1,23 @@
+.orderGrid {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: whitesmoke;
+  padding: 10px;
+  border-radius: 8px;
+  -webkit-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.gridContainer {
+  width: 100%;
+  float: left;
+  display: grid;
+  grid-template-columns: auto auto;
+}
+.topic{
+    text-align: center;
+    margin: 10px 0;
+    color: #169188;
+}

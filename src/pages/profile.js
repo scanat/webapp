@@ -96,6 +96,13 @@ export default function Profile() {
             </section>
           </ProfileCard>
           <ProfileCard>
+            <section className={profileStyles.cardChild} onClick={() => navigate("/pro/orders")} >
+              <h1 className={profileStyles.cardTopic}>
+                {getCurrentUser()["custom:category"]} Live Orders
+              </h1>
+            </section>
+          </ProfileCard>
+          <ProfileCard>
             <section className={profileStyles.cardChild}>
               <h1 className={profileStyles.cardTopic}>My Profile</h1>
             </section>

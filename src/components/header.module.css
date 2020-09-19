@@ -1,7 +1,7 @@
 .head {
   position: fixed;
   width: 90%;
-  background: whitesmoke;
+  background: rgba(0, 0, 0, 0.8);
   height: 44px;
   display: flex;
   align-items: center;
@@ -21,7 +21,7 @@
   margin-top: 2px;
 }
 .topic{
-  color: #169188;
+  color: white;
 }
 
 .loginButton {
