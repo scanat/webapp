@@ -49,7 +49,7 @@ const Orders = () => {
       <section className={orderStyles.gridContainer}>
         {[...Array(noQrs)].map((item, id) => (
           <section className={orderStyles.orderGrid}>
-            <h1>{id}</h1>
+            <h1>{id+1}</h1>
           </section>
         ))}
       </section>

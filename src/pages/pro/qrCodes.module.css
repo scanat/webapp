@@ -53,3 +53,13 @@
   color: grey;
   cursor: pointer;
 }
+.customContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.iconButton{
+  background: none;
+  border: none;
+  margin: 0;
+}

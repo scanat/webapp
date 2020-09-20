@@ -9,12 +9,20 @@ import config from "../../config.json"
 import { navigate, Link } from "gatsby"
 
 import scanatlogo from "../../images/scan_at_logo.png"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import {
+  faMinusSquare,
+  faPlusSquare,
+} from "@fortawesome/free-regular-svg-icons"
 
 const QrCodes = () => {
   const [portfolioUrl, setPortfolioUrl] = useState()
   const [noQrs, setNoQrs] = useState(1)
   const [snackContent, setSnackContent] = useState()
   const [snackError, setSnackError] = useState(false)
+  const [openCustom, setOpenCustom] = useState(false)
+  const [customNum, setCustomNum] = useState("")
+  const [roomNumber, setRoomNumber] = useState([])
 
   useEffect(() => {
     setTimeout(() => {
@@ -47,8 +55,13 @@ const QrCodes = () => {
         `${config.invokeUrl}/getsubscriberqr`,
         params
       )
+      let data = res.data.qr
+      if(typeof data === "object"){
+        setNoQrs(data.length)
+        setRoomNumber(data)
+      }
       switchContent(res.data.msg, true)
-      if (typeof JSON.parse(res.data.qr) === "number") {
+      if (typeof JSON.parse(res.data.qr) !== "object") {
         if (typeof window !== "undefined") {
           document.getElementById("qrInput").value = JSON.parse(res.data.qr)
         }
@@ -78,6 +91,51 @@ const QrCodes = () => {
     } catch (error) {
       switchContent(error.message, false)
     }
+  }
+
+  const generateCustomQrs = async () => {
+    try {
+      const params = JSON.stringify({
+        phoneNumber: getCurrentUser().phone_number,
+        qr: roomNumber,
+      })
+      const res = await axios.post(
+        `${config.invokeUrl}/putsubscriberqr`,
+        params
+      )
+      switchContent(res.data.msg, true)
+    } catch (error) {
+      switchContent(error.message, false)
+    }
+  }
+
+  const addCustomNumber = () => {
+    if (customNum.length > 0) {
+      if (!roomNumber.includes(customNum)) {
+        roomNumber.push(customNum)
+      }else{
+        switchContent("Number already exists.", false)
+      }
+    } else {
+      switchContent("Oops", false)
+    }
+
+    setRoomNumber(roomNumber)
+  }
+
+  const reduceCustomNumber = () => {
+    if (customNum.length > 0) {
+      if (roomNumber.includes(customNum)) {
+        const tempList = [...roomNumber]
+        const index = tempList.indexOf(customNum)
+        tempList.splice(index, 1)
+      } else {
+        switchContent("Number does not exist.", false)
+      }
+    } else {
+      switchContent("Oops", false)
+    }
+    setRoomNumber(roomNumber)
   }
 
   return (
@@ -146,8 +204,38 @@ const QrCodes = () => {
             Generate {noQrs} sequential QRs
           </button>
           <hr /> OR <hr />
-          <button className={qrStyles.generateButton} type="button">
-            Generate custom QRs *
+          <section className={qrStyles.customContainer}>
+            <button
+              className={qrStyles.iconButton}
+              type="button"
+              onClick={reduceCustomNumber}
+            >
+              <FontAwesomeIcon icon={faMinusSquare} size="3x" color="#db2626" />
+            </button>
+            <input
+              style={{ padding: "5px" }}
+              type="text-area"
+              onChange={e => String(setCustomNum(e.target.value)).toString()}
+              placeholder="101, 102, ..."
+            />
+            <button
+              className={qrStyles.iconButton}
+              type="button"
+              onClick={addCustomNumber}
+            >
+              <FontAwesomeIcon icon={faPlusSquare} size="3x" color="#169188" />
+            </button>
+          </section>
+          <p style={{margin: '5px 20px', textAlign: "center"}}>{roomNumber + " "}</p>
+        </section>
+        <section>
+          <button
+            className={qrStyles.generateButton}
+            type="button"
+            onClick={generateCustomQrs}
+            disabled={roomNumber.length>0 ? false : true}
+          >
+            Generate {roomNumber.length} custom QRs *
           </button>
         </section>
 

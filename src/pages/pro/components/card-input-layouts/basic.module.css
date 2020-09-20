@@ -34,9 +34,10 @@
 }
 .itemControls {
   width: 100%;
-  display: flex;
-  flex: 1;
-  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  /* flex: 1; */
+  padding: 10px;
   align-items: center;
   justify-content: space-evenly;
 }

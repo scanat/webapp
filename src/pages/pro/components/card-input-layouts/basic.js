@@ -11,6 +11,7 @@ import {
   faPencilAlt,
   faToggleOn,
   faToggleOff,
+  faCut,
 } from "@fortawesome/free-solid-svg-icons"
 import axios from "axios"
 import { navigate } from "gatsby"
@@ -56,6 +57,8 @@ const Basic = props => {
       console.log(error)
     }
   }
+
+  console.log("All good!")
 
   // Adding the items to the list
   const addItemHandler = () => {
@@ -236,6 +239,18 @@ const Basic = props => {
                 color={list.length > 0 ? "#169188" : "grey"}
               />
               <label className={basicStyles.controlItemLabel}>Upload</label>
+            </section>
+            <section className={basicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={faCut}
+                // onClick={list.length > 0 && uploadData}
+                // onMouseUp={list.length > 0 && uploadData}
+                size="lg"
+                color={list.length > 0 ? "#169188" : "grey"}
+              />
+              <label className={basicStyles.controlItemLabel}>
+                Delete Category
+              </label>
             </section>
           </section>
         </Card>

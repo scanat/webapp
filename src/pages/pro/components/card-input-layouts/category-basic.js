@@ -12,6 +12,7 @@ import {
   faPencilAlt,
   faToggleOn,
   faToggleOff,
+  faCut,
 } from "@fortawesome/free-solid-svg-icons"
 import categoryBasicStyles from "./category-basic.module.css"
 import axios from "axios"
@@ -48,6 +49,15 @@ const CategoryBasic = props => {
     fetchData()
   }, [])
 
+  // Delete Category
+  const deleteCategory = () => {
+    const tempList = [...categoryList]
+    const index = tempList.indexOf(category)
+    tempList.splice(index, 1)
+    setCategoryList(tempList)
+    console.log(categoryList)
+  }
+
   // Fetch inital data if available
   const fetchData = async () => {
     try {
@@ -56,10 +66,10 @@ const CategoryBasic = props => {
       })
       const res = await axios.post(`${config.userDataAPI}/items/get`, params)
       res.data.data.data.map(element => {
-        if(categoryList.indexOf(element.category)<0){
+        if (categoryList.indexOf(element.category) < 0) {
           categoryList.push(element.category)
         }
-      });
+      })
       switchContent("Found Items", true)
       setList(res.data.data.data)
     } catch (error) {
@@ -181,7 +191,7 @@ const CategoryBasic = props => {
       const params = {
         phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
         data: list,
-        categories: categoryList
+        categories: categoryList,
       }
       const res = await axios.post(`${config.userDataAPI}/items/add`, params)
       switchContent(res.data.msg, true)
@@ -274,6 +284,17 @@ const CategoryBasic = props => {
               />
               <label className={categoryBasicStyles.controlItemLabel}>
                 Upload
+              </label>
+            </section>
+            <section className={categoryBasicStyles.controlItem}>
+              <FontAwesomeIcon
+                icon={faCut}
+                onClick={deleteCategory}
+                size="lg"
+                color={list.length > 0 ? "#169188" : "grey"}
+              />
+              <label className={categoryBasicStyles.controlItemLabel}>
+                Delete Category
               </label>
             </section>
           </section>
