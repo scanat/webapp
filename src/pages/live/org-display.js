@@ -20,7 +20,7 @@ import { getCurrentUser } from "../../utils/auth"
 const OrgDisplay = () => {
   const [list, setList] = useState([])
   const [filteredList, setFilteredList] = useState([])
-  const [categoryList, setCategoryList] = useState([])
+  const [categoryList, setCategoryList] = useState(["All"])
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [orderList, setOrderList] = useState([])
   const [orgName, setOrgName] = useState("")
@@ -39,10 +39,10 @@ const OrgDisplay = () => {
     setQrId(id)
 
     if (pn.length > 0) {
-    var decodedPn = window.atob(pn)
+      var decodedPn = window.atob(pn)
 
-    setSubscriberPhoneNumber(decodedPn)
-    getAllData(decodedPn)
+      setSubscriberPhoneNumber(decodedPn)
+      getAllData(decodedPn)
     } else {
       alert("Oops the link failed!")
       navigate("/")
@@ -66,12 +66,17 @@ const OrgDisplay = () => {
         phoneNumber: id,
       }
       const res = await axios.post(`${config.invokeUrl}/items/get`, params)
-      setCategoryList(res.data.data.categories)
+
+      // setCategoryList(res.data.data.categories)
+
       res.data.data.data.map(dataItem => {
         if (dataItem.status) {
           dataItem.qty = 1
           dataItem.ordered = false
           list.push(dataItem)
+
+          if (!categoryList.includes(dataItem.category))
+            categoryList.push(dataItem.category)
         }
       })
       navigate(typeof window !== "undefined" && window.location.search)
@@ -96,8 +101,7 @@ const OrgDisplay = () => {
   const incQty = (givenList, id) => {
     var tempList = [...givenList]
     tempList[id].qty += 1
-    givenList === list ?
-    setList(tempList) : setFilteredList(tempList)
+    givenList === list ? setList(tempList) : setFilteredList(tempList)
     // var tempOrderList = [...orderList]
     // tempOrderList[id].itemPrice *= tempOrderList[id].qty
     // setOrderList(tempOrderList)
@@ -106,8 +110,7 @@ const OrgDisplay = () => {
   const decQty = (givenList, id) => {
     var tempList = [...givenList]
     tempList[id].qty -= 1
-    givenList === list ?
-    setList(tempList) : setFilteredList(tempList)
+    givenList === list ? setList(tempList) : setFilteredList(tempList)
     // var tempOrderList = [...orderList]
     // tempOrderList[id].itemPrice *= tempOrderList[id].qty
     // setOrderList(tempOrderList)
@@ -185,7 +188,9 @@ const OrgDisplay = () => {
                   <section>
                     <FontAwesomeIcon
                       icon={faMinusSquare}
-                      onClick={() => item.qty > 1 && decQty(filteredList, index)}
+                      onClick={() =>
+                        item.qty > 1 && decQty(filteredList, index)
+                      }
                       size="lg"
                       color="#db2626"
                     />
@@ -331,7 +336,7 @@ const ConfirmOrder = props => {
         userPhoneNumber: getCurrentUser().phone_number,
         data: props.orderList,
         qrId: props.qrId + "",
-        reqMessage: message
+        reqMessage: message,
       }
       const res = await axios.post(`${config.userDataAPI}/orders/add`, params)
 
@@ -342,13 +347,16 @@ const ConfirmOrder = props => {
     }
   }
 
-  const sendOrderCopy = async (orderId) => {
+  const sendOrderCopy = async orderId => {
     try {
       const params = {
-        phoneNumber: "+91"+props.subscriberPhoneNumber,
-        orderId: orderId
+        phoneNumber: "+91" + props.subscriberPhoneNumber,
+        orderId: orderId,
       }
-      const res = await axios.post(`${config.userDataAPI}/orders/addcopy`, params)
+      const res = await axios.post(
+        `${config.userDataAPI}/orders/addcopy`,
+        params
+      )
       console.log(res)
 
       // props.switchConfirmOrder
