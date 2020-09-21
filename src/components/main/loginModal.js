@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react"
 import loginModalStyles from "./loginModal.module.css"
-import { faGoogle, faFacebookF } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Auth } from "aws-amplify"
 import { navigate } from "gatsby"
@@ -8,22 +7,23 @@ import { setUser, isLoggedIn, getCurrentUser } from "../../utils/auth"
 import SnackBar from "../snackBar"
 import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons"
 import stateCityList from "../../pre-data/state-city.json"
+import Loader from "../loader"
 
 const LoginSection = props => {
   const [username, setUsername] = useState(null)
   const [password, setPassword] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const userLogin = async () => {
-    if (
-      username !== null && password !== null
-    ) {
+    if (username !== null && password !== null) {
+      setLoading(true)
       try {
         const user = await Auth.signIn(username, password)
         setUser(user)
         props.switchContent("Success", true)
         navigate("/")
         props.closeLoginModal()
-        console.log(getCurrentUser())
+        setLoading(false)
       } catch (error) {
         props.switchContent(error.message, false)
       }
@@ -34,6 +34,7 @@ const LoginSection = props => {
 
   return (
     <section className={loginModalStyles.inputArea}>
+      {loading && <Loader></Loader>}
       <h3 style={{ marginBottom: "20px", color: "#169188" }}>LOGIN</h3>
       <input
         id="loginId"
@@ -97,12 +98,13 @@ const RegistrationSection = props => {
   const [states, setStates] = useState([])
   const [regdOrgName, setRegdOrgName] = useState("")
   const [regdEmail, setRegdEmail] = useState("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       gpsevent => setGpsLocale(gpsevent),
       () => props.switchContent("User location failed!", false),
-      {enableHighAccuracy:true, maximumAge: 10000}
+      { enableHighAccuracy: true, maximumAge: 10000 }
     )
   }, [])
 
@@ -110,7 +112,7 @@ const RegistrationSection = props => {
     if (password && confirmPass) {
       if (password === confirmPass) {
         let websiteOrgName = regdOrgName.replace(new RegExp(" ", "g"), "")
-        console.log(password)
+        setLoading(true)
         try {
           const user = await Auth.signUp({
             username: username,
@@ -132,12 +134,13 @@ const RegistrationSection = props => {
               "custom:postal_code": regdPostalCode,
               "custom:city": selectedCity,
               "custom:state": selectedState,
-              "custom:category": regdApplyFor
+              "custom:category": regdApplyFor,
             },
           })
           props.switchPanel("login")
           props.switchContent("SUCCESS", true)
           props.switchContent("VERIFY REGISTERED EMAIL", true)
+          setLoading(false)
         } catch (error) {
           props.switchContent(error.message, false)
         }
@@ -240,7 +243,9 @@ const RegistrationSection = props => {
             placeholder="Email"
             onChange={event => setRegdEmail(event.target.value)}
           />
-          <label className={loginModalStyles.label}>Business Phone Number</label>
+          <label className={loginModalStyles.label}>
+            Business Phone Number
+          </label>
           <input
             className={loginModalStyles.input}
             id="phoneNumber"
@@ -256,7 +261,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
-              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -264,7 +268,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={checkPhase1}
-              onMouseUp={checkPhase1}
             >
               PROCEED
             </button>
@@ -281,7 +284,6 @@ const RegistrationSection = props => {
               color="#169188"
               style={{ marginBottom: "10px" }}
               onClick={() => setRegistrationPhase(1)}
-              onMouseUp={() => setRegistrationPhase(1)}
             />
           </section>
 
@@ -346,7 +348,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
-              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -354,7 +355,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={checkPhase2}
-              onMouseUp={checkPhase2}
             >
               PROCEED
             </button>
@@ -363,6 +363,7 @@ const RegistrationSection = props => {
       )}
       {registrationPhase === 3 && (
         <>
+          {loading && <Loader></Loader>}
           <h3 className={loginModalStyles.topic}>SET A PASSCODE</h3>
           <section style={{ width: "100%" }}>
             <FontAwesomeIcon
@@ -371,7 +372,6 @@ const RegistrationSection = props => {
               color="#169188"
               style={{ marginBottom: "10px" }}
               onClick={() => setRegistrationPhase(2)}
-              onMouseUp={() => setRegistrationPhase(2)}
             />
           </section>
           <label className={loginModalStyles.label}>Login username</label>
@@ -412,7 +412,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.panelOpenButton}
               type="submit"
               onClick={() => props.switchPanel("login")}
-              onMouseUp={() => props.switchPanel("login")}
             >
               Login
             </button>
@@ -420,7 +419,6 @@ const RegistrationSection = props => {
               className={loginModalStyles.loginButton}
               type="button"
               onClick={registerUser}
-              onMouseUp={registerUser}
             >
               REGISTER
             </button>

@@ -15,17 +15,12 @@ import {
 
 const Header = props => {
   const [subMenu, setSubMenu] = useState(false)
-  const [user, setUser] = useState({})
 
   useEffect(() => {
     document
       .getElementById("dropDownParent")
       .addEventListener("toggle", toggleSubmenu)
   }, [subMenu])
-
-  useEffect(() => {
-    setUser()
-  }, [getCurrentUser()])
 
   const toggleSubmenu = () => {
     subMenu ? setSubMenu(false) : setSubMenu(true)

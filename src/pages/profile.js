@@ -59,6 +59,16 @@ export default function Profile() {
           <ProfileCard>
             <section
               className={profileStyles.cardChild}
+              onClick={() => navigate("/portfolio")}
+            >
+              <h1 className={profileStyles.cardTopic}>
+                {getCurrentUser()["custom:category"]} Portfolio
+              </h1>
+            </section>
+          </ProfileCard>
+          <ProfileCard>
+            <section
+              className={profileStyles.cardChild}
               onClick={() =>
                 navigate("/pro/components/card-input-layouts/category-basic")
               }
@@ -96,7 +106,10 @@ export default function Profile() {
             </section>
           </ProfileCard>
           <ProfileCard>
-            <section className={profileStyles.cardChild} onClick={() => navigate("/pro/orders")} >
+            <section
+              className={profileStyles.cardChild}
+              onClick={() => navigate("/pro/orders")}
+            >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} Live Orders
               </h1>

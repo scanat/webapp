@@ -7,11 +7,6 @@ import axios from "axios"
 import SnackBar from "../../components/snackBar"
 import config from "../../config.json"
 import { navigate, Link } from "gatsby"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {
-  faCaretLeft,
-  faCaretSquareLeft,
-} from "@fortawesome/free-solid-svg-icons"
 import Sticker from "../../images/sticker.png"
 
 const Card = ({ children }) => {
