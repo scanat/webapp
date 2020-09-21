@@ -38,6 +38,7 @@
   -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  outline: none;
 }
 .input {
   width: 50px;
@@ -62,4 +63,19 @@
   background: none;
   border: none;
   margin: 0;
+  outline: none;
+}
+.iconButton:hover{
+  cursor: pointer;
+}
+.socialLinksContainer{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.shareLink{
+  color: #169188;
+}
+.shareText{
+  font-size: 12px;
 }

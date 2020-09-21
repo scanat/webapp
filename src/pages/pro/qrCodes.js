@@ -7,20 +7,25 @@ import axios from "axios"
 import SnackBar from "../../components/snackBar"
 import config from "../../config.json"
 import { navigate, Link } from "gatsby"
-
 import scanatlogo from "../../images/scan_at_logo.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faMinusSquare,
   faPlusSquare,
 } from "@fortawesome/free-regular-svg-icons"
+import {
+  faFacebookF,
+  faPinterestP,
+  faTwitter,
+  faWhatsapp,
+} from "@fortawesome/free-brands-svg-icons"
 
 const QrCodes = () => {
   const [portfolioUrl, setPortfolioUrl] = useState()
   const [noQrs, setNoQrs] = useState(1)
   const [snackContent, setSnackContent] = useState()
   const [snackError, setSnackError] = useState(false)
-  const [openCustom, setOpenCustom] = useState(false)
+  const [update, setUpdate] = useState(false)
   const [customNum, setCustomNum] = useState("")
   const [roomNumber, setRoomNumber] = useState([])
 
@@ -56,7 +61,7 @@ const QrCodes = () => {
         params
       )
       let data = res.data.qr
-      if(typeof data === "object"){
+      if (typeof data === "object") {
         setNoQrs(data.length)
         setRoomNumber(data)
       }
@@ -103,6 +108,7 @@ const QrCodes = () => {
         `${config.invokeUrl}/putsubscriberqr`,
         params
       )
+      navigate("/pro/qrCodes")
       switchContent(res.data.msg, true)
     } catch (error) {
       switchContent(error.message, false)
@@ -113,7 +119,8 @@ const QrCodes = () => {
     if (customNum.length > 0) {
       if (!roomNumber.includes(customNum)) {
         roomNumber.push(customNum)
-      }else{
+        setUpdate(e => !e)
+      } else {
         switchContent("Number already exists.", false)
       }
     } else {
@@ -126,9 +133,9 @@ const QrCodes = () => {
   const reduceCustomNumber = () => {
     if (customNum.length > 0) {
       if (roomNumber.includes(customNum)) {
-        const tempList = [...roomNumber]
-        const index = tempList.indexOf(customNum)
-        tempList.splice(index, 1)
+        const index = roomNumber.indexOf(customNum)
+        roomNumber.splice(index, 1)
+        setUpdate(e => !e)
       } else {
         switchContent("Number does not exist.", false)
       }
@@ -177,9 +184,59 @@ const QrCodes = () => {
             className={qrStyles.generateButton}
             type="button"
             onClick={() => navigate("/pro/viewQr")}
+            style={{ background: "rgba(22, 145, 136, 1)", color: "whitesmoke" }}
           >
             View my {noQrs} generated QRs
           </button>
+          <section className={qrStyles.socialLinksContainer}>
+            <a
+              alt="Whatsapp"
+              href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/portfolio${
+                getCurrentUser().website
+              }`}
+              class={qrStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faWhatsapp} size="lg" />
+              <br />
+              <label className={qrStyles.shareText}>WhatsApp</label>
+            </a>
+
+            <a
+              alt="Twitter"
+              href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/portfolio${
+                getCurrentUser().website
+              }`}
+              class={qrStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faTwitter} size="lg" />
+              <br />
+              <label className={qrStyles.shareText}>Twitter</label>
+            </a>
+
+            <a
+              alt="Facebook"
+              href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/portfolio${
+                getCurrentUser().website
+              }[title]=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
+              class={qrStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faFacebookF} size="lg" />
+              <br />
+              <label className={qrStyles.shareText}>Facebook</label>
+            </a>
+
+            <a
+              alt="Pinterest"
+              href={`http://pinterest.com/pin/create/button/?url=${
+                getCurrentUser().website
+              }&description=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
+              class={qrStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faPinterestP} size="lg" />
+              <br />
+              <label className={qrStyles.shareText}>Pinterest</label>
+            </a>
+          </section>
         </section>
         <h1 className={qrStyles.topic}>Generate QRs</h1>
         <section className={qrStyles.generateQrSection}>
@@ -215,7 +272,7 @@ const QrCodes = () => {
             <input
               style={{ padding: "5px" }}
               type="text-area"
-              onChange={e => String(setCustomNum(e.target.value)).toString()}
+              onChange={e => setCustomNum(e.target.value)}
               placeholder="101, 102, ..."
             />
             <button
@@ -226,14 +283,16 @@ const QrCodes = () => {
               <FontAwesomeIcon icon={faPlusSquare} size="3x" color="#169188" />
             </button>
           </section>
-          <p style={{margin: '5px 20px', textAlign: "center"}}>{roomNumber + " "}</p>
+          <p style={{ margin: "5px 20px", textAlign: "center" }}>
+            {roomNumber + " "}
+          </p>
         </section>
         <section>
           <button
             className={qrStyles.generateButton}
             type="button"
             onClick={generateCustomQrs}
-            disabled={roomNumber.length>0 ? false : true}
+            disabled={roomNumber.length > 0 ? false : true}
           >
             Generate {roomNumber.length} custom QRs *
           </button>
