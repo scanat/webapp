@@ -4,12 +4,11 @@ import portfolioStyles from "./portfolio.module.css"
 import PortfolioBanner from "../../images/portfolio-banner.jpg"
 import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import AWS, { S3 } from 'aws-sdk'
 import {
-  faAngleDown,
   faAngleLeft,
   faAngleRight,
   faCamera,
-  faCaretUp,
   faCheckCircle,
   faEllipsisH,
   faEllipsisV,
@@ -34,6 +33,11 @@ import config from "../../config.json"
 import axios from "axios"
 import dishImage from "../../images/burger.jpg"
 import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
+
+const s3 = new AWS.S3({
+  accessKeyId: config.s3.ACCESS_ID,
+  secretAccessKey: config.s3.SECRET_ACCESS_KEY
+})
 
 const CardLayout = props => {
   return (
@@ -402,23 +406,30 @@ const Portfolio = () => {
   }
 
   const uploadBanner = async e => {
-    try {
-      const params = JSON.stringify({
-        phoneNumber: getCurrentUser().phone_number,
-        image: imageUrl,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      })
-      console.log(params)
-      const res = await axios.post(
-        `${config.invokeUrl}/subscriberdata/add/banner`,
-        params
-      )
-      console.log(res)
-    } catch (error) {
-      console.log(error)
+    const params = {
+      Bucket: 'subscriber-media',
+      Key: `Portfolio/something.png`,
+      Body: JSON.stringify(imageUrl, null, 2)
     }
+
+    s3.upload(params, (err, data) => {console.log(err, data)})
+    // try {
+    //   const params = JSON.stringify({
+    //     phoneNumber: getCurrentUser().phone_number,
+    //     image: imageUrl,
+    //     name: file.name,
+    //     size: file.size,
+    //     type: file.type,
+    //   })
+    //   console.log(params)
+    //   const res = await axios.post(
+    //     `${config.invokeUrl}/subscriberdata/add/banner`,
+    //     params
+    //   )
+    //   console.log(res)
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   return Object.keys(getCurrentUser()).length === 0 ? (
