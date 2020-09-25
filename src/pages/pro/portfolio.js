@@ -4,7 +4,7 @@ import portfolioStyles from "./portfolio.module.css"
 import PortfolioBanner from "../../images/portfolio-banner.jpg"
 import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import AWS, { S3 } from 'aws-sdk'
+import AWS from 'aws-sdk'
 import {
   faAngleLeft,
   faAngleRight,
@@ -35,8 +35,8 @@ import dishImage from "../../images/burger.jpg"
 import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
 
 const s3 = new AWS.S3({
-  accessKeyId: config.s3.ACCESS_ID,
-  secretAccessKey: config.s3.SECRET_ACCESS_KEY
+  accessKeyId: process.env.ACCESS_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY
 })
 
 const CardLayout = props => {

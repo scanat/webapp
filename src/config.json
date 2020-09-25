@@ -5,9 +5,5 @@
         "REGION": "ap-south-1",
         "USER_POOL_ID": "ap-south-1_EDXq9dza7",
         "APP_CLIENT_ID": "4gkgj02l0s4jlqb8rl9pi3la7j"
-    },
-    "s3": {
-        "ACCESS_ID": "AKIAYUA25DEXBO725FXA",
-        "SECRET_ACCESS_KEY": "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"
     }
 }
