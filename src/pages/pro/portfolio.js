@@ -459,7 +459,7 @@ const Portfolio = () => {
   ) : (
     <Layout>
       <section className={portfolioStyles.banner}>
-        <img src={PortfolioBanner} alt="Portfolio Banner" />
+        <img ref={bannerRef} src={PortfolioBanner} alt="Portfolio Banner" />
         <section
           className={portfolioStyles.editHolder}
           onClick={() => uploadBannerInput.current.click()}
@@ -514,7 +514,7 @@ const Portfolio = () => {
             <li>
               <a
                 alt="Whatsapp"
-                href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/portfolio${
+                href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/pro/portfolio${
                   getCurrentUser().website
                 }`}
                 className={portfolioStyles.shareLink}
@@ -525,7 +525,7 @@ const Portfolio = () => {
             <li>
               <a
                 alt="Twitter"
-                href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/portfolio${
+                href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/pro/portfolio${
                   getCurrentUser().website
                 }`}
                 className={portfolioStyles.shareLink}
@@ -536,7 +536,7 @@ const Portfolio = () => {
             <li>
               <a
                 alt="Facebook"
-                href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/portfolio${
+                href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/pro/portfolio${
                   getCurrentUser().website
                 }[title]=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
                 className={portfolioStyles.shareLink}
