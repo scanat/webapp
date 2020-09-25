@@ -59,7 +59,7 @@ export default function Profile() {
           <ProfileCard>
             <section
               className={profileStyles.cardChild}
-              onClick={() => navigate("/portfolio")}
+              onClick={() => navigate("/pro/portfolio")}
             >
               <h1 className={profileStyles.cardTopic}>
                 {getCurrentUser()["custom:category"]} Portfolio
@@ -116,8 +116,11 @@ export default function Profile() {
             </section>
           </ProfileCard>
           <ProfileCard>
-            <section className={profileStyles.cardChild}>
-              <h1 className={profileStyles.cardTopic}>My Profile</h1>
+            <section
+              className={profileStyles.cardChild}
+              onClick={() => navigate("/pro/employeeManagement")}
+            >
+              <h1 className={profileStyles.cardTopic}>Employee Management</h1>
             </section>
           </ProfileCard>
         </section>

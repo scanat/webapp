@@ -3,7 +3,7 @@ import loaderStyles from './loader.module.css'
 import LoadingImage from '../images/loading.png'
 import Anime from 'animejs'
 
-const Loader = () => {
+const Loader = (props) => {
 
     useEffect(() => {
         Anime({
@@ -17,7 +17,7 @@ const Loader = () => {
     }, [])
 
     return(
-        <section className={loaderStyles.container}>
+        <section className={loaderStyles.container} style={{display: props.loading ? 'flex' : 'none'}}>
             <h1 className={loaderStyles.topic}>SCAN AT</h1>
             <img id="spinnerId" src={LoadingImage} alt="Scan At Loading Image" />
         </section>

@@ -34,7 +34,7 @@ const LoginSection = props => {
 
   return (
     <section className={loginModalStyles.inputArea}>
-      {loading && <Loader></Loader>}
+      <Loader loading={loading}></Loader>
       <h3 style={{ marginBottom: "20px", color: "#169188" }}>LOGIN</h3>
       <input
         id="loginId"

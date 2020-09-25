@@ -17,7 +17,7 @@ const IndexPage = () => {
 
   return (
     <Container>
-      {loading && <Loader></Loader>}
+      <Loader loading={loading} ></Loader>
       <Banner />
       <ScanAtWorks />
       <ClientReview />
