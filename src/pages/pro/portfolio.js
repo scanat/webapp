@@ -402,14 +402,14 @@ const Portfolio = () => {
       setImageUrl(reader.result)
       setFile(selectedFile)
     }
-    uploadBanner(selectedFile)
+    uploadBanner()
   }
 
-  const uploadBanner = async e => {
+  const uploadBanner = async => {
     const params = {
       Bucket: "subscriber-media",
       Key: `Portfolio/${file['lastModified']+file['name']}`,
-      Body: JSON.stringify(e),
+      Body: JSON.stringify(imageUrl),
     }
 
     s3.upload(params, (err, data) => {
