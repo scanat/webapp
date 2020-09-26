@@ -4,7 +4,7 @@ import portfolioStyles from "./portfolio.module.css"
 import PortfolioBanner from "../../images/portfolio-banner.jpg"
 import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import AWS from 'aws-sdk'
+import AWS, { EnvironmentCredentials } from "aws-sdk"
 import {
   faAngleLeft,
   faAngleRight,
@@ -35,8 +35,8 @@ import dishImage from "../../images/burger.jpg"
 import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
 
 const s3 = new AWS.S3({
-  accessKeyId: process.env.ACCESS_ID,
-  secretAccessKey: process.env.SECRET_ACCESS_KEY
+  accessKeyId: "AKIAYUA25DEXBO725FXA",
+  secretAccessKey: "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",
 })
 
 const CardLayout = props => {
@@ -268,8 +268,8 @@ const DishesWeek = () => {
                   className={portfolioStyles.fetchedItemsOptions}
                   onChange={addItem}
                 >
-                  {fetchList.map(item => (
-                    <option>{item.itemName}</option>
+                  {fetchList.map((item, id) => (
+                    <option key={id}>{item.itemName}</option>
                   ))}
                 </select>
               </section>
@@ -345,8 +345,8 @@ const PageId = () => {
     <section className={portfolioStyles.orgTitle}>
       <h1>{getCurrentUser().name}</h1>
       <label style={{ fontSize: "0.7em" }}>
-        Your Page ID is irreversible, kindly cross check before making a permanent
-        change
+        Your Page ID is irreversible, kindly cross check before making a
+        permanent change
       </label>
       <section className={portfolioStyles.socialLinkInputHolder}>
         <label style={{ fontSize: "1rem", margin: "0 5px" }}>
@@ -385,13 +385,15 @@ const Portfolio = () => {
   const [file, setFile] = useState("")
   const [shareIconsVisible, setShareIconsVisible] = useState(false)
   const [width, setWidth] = useState()
-  const [rated, setRated] = useState(0)
+  const bannerRef = useRef(null)
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
     else if (document.body.offsetWidth < 600) setWidth(2)
     else if (document.body.offsetWidth < 1024) setWidth(4)
     else setWidth(5)
+
+    console.log(process)
   }, [])
 
   const selectImage = e => {
@@ -407,12 +409,14 @@ const Portfolio = () => {
 
   const uploadBanner = async e => {
     const params = {
-      Bucket: 'subscriber-media',
+      Bucket: "subscriber-media",
       Key: `Portfolio/something.png`,
-      Body: JSON.stringify(imageUrl, null, 2)
+      Body: JSON.stringify(imageUrl, null, 2),
     }
 
-    s3.upload(params, (err, data) => {console.log(err, data)})
+    s3.upload(params, (err, data) => {
+      console.log(err, data)
+    })
     // try {
     //   const params = JSON.stringify({
     //     phoneNumber: getCurrentUser().phone_number,
