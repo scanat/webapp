@@ -392,8 +392,6 @@ const Portfolio = () => {
     else if (document.body.offsetWidth < 600) setWidth(2)
     else if (document.body.offsetWidth < 1024) setWidth(4)
     else setWidth(5)
-
-    console.log(process)
   }, [])
 
   const selectImage = e => {
@@ -404,14 +402,14 @@ const Portfolio = () => {
       setImageUrl(reader.result)
       setFile(selectedFile)
     }
-    uploadBanner()
+    uploadBanner(selectedFile)
   }
 
   const uploadBanner = async e => {
     const params = {
       Bucket: "subscriber-media",
-      Key: `Portfolio/something.png`,
-      Body: JSON.stringify(imageUrl, null, 2),
+      Key: `Portfolio/${file['lastModified']+file['name']}`,
+      Body: JSON.stringify(e),
     }
 
     s3.upload(params, (err, data) => {
