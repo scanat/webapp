@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react"
 import Layout from "../../components/layout"
 import portfolioStyles from "./portfolio.module.css"
+import Img from "gatsby-image"
 import PortfolioBanner from "../../images/portfolio-banner.jpg"
 import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import AWS, { EnvironmentCredentials } from "aws-sdk"
+import AWS from "aws-sdk"
 import {
   faAngleLeft,
   faAngleRight,
@@ -28,32 +29,23 @@ import {
   faTwitter,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
-import { Link, navigate } from "gatsby"
+import { Link, graphql } from "gatsby"
 import config from "../../config.json"
 import axios from "axios"
 import dishImage from "../../images/burger.jpg"
 import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
+import Loader from "../../components/loader"
 
 const s3 = new AWS.S3({
   accessKeyId: "AKIAYUA25DEXBO725FXA",
   secretAccessKey: "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",
 })
 
-const CardLayout = props => {
-  return (
-    <section className={portfolioStyles.cardContainer}>
-      <img
-        src={props.image}
-        alt={props.image}
-        className={portfolioStyles.image}
-      />
-      {/* <label className={portfolioStyles.hearts}>
-        {props.hearts}
-        <FontAwesomeIcon icon={faHeart} color="crimson" />
-      </label> */}
-    </section>
-  )
-}
+const db = new AWS.DynamoDB({
+  region: 'ap-south1',
+  accessKeyId: "AKIAYUA25DEXAKYOBJHS",
+  secretAccessKey: "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",
+})
 
 const CardLayoutInput = props => {
   return (
@@ -69,29 +61,6 @@ const CardLayoutInput = props => {
           <FontAwesomeIcon icon={faPlusCircle} size="2x" color="#169188" />
         </section>
       )}
-    </section>
-  )
-}
-
-const DishesLayout = () => {
-  return (
-    <section className={portfolioStyles.dishesContainer}>
-      <img
-        src={dishImage}
-        alt="Scan At Dish Image"
-        className={portfolioStyles.dishesImage}
-      />
-      <section>
-        <h4 className={portfolioStyles.dishName}>Dish Name</h4>
-        <p className={portfolioStyles.dishDescription}>
-          This is a little description of the item that has been newly added
-          here.
-        </p>
-        <p className={portfolioStyles.offerprice}>
-          <strike className={portfolioStyles.strokePrice}>Rs. 1000</strike> Rs.
-          840/- <label className={portfolioStyles.offerOff}>(20% OFF)</label>
-        </p>
-      </section>
     </section>
   )
 }
@@ -338,7 +307,18 @@ const PageId = () => {
   }
 
   const finalizePageId = () => {
-    inputRef.current.disabled = true
+    const promise = new Promise((resolve, reject) => {
+      const params = {
+        TableName: "subscriberPage",
+        Item: {
+          pageId: { S: pageId },
+        },
+      }
+      db.putItem(params, (err, data) => {
+        if (data) inputRef.current.disabled = true
+        console.log(err, data)
+      })
+    })
   }
 
   return (
@@ -377,61 +357,75 @@ const PageId = () => {
   )
 }
 
-const Portfolio = () => {
-  const [subMenu, setSubMenu] = useState(false)
+const Portfolio = ({ data }) => {
+  const [bannerData, setBannerData] = useState(null)
   const uploadBannerInput = useRef(null)
   const bannerForm = useRef(null)
   const [imageUrl, setImageUrl] = useState("")
   const [file, setFile] = useState("")
   const [shareIconsVisible, setShareIconsVisible] = useState(false)
   const [width, setWidth] = useState()
-  const bannerRef = useRef(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
     else if (document.body.offsetWidth < 600) setWidth(2)
     else if (document.body.offsetWidth < 1024) setWidth(4)
     else setWidth(5)
+
+    // loadBanner()
   }, [])
 
+  const loadBanner = async () => {
+    try {
+      setLoading(true)
+      const paramsGet = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser().phone_number}/portfolio_banner.png`,
+      }
+
+      await s3.getObject(paramsGet, (err, data) => {
+        console.log(err)
+        console.log(data)
+        setBannerData(data.Body)
+        setLoading(false)
+      })
+    } catch (error) {
+      setLoading(false)
+    }
+  }
+
   const selectImage = e => {
+    setLoading(true)
     const selectedFile = e.target.files[0]
     const reader = new FileReader(selectedFile)
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
       setFile(selectedFile)
+      setLoading(false)
+      console.log(selectedFile)
+      uploadBanner()
     }
-    uploadBanner()
   }
 
-  const uploadBanner = async => {
-    const params = {
-      Bucket: "subscriber-media",
-      Key: `Portfolio/${file['lastModified']+file['name']}`,
-      Body: JSON.stringify(imageUrl),
-    }
+  const uploadBanner = async () => {
+    try {
+      setLoading(true)
+      const params = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser().phone_number}/portfolio_banner.png`,
+        Body: imageUrl,
+      }
 
-    s3.upload(params, (err, data) => {
-      console.log(err, data)
-    })
-    // try {
-    //   const params = JSON.stringify({
-    //     phoneNumber: getCurrentUser().phone_number,
-    //     image: imageUrl,
-    //     name: file.name,
-    //     size: file.size,
-    //     type: file.type,
-    //   })
-    //   console.log(params)
-    //   const res = await axios.post(
-    //     `${config.invokeUrl}/subscriberdata/add/banner`,
-    //     params
-    //   )
-    //   console.log(res)
-    // } catch (error) {
-    //   console.log(error)
-    // }
+      await s3.upload(JSON.stringify(params), (err, data) => {
+        if (data) loadBanner()
+        console.log(err)
+        setLoading(false)
+      })
+    } catch (error) {
+      setLoading(false)
+    }
   }
 
   return Object.keys(getCurrentUser()).length === 0 ? (
@@ -460,8 +454,13 @@ const Portfolio = () => {
     </Layout>
   ) : (
     <Layout>
+      <Loader loading={loading} />
       <section className={portfolioStyles.banner}>
-        <img ref={bannerRef} src={PortfolioBanner} alt="Portfolio Banner" />
+        {bannerData == null ? (
+          <Img fluid={data.file.childImageSharp.fluid} />
+        ) : (
+          <img src={bannerData} alt="Portfolio Banner" />
+        )}
         <section
           className={portfolioStyles.editHolder}
           onClick={() => uploadBannerInput.current.click()}
@@ -609,50 +608,14 @@ const Portfolio = () => {
 
 export default Portfolio
 
-let topDeals = [
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 100,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 58,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 70,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 88,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 147,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 1002,
-  },
-]
-
-let dishes = [
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-]
+export const query = graphql`
+  query {
+    file(relativePath: { eq: "portfolio-banner.jpg" }) {
+      childImageSharp {
+        fluid(maxWidth: 1920, quality: 100) {
+          ...GatsbyImageSharpFluid
+        }
+      }
+    }
+  }
+`
