@@ -228,7 +228,7 @@ const AmbiencePost = props => {
           "#PAL": "portfolioAmbiences",
         },
         ExpressionAttributeValues: {
-          ":a": [selectedFile["name"]],
+          ":a": selectedFile["name"],
           ":emptyList": [],
         },
         ReturnValues: "ALL_NEW",
