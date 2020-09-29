@@ -28,15 +28,15 @@ import Loader from "../../../../components/loader"
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
   apiVersion: "2006-03-01",
-  accessKeyId: process.env.S3_ACCESS_ID,
-  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_SECRET_ACCESS_KEY,
 })
 
 const itemsPageDb = new AWS.DynamoDB.DocumentClient({
   region: "ap-south-1",
   apiVersion: "2012-08-10",
-  accessKeyId: process.env.ITEM_DB_ACCESS_ID,
-  secretAccessKey: process.env.ITEM_DB_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.GATSBY_ITEM_DB_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_ITEM_DB_SECRET_ACCESS_KEY,
 })
 
 const Card = props => {
