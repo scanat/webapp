@@ -40,15 +40,15 @@ import { Auth } from "aws-amplify"
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
   apiVersion: "2006-03-01",
-  accessKeyId: "AKIAYUA25DEXBO725FXA",
-  secretAccessKey: "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",
+  accessKeyId: process.env.S3_ACCESS_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
 })
 
 const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
   region: "ap-south-1",
   apiVersion: "2012-08-10",
-  accessKeyId: "AKIAYUA25DEXAKYOBJHS",
-  secretAccessKey: "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",
+  accessKeyId: process.env.SUBSCRIBERPAGE_DB_ACCESS_ID,
+  secretAccessKey: process.env.SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
 })
 
 const SocialPlatformLink = props => {
@@ -239,7 +239,6 @@ const AmbiencePost = props => {
           "SET #PAL = list_append(if_not_exists(#PAL, :emptyList), :a)",
       }
       await subscriberPageDb.update(params, (err, resp) => {
-        console.log(resp)
         resp && uploadImage(selectedFile, reader.result)
         props.loadHandler(false)
       })
