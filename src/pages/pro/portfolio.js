@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react"
 import Layout from "../../components/layout"
 import portfolioStyles from "./portfolio.module.css"
 import Img from "gatsby-image"
 import PortfolioBanner from "../../images/portfolio-banner.jpg"
-import { getCurrentUser } from "../../utils/auth"
+import { getCurrentUser, setUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import AWS from "aws-sdk"
 import {
@@ -29,43 +29,56 @@ import {
   faTwitter,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
-import { Link, graphql } from "gatsby"
+import { Link, graphql, navigate } from "gatsby"
 import config from "../../config.json"
 import axios from "axios"
 import dishImage from "../../images/burger.jpg"
 import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
 import Loader from "../../components/loader"
+import { Auth } from "aws-amplify"
 
-const s3 = new AWS.S3({
+const subscriberPageS3 = new AWS.S3({
+  region: "ap-south-1",
+  apiVersion: "2006-03-01",
   accessKeyId: "AKIAYUA25DEXBO725FXA",
   secretAccessKey: "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",
 })
 
-const db = new AWS.DynamoDB({
-  region: 'ap-south1',
+const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
+  region: "ap-south-1",
+  apiVersion: "2012-08-10",
   accessKeyId: "AKIAYUA25DEXAKYOBJHS",
   secretAccessKey: "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",
 })
 
-const CardLayoutInput = props => {
-  return (
-    <section className={portfolioStyles.ambienceImageCardContainer}>
-      {props.image !== "" ? (
-        <img
-          src={props.image}
-          alt={props.image}
-          className={portfolioStyles.ambienceImage}
-        />
-      ) : (
-        <section className={portfolioStyles.ambienceInstructions}>
-          <FontAwesomeIcon icon={faPlusCircle} size="2x" color="#169188" />
-        </section>
-      )}
-    </section>
-  )
-}
+const SocialPlatformLink = props => {
+  const twitterRef = useRef(null)
+  const facebookRef = useRef(null)
+  const pinterestRef = useRef(null)
+  const instargamRef = useRef(null)
 
-const SocialPlatformLink = () => {
+  const setSocial = async inputs => {
+    try {
+      const params = {
+        TableName: "subscriberPage",
+        ExpressionAttributeNames: {
+          "#S": inputs.current.name,
+        },
+        ExpressionAttributeValues: {
+          ":v": inputs.current.value,
+        },
+        ReturnValues: "ALL_NEW",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
+        UpdateExpression: "SET #S = :v",
+      }
+      await subscriberPageDb.update(params, (err, data) => {
+        console.log(err, data)
+      })
+    } catch (error) {}
+  }
+
   return (
     <section className={portfolioStyles.socialLinksContainer}>
       <p className={portfolioStyles.headerTopic}>
@@ -77,6 +90,15 @@ const SocialPlatformLink = () => {
         <input
           className={portfolioStyles.socialTextInput}
           placeholder="Your Twitter ID"
+          ref={twitterRef}
+          name="TwitterId"
+          value={props.details && props.details.TwitterId}
+        />
+        <FontAwesomeIcon
+          icon={faCheckCircle}
+          onClick={() => setSocial(twitterRef)}
+          size="lg"
+          color="#169188"
         />
       </section>
       <section className={portfolioStyles.socialLinkInputHolder}>
@@ -84,6 +106,15 @@ const SocialPlatformLink = () => {
         <input
           className={portfolioStyles.socialTextInput}
           placeholder="Your Facebook Page"
+          ref={facebookRef}
+          name="FacebookId"
+          value={props.details && props.details.FacebookId}
+        />
+        <FontAwesomeIcon
+          icon={faCheckCircle}
+          onClick={() => setSocial(facebookRef)}
+          size="lg"
+          color="#169188"
         />
       </section>
       <section className={portfolioStyles.socialLinkInputHolder}>
@@ -91,6 +122,15 @@ const SocialPlatformLink = () => {
         <input
           className={portfolioStyles.socialTextInput}
           placeholder="Your Pinterest ID"
+          ref={pinterestRef}
+          name="PinterestId"
+          value={props.details && props.details.PinterestId}
+        />
+        <FontAwesomeIcon
+          icon={faCheckCircle}
+          onClick={() => setSocial(pinterestRef)}
+          size="lg"
+          color="#169188"
         />
       </section>
       <section className={portfolioStyles.socialLinkInputHolder}>
@@ -98,23 +138,141 @@ const SocialPlatformLink = () => {
         <input
           className={portfolioStyles.socialTextInput}
           placeholder="Your Instagram ID"
+          ref={instargamRef}
+          name="InstagramId"
+          value={props.details && props.details.InstagramId}
+        />
+        <FontAwesomeIcon
+          icon={faCheckCircle}
+          onClick={() => setSocial(instargamRef)}
+          size="lg"
+          color="#169188"
         />
       </section>
     </section>
   )
 }
 
-const AmbiencePost = () => {
-  const [ambienceList, setAmbienceList] = useState([])
+const AmbiencePost = props => {
+  const [ambienceList, setAmbienceList] = useState([{ name: "", image: "" }])
   const [width, setWidth] = useState()
+  const uploadAmbienceInput = useRef(null)
+  const ambienceForm = useRef(null)
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
     else if (document.body.offsetWidth < 600) setWidth(2)
     else if (document.body.offsetWidth < 1024) setWidth(4)
     else setWidth(5)
-    ambienceList.push({ image: "" })
+
+    getSubscriberPageData()
   }, [])
+
+  async function getSubscriberPageData() {
+    try {
+      const params = {
+        TableName: "subscriberPage",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
+      }
+      await subscriberPageDb.get(params, (err, result) => {
+        result.Item.portfolioAmbiences &&
+          getImageList(result.Item.portfolioAmbiences)
+        console.log(result.Item.portfolioAmbiences)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function getImageList(list) {
+    list.map(element => {
+      getImage(element)
+    })
+  }
+
+  async function getImage(fileName) {
+    props.loadHandler(true)
+    try {
+      const paramsGet = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${fileName}`,
+      }
+
+      await subscriberPageS3.getObject(paramsGet, (err, resp) => {
+        if (resp) {
+          let tempAmbienceList = { name: fileName, image: resp.Body }
+          ambienceList.push(tempAmbienceList)
+          let tempList = [...ambienceList]
+          setAmbienceList(tempList)
+          props.loadHandler(false)
+        } else {
+          props.loadHandler(false)
+        }
+      })
+    } catch (error) {
+      props.loadHandler(false)
+    }
+  }
+
+  const selectImage = async e => {
+    props.loadHandler(true)
+    const selectedFile = e.target.files[0]
+    const reader = new FileReader(selectedFile)
+    reader.readAsDataURL(selectedFile)
+    reader.onload = async () => {
+      const params = {
+        TableName: "subscriberPage",
+        ExpressionAttributeNames: {
+          "#PAL": "portfolioAmbiences",
+        },
+        ExpressionAttributeValues: {
+          ":a": [selectedFile["name"]],
+          ":emptyList": [],
+        },
+        ReturnValues: "ALL_NEW",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
+        UpdateExpression:
+          "SET #PAL = list_append(if_not_exists(#PAL, :emptyList), :a)",
+      }
+      await subscriberPageDb.update(params, (err, resp) => {
+        console.log(resp)
+        resp && uploadImage(selectedFile, reader.result)
+        props.loadHandler(false)
+      })
+    }
+  }
+
+  const uploadImage = async (selectedFile, imgUri) => {
+    try {
+      props.loadHandler(true)
+      const params = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${
+          selectedFile["name"]
+        }`,
+        Body: imgUri,
+      }
+
+      await subscriberPageS3.upload(params, (err, resp) => {
+        props.loadHandler(false)
+        addNewImage(selectedFile["name"], imgUri)
+      })
+    } catch (error) {
+      props.loadHandler(false)
+      console.log(error)
+    }
+  }
+
+  const addNewImage = (fileName, newImg) => {
+    let tempAmbienceList = [...ambienceList]
+    tempAmbienceList.push({ name: fileName, image: newImg })
+    setAmbienceList(tempAmbienceList)
+    console.log(ambienceList)
+  }
 
   return (
     <section className={portfolioStyles.socialLinksContainer}>
@@ -145,7 +303,37 @@ const AmbiencePost = () => {
           )}
         >
           {ambienceList.map((element, index) => (
-            <CardLayoutInput key={index} image={element["image"]} />
+            <section
+              key={index}
+              className={portfolioStyles.ambienceImageCardContainer}
+            >
+              {element["image"].length > 0 ? (
+                <img
+                  src={element["image"]}
+                  alt={element["name"]}
+                  className={portfolioStyles.ambienceImage}
+                />
+              ) : (
+                <section className={portfolioStyles.ambienceInstructions}>
+                  <FontAwesomeIcon
+                    icon={faPlusCircle}
+                    size="2x"
+                    color="#169188"
+                    onClick={() => uploadAmbienceInput.current.click()}
+                  />
+                  <form ref={ambienceForm} hidden>
+                    <input
+                      ref={uploadAmbienceInput}
+                      id="itemId"
+                      type="file"
+                      onChange={selectImage}
+                      hidden
+                    />
+                    <button type="submit"></button>
+                  </form>
+                </section>
+              )}
+            </section>
           ))}
         </Carousel>
       </section>
@@ -306,19 +494,23 @@ const PageId = () => {
     }
   }
 
-  const finalizePageId = () => {
-    const promise = new Promise((resolve, reject) => {
+  const finalizePageId = async () => {
+    try {
       const params = {
         TableName: "subscriberPage",
         Item: {
-          pageId: { S: pageId },
+          pageId: pageId,
         },
       }
-      db.putItem(params, (err, data) => {
-        if (data) inputRef.current.disabled = true
+      const response = await subscriberPageDb.put(params, (err, data) => {
         console.log(err, data)
       })
-    })
+      const user = await Auth.currentAuthenticatedUser()
+      const result = await Auth.updateUserAttributes(user, {
+        "custom:pageId": pageId,
+      })
+      setUser(result)
+    } catch (error) {}
   }
 
   return (
@@ -332,11 +524,19 @@ const PageId = () => {
         <label style={{ fontSize: "1rem", margin: "0 5px" }}>
           Create a ScanAt Page{" "}
         </label>
-        <FontAwesomeIcon id="bulbGlowId" icon={faLightbulb} color="grey" />
+        <FontAwesomeIcon
+          id="bulbGlowId"
+          icon={faLightbulb}
+          color={getCurrentUser()["custom:pageId"] !== "" ? "green" : "grey"}
+        />
         <input
           ref={inputRef}
           className={portfolioStyles.socialTextInput}
-          placeholder="New Page ID"
+          placeholder={
+            getCurrentUser()["custom:pageId"] !== ""
+              ? getCurrentUser()["custom:pageId"]
+              : "New Page ID"
+          }
           onFocus={e => {
             typeof window !== "undefined" &&
               document
@@ -344,87 +544,373 @@ const PageId = () => {
                 .setAttribute("color", e ? "green" : "grey")
           }}
           onChange={pageIdHandler}
+          disabled={getCurrentUser()["custom:pageId"] !== "" ? true : false}
         />
-        <FontAwesomeIcon
-          icon={faCheckCircle}
-          size="lg"
-          color="#169188"
-          onClick={finalizePageId}
-        />
+        {getCurrentUser()["custom:pageId"] === "" && (
+          <FontAwesomeIcon
+            icon={faCheckCircle}
+            size="lg"
+            color="#169188"
+            onClick={finalizePageId}
+          />
+        )}
       </section>
-      <label style={{ fontSize: "0.7em" }}>scanat.in/{pageId}</label>
+      <label style={{ fontSize: "0.7em" }}>
+        scanat.in/
+        {getCurrentUser()["custom:pageId"] !== ""
+          ? getCurrentUser()["custom:pageId"]
+          : pageId}
+      </label>
     </section>
   )
 }
 
-const Portfolio = ({ data }) => {
+const Banner = (props, { data }) => {
   const [bannerData, setBannerData] = useState(null)
   const uploadBannerInput = useRef(null)
   const bannerForm = useRef(null)
   const [imageUrl, setImageUrl] = useState("")
-  const [file, setFile] = useState("")
-  const [shareIconsVisible, setShareIconsVisible] = useState(false)
-  const [width, setWidth] = useState()
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (document.body.offsetWidth < 481) setWidth(1)
-    else if (document.body.offsetWidth < 600) setWidth(2)
-    else if (document.body.offsetWidth < 1024) setWidth(4)
-    else setWidth(5)
-
-    // loadBanner()
+    getImageName()
   }, [])
 
-  const loadBanner = async () => {
+  async function getImageName() {
+    props.loadHandler(true)
     try {
-      setLoading(true)
-      const paramsGet = {
-        Bucket: "subscriber-media",
-        Key: `Portfolio/${getCurrentUser().phone_number}/portfolio_banner.png`,
+      const params = {
+        TableName: "subscriberPage",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
       }
-
-      await s3.getObject(paramsGet, (err, data) => {
-        console.log(err)
-        console.log(data)
-        setBannerData(data.Body)
-        setLoading(false)
+      await subscriberPageDb.get(params, (err, resp) => {
+        getImage(resp.Item.portfolioBanner)
+        props.loadHandler(false)
       })
     } catch (error) {
-      setLoading(false)
+      props.loadHandler(false)
+      console.log(error)
     }
   }
 
-  const selectImage = e => {
-    setLoading(true)
+  async function getImage(fileName) {
+    props.loadHandler(true)
+    try {
+      const paramsGet = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${fileName}`,
+      }
+
+      await subscriberPageS3.getObject(paramsGet, (err, resp) => {
+        if (resp) {
+          setBannerData(resp.Body)
+          props.loadHandler(false)
+        } else {
+          props.loadHandler(false)
+        }
+      })
+    } catch (error) {
+      props.loadHandler(false)
+    }
+  }
+
+  const selectImage = async e => {
+    props.loadHandler(true)
     const selectedFile = e.target.files[0]
     const reader = new FileReader(selectedFile)
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
-      setFile(selectedFile)
-      setLoading(false)
-      console.log(selectedFile)
-      uploadBanner()
+      // setFile(selectedFile)
     }
+
+    const params = {
+      TableName: "subscriberPage",
+      ExpressionAttributeNames: {
+        "#PB": "portfolioBanner",
+      },
+      ExpressionAttributeValues: {
+        ":b": selectedFile["name"],
+      },
+      ReturnValues: "ALL_NEW",
+      Key: {
+        pageId: getCurrentUser()["custom:pageId"],
+      },
+      UpdateExpression: "SET #PB = :b",
+    }
+    await subscriberPageDb.update(params, (err, resp) => {
+      resp && uploadImage(selectedFile)
+      props.loadHandler(false)
+    })
   }
 
-  const uploadBanner = async () => {
+  const uploadImage = async selectedFile => {
     try {
-      setLoading(true)
+      props.loadHandler(true)
       const params = {
         Bucket: "subscriber-media",
-        Key: `Portfolio/${getCurrentUser().phone_number}/portfolio_banner.png`,
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${
+          selectedFile["name"]
+        }`,
         Body: imageUrl,
       }
 
-      await s3.upload(JSON.stringify(params), (err, data) => {
-        if (data) loadBanner()
-        console.log(err)
-        setLoading(false)
+      await subscriberPageS3.upload(params, (err, resp) => {
+        props.loadHandler(false)
+        resp && getImageName()
       })
     } catch (error) {
-      setLoading(false)
+      props.loadHandler(false)
+      console.log(error)
+    }
+  }
+
+  return (
+    <section className={portfolioStyles.banner}>
+      {bannerData === null ? (
+        <Img fluid={props.data.file.childImageSharp.fluid} />
+      ) : (
+        <img src={bannerData} alt="Portfolio Banner" />
+      )}
+      <section
+        className={portfolioStyles.editHolder}
+        onClick={() => uploadBannerInput.current.click()}
+      >
+        <FontAwesomeIcon icon={faCamera} size="lg" color="#169188" />
+        <form ref={bannerForm} hidden>
+          <input
+            ref={uploadBannerInput}
+            id="itemId"
+            type="file"
+            onChange={selectImage}
+            hidden
+          />
+          <button type="submit"></button>
+        </form>
+      </section>
+    </section>
+  )
+}
+
+const Logo = props => {
+  const [logoData, setLogoData] = useState(null)
+  const uploadLogoInput = useRef(null)
+  const logoForm = useRef(null)
+  const [imageUrl, setImageUrl] = useState("")
+
+  useEffect(() => {
+    getImageName()
+  }, [])
+
+  async function getImageName() {
+    props.loadHandler(true)
+    try {
+      const params = {
+        TableName: "subscriberPage",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
+      }
+      await subscriberPageDb.get(params, (err, data) => {
+        getImage(data.Item.portfolioLogo)
+        props.loadHandler(false)
+      })
+    } catch (error) {
+      props.loadHandler(false)
+      console.log(error)
+    }
+  }
+
+  async function getImage(fileName) {
+    props.loadHandler(true)
+    try {
+      const paramsGet = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${fileName}`,
+      }
+
+      await subscriberPageS3.getObject(paramsGet, (err, data) => {
+        if (data) {
+          setLogoData(data.Body)
+          props.loadHandler(false)
+        } else {
+          props.loadHandler(false)
+        }
+      })
+    } catch (error) {
+      props.loadHandler(false)
+    }
+  }
+
+  const selectImage = async e => {
+    props.loadHandler(true)
+    const selectedFile = e.target.files[0]
+    const reader = new FileReader(selectedFile)
+    reader.readAsDataURL(selectedFile)
+    reader.onload = () => {
+      setImageUrl(reader.result)
+      // setFile(selectedFile)
+    }
+
+    const params = {
+      TableName: "subscriberPage",
+      ExpressionAttributeNames: {
+        "#PL": "portfolioLogo",
+      },
+      ExpressionAttributeValues: {
+        ":l": selectedFile["name"],
+      },
+      ReturnValues: "ALL_NEW",
+      Key: {
+        pageId: getCurrentUser()["custom:pageId"],
+      },
+      UpdateExpression: "SET #PL = :l",
+    }
+    await subscriberPageDb.update(params, (err, data) => {
+      data && uploadImage(selectedFile)
+      props.loadHandler(false)
+    })
+  }
+
+  const uploadImage = async selectedFile => {
+    try {
+      props.loadHandler(true)
+      const params = {
+        Bucket: "subscriber-media",
+        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${
+          selectedFile["name"]
+        }`,
+        Body: imageUrl,
+      }
+
+      await subscriberPageS3.upload(params, (err, data) => {
+        props.loadHandler(false)
+        data && getImageName()
+      })
+    } catch (error) {
+      props.loadHandler(false)
+      console.log(error)
+    }
+  }
+
+  return (
+    <>
+      <section className={portfolioStyles.logoContainer}>
+        {logoData === null ? (
+          <label className={portfolioStyles.logoText}>
+            {getCurrentUser().name.substring(0, 2)}
+          </label>
+        ) : (
+          <img src={logoData} alt="Organization Logo" />
+        )}
+      </section>
+      <section
+        className={portfolioStyles.editDpHolder}
+        onClick={() => uploadLogoInput.current.click()}
+      >
+        <FontAwesomeIcon icon={faCamera} size="1x" color="#169188" />
+        <form ref={logoForm} hidden>
+          <input
+            ref={uploadLogoInput}
+            id="itemId"
+            type="file"
+            onChange={selectImage}
+            hidden
+          />
+          <button type="submit"></button>
+        </form>
+      </section>
+    </>
+  )
+}
+
+const SocialShare = () => {
+  const [shareIconsVisible, setShareIconsVisible] = useState(false)
+
+  return (
+    <ul className={portfolioStyles.shareListContainer}>
+      <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>
+        <FontAwesomeIcon
+          icon={faShareAlt}
+          color={shareIconsVisible ? "#169188" : "grey"}
+          size="lg"
+        />
+        <ul
+          className={portfolioStyles.shareSubListContainer}
+          style={{ display: shareIconsVisible ? "block" : "none" }}
+        >
+          <li>
+            <a
+              alt="Whatsapp"
+              href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/pro/portfolio${
+                getCurrentUser().website
+              }`}
+              className={portfolioStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faWhatsapp} color="#075e54" size="lg" />
+            </a>
+          </li>
+          <li>
+            <a
+              alt="Twitter"
+              href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/pro/portfolio${
+                getCurrentUser().website
+              }`}
+              className={portfolioStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faTwitter} color="#00acee" size="lg" />
+            </a>
+          </li>
+          <li>
+            <a
+              alt="Facebook"
+              href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/pro/portfolio${
+                getCurrentUser().website
+              }[title]=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
+              className={portfolioStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faFacebookF} color="#3b5998" size="lg" />
+            </a>
+          </li>
+          <li>
+            <a
+              alt="Pinterest"
+              href={`http://pinterest.com/pin/create/button/?url=${
+                getCurrentUser().website
+              }&description=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
+              className={portfolioStyles.shareLink}
+            >
+              <FontAwesomeIcon icon={faPinterestP} color="#e60023" size="lg" />
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  )
+}
+
+const Portfolio = ({ data }) => {
+  const [loading, setLoading] = useState(false)
+  const [subscriberData, setSubscriberData] = useState()
+
+  useEffect(() => {
+    getSubscriberPageData()
+  }, [])
+
+  async function getSubscriberPageData() {
+    try {
+      const params = {
+        TableName: "subscriberPage",
+        Key: {
+          pageId: getCurrentUser()["custom:pageId"],
+        },
+      }
+      await subscriberPageDb.get(params, (err, result) => {
+        result && setSubscriberData(result.Item)
+      })
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -455,110 +941,11 @@ const Portfolio = ({ data }) => {
   ) : (
     <Layout>
       <Loader loading={loading} />
-      <section className={portfolioStyles.banner}>
-        {bannerData == null ? (
-          <Img fluid={data.file.childImageSharp.fluid} />
-        ) : (
-          <img src={bannerData} alt="Portfolio Banner" />
-        )}
-        <section
-          className={portfolioStyles.editHolder}
-          onClick={() => uploadBannerInput.current.click()}
-        >
-          <FontAwesomeIcon icon={faCamera} size="lg" color="#169188" />
-          <form ref={bannerForm} hidden>
-            <input
-              ref={uploadBannerInput}
-              id="itemId"
-              type="file"
-              onChange={selectImage}
-              hidden
-            />
-            <button type="submit" onSubmit={uploadBanner}></button>
-          </form>
-        </section>
-      </section>
+      <Banner data={data} loadHandler={val => setLoading(val)} />
 
-      <section className={portfolioStyles.logoContainer}>
-        <label className={portfolioStyles.logoText}>
-          {getCurrentUser().name.substring(0, 2)}
-        </label>
-      </section>
-      <section
-        className={portfolioStyles.editDpHolder}
-        onClick={() => uploadBannerInput.current.click()}
-      >
-        <FontAwesomeIcon icon={faCamera} size="1x" color="#169188" />
-        <form ref={bannerForm} hidden>
-          <input
-            ref={uploadBannerInput}
-            id="itemId"
-            type="file"
-            onChange={selectImage}
-            hidden
-          />
-          <button type="submit" onSubmit={uploadBanner}></button>
-        </form>
-      </section>
+      <Logo loadHandler={val => setLoading(val)} />
 
-      <ul className={portfolioStyles.shareListContainer}>
-        <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>
-          <FontAwesomeIcon
-            icon={faShareAlt}
-            color={shareIconsVisible ? "#169188" : "grey"}
-            size="lg"
-          />
-          <ul
-            className={portfolioStyles.shareSubListContainer}
-            style={{ display: shareIconsVisible ? "block" : "none" }}
-          >
-            <li>
-              <a
-                alt="Whatsapp"
-                href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/pro/portfolio${
-                  getCurrentUser().website
-                }`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faWhatsapp} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Twitter"
-                href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/pro/portfolio${
-                  getCurrentUser().website
-                }`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faTwitter} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Facebook"
-                href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/pro/portfolio${
-                  getCurrentUser().website
-                }[title]=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faFacebookF} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Pinterest"
-                href={`http://pinterest.com/pin/create/button/?url=${
-                  getCurrentUser().website
-                }&description=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faPinterestP} size="lg" />
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <SocialShare />
 
       <PageId />
 
@@ -572,7 +959,7 @@ const Portfolio = ({ data }) => {
         </a>
       </section>
 
-      <SocialPlatformLink />
+      <SocialPlatformLink details={subscriberData} />
 
       <section className={portfolioStyles.fullDescription}>
         <section className={portfolioStyles.businessLocation}>
@@ -599,7 +986,7 @@ const Portfolio = ({ data }) => {
         </section>
       </section>
 
-      <AmbiencePost />
+      <AmbiencePost loadHandler={val => setLoading(val)} />
 
       <DishesWeek />
     </Layout>

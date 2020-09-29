@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import BannerStyles from "./banner.module.css"
 import BannerImage from "../../images/bannerimage.jpg"
+import { HomeBanner } from "../image"
 import Anime from "animejs"
 
 const Banner = () => {
