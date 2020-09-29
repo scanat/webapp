@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faPlusSquare,
@@ -13,14 +13,31 @@ import {
   faToggleOn,
   faToggleOff,
   faCut,
+  faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons"
 import categoryBasicStyles from "./category-basic.module.css"
+import AWS from "aws-sdk"
 import axios from "axios"
 import { navigate } from "gatsby"
 import { getCurrentUser } from "../../../../utils/auth"
 import config from "../../../../config.json"
 import SnackBar from "../../../../components/snackBar"
 import Layout from "../../../../components/layout"
+import Loader from "../../../../components/loader"
+
+const subscriberPageS3 = new AWS.S3({
+  region: "ap-south-1",
+  apiVersion: "2006-03-01",
+  accessKeyId: process.env.S3_ACCESS_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+})
+
+const itemsPageDb = new AWS.DynamoDB.DocumentClient({
+  region: "ap-south-1",
+  apiVersion: "2012-08-10",
+  accessKeyId: process.env.ITEM_DB_ACCESS_ID,
+  secretAccessKey: process.env.ITEM_DB_SECRET_ACCESS_KEY,
+})
 
 const Card = props => {
   return (
@@ -31,13 +48,18 @@ const Card = props => {
 const CategoryBasic = props => {
   const [itemName, setItemName] = useState("")
   const [itemPrice, setItemPrice] = useState("")
+  const [itemImage, setItemImage] = useState("")
   const [category, setCategory] = useState("None")
   const [changing, setChanging] = useState(false)
   const [list, setList] = useState([])
+  const [itemImageList, setItemImageList] = useState([])
   const [chosenItem, setChosenItem] = useState()
   const [categoryList, setCategoryList] = useState(["Category"])
   const [snackContent, setSnackContent] = useState()
   const [snackError, setSnackError] = useState(false)
+  const itemImageForm = useRef(null)
+  const uploadItemImageInput = useRef(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setTimeout(() => {
@@ -55,26 +77,53 @@ const CategoryBasic = props => {
     const index = tempList.indexOf(category)
     tempList.splice(index, 1)
     setCategoryList(tempList)
-    console.log(categoryList)
   }
 
   // Fetch inital data if available
   const fetchData = async () => {
+    setLoading(true)
     try {
-      const params = JSON.stringify({
-        phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
-      })
-      const res = await axios.post(`${config.userDataAPI}/items/get`, params)
-      res.data.data.data.map(element => {
-        if (categoryList.indexOf(element.category) < 0) {
-          categoryList.push(element.category)
+      const params = {
+        TableName: "items",
+        Key: {
+          phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
+        },
+      }
+      await itemsPageDb.get(params, (err, data) => {
+        if (data) {
+          data.Item.data.map(element => {
+            if (categoryList.indexOf(element.category) < 0) {
+              categoryList.push(element.category)
+            }
+            getImage(element.image)
+          })
+          switchContent("Found Items", true)
+          setList(data.Item.data)
         }
+        setLoading(false)
       })
-      switchContent("Found Items", true)
-      setList(res.data.data.data)
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
+  }
+
+  async function getImage(fileName) {
+    setLoading(true)
+    const paramsGet = {
+      Bucket: "subscriber-media",
+      Key: `Items/${String(getCurrentUser().phone_number).replace(
+        "+91",
+        ""
+      )}/${fileName}`,
+    }
+    await subscriberPageS3.getObject(paramsGet, (err, resp) => {
+      resp && itemImageList.push(resp.Body)
+      err && itemImageList.push("")
+      let tempList = [...itemImageList]
+      setItemImageList(tempList)
+      setLoading(false)
+    })
   }
 
   const setSelectedCategory = () => {
@@ -86,6 +135,7 @@ const CategoryBasic = props => {
 
   // Adding the items to the list
   const addItemHandler = () => {
+    setLoading(true)
     if (
       itemName !== null &&
       itemName !== "" &&
@@ -99,15 +149,19 @@ const CategoryBasic = props => {
           itemPrice: itemPrice,
           status: true,
           category: category.toString(),
+          image: itemImage,
         })
       )
+      setItemImageList(itemImageList.concat(""))
       setItemName("")
       setItemPrice("")
       if (typeof window !== "undefined") {
         document.getElementById("item-name-input").value = ""
         document.getElementById("item-price-input").value = ""
       }
+      setLoading(false)
     }
+    setLoading(false)
   }
 
   // Reseting the input blocks to empty
@@ -179,6 +233,7 @@ const CategoryBasic = props => {
       itemPrice: itemPrice,
       status: true,
       category: category,
+      image: itemImage,
     }
     setList(newList)
     setChanging(false)
@@ -187,18 +242,64 @@ const CategoryBasic = props => {
 
   // Upload Data button press
   const uploadData = async () => {
+    setLoading(true)
     try {
       const params = {
-        phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
-        data: list,
-        categories: categoryList,
+        TableName: "items",
+        ExpressionAttributeNames: {
+          "#d": "data",
+          "#c": "categories",
+        },
+        ExpressionAttributeValues: {
+          ":dl": list,
+          ":cl": categoryList,
+        },
+        Key: {
+          phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
+        },
+        UpdateExpression: "SET #d = :dl, #c = :cl",
       }
-      const res = await axios.post(`${config.userDataAPI}/items/add`, params)
-      switchContent(res.data.msg, true)
-      setTimeout(() => {
-        navigate("/profile")
-      }, 2000)
+      itemsPageDb.update(params, (err, data) => {
+        setLoading(false)
+      })
     } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const selectImage = async (e, item) => {
+    setLoading(true)
+    const selectedFile = e.target.files[0]
+    const reader = new FileReader(selectedFile)
+    reader.readAsDataURL(selectedFile)
+    reader.onload = async () => {
+      item.image = selectedFile["name"]
+      console.log(item)
+      console.log(list)
+      uploadImage(selectedFile, reader.result)
+    }
+    setLoading(false)
+  }
+
+  const uploadImage = async (selectedFile, imgUri) => {
+    setLoading(true)
+    try {
+      const params = {
+        Bucket: "subscriber-media",
+        Key: `Items/${String(getCurrentUser().phone_number).replace(
+          "+91",
+          ""
+        )}/${selectedFile["name"]}`,
+        Body: imgUri,
+      }
+
+      await subscriberPageS3.upload(params, (err, resp) => {
+        setLoading(false)
+        console.log(resp)
+      })
+    } catch (error) {
+      setLoading(false)
       console.log(error)
     }
   }
@@ -210,6 +311,7 @@ const CategoryBasic = props => {
 
   return (
     <Layout>
+      <Loader loading={loading} />
       <section className={categoryBasicStyles.container}>
         <Card>
           <section>
@@ -301,17 +403,53 @@ const CategoryBasic = props => {
         </Card>
 
         <section className={categoryBasicStyles.listContainer}>
-          {list.map(item => (
+          {list.map((item, id) => (
             <section className={categoryBasicStyles.greenCard} key={item._id}>
-              <section className={categoryBasicStyles.textContainers}>
-                <p className={categoryBasicStyles.itemName}>{item.itemName}</p>
-                <p className={categoryBasicStyles.itemPrice}>
-                  Rs {item.itemPrice} /-
-                </p>
+              <section className={categoryBasicStyles.parentDataContainer}>
+                <section className={categoryBasicStyles.itemImageContainer}>
+                  {item["image"] !== "" ? (
+                    <img
+                      src={itemImageList[id]}
+                      alt={item["image"]}
+                      className={categoryBasicStyles.itemImage}
+                    />
+                  ) : (
+                    <section
+                      className={categoryBasicStyles.itemImageInstructions}
+                    >
+                      <FontAwesomeIcon
+                        icon={faPlusCircle}
+                        size="lg"
+                        color="#169188"
+                        onClick={() => uploadItemImageInput.current.click()}
+                      />
+                      <form ref={itemImageForm} hidden>
+                        <input
+                          ref={uploadItemImageInput}
+                          id="itemId"
+                          type="file"
+                          onChange={e => selectImage(e, item)}
+                          hidden
+                        />
+                        <button type="submit"></button>
+                      </form>
+                    </section>
+                  )}
+                </section>
+                <section className={categoryBasicStyles.basicDataContainer}>
+                  <section className={categoryBasicStyles.textContainers}>
+                    <p className={categoryBasicStyles.itemName}>
+                      {item.itemName}
+                    </p>
+                    <p className={categoryBasicStyles.itemPrice}>
+                      Rs {item.itemPrice} /-
+                    </p>
+                  </section>
+                  <label className={categoryBasicStyles.categoryName}>
+                    <u>Category</u> : {item.category}
+                  </label>
+                </section>
               </section>
-              <label className={categoryBasicStyles.categoryName}>
-                <u>Category</u> : {item.category}
-              </label>
               <section className={categoryBasicStyles.itemControls}>
                 <FontAwesomeIcon
                   icon={faTrash}
