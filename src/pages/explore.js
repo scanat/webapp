@@ -10,7 +10,12 @@ import {
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons"
 import Carousel from "react-elastic-carousel"
-import AWS from 'aws-sdk'
+import AWS from "aws-sdk"
+import Img from "gatsby-image"
+import { graphql, useStaticQuery } from "gatsby"
+import Select1 from "../images/selects1.jpg"
+import Select2 from "../images/selects2.jpg"
+import Select3 from "../images/selects3.jpg"
 
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
@@ -26,8 +31,9 @@ const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
   secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
 })
 
-const Explore = () => {
+const Explore = ({ data }) => {
   const [width, setWidth] = useState()
+  const [searchObject, setSearchObject] = useState(null)
   const searchRef = useRef(null)
 
   useEffect(() => {
@@ -40,16 +46,43 @@ const Explore = () => {
   const searchItems = async () => {
     const params = {
       TableName: "subscriberPage",
-      ExpressionAttributeNames: {
-        "#PID": "pageId",
-      },
-      ExpressionAttributeValues: {
-        ":i": searchRef.current.value,
+      AttributesToGet: ["pageId", "portfolioLogo"],
+      ScanFilter: {
+        pageId: {
+          ComparisonOperator: "CONTAINS",
+          AttributeValueList: [searchRef.current.value],
+        },
       },
     }
 
     await subscriberPageDb.scan(params, (err, data) => {
-        console.log(err, data)
+      if (data) {
+        setSearchObject(data)
+        console.log(data.Items)
+        const itemList = data.Items
+        itemList.map(element => {
+          if (!element.portfolioLogo) {
+            element.image = ""
+            let temp = searchObject
+            setSearchObject(temp)
+          } else {
+            getItemImages(element)
+          }
+        })
+      }
+    })
+  }
+
+  async function getItemImages(element) {
+    const params = {
+      Bucket: "subscriber-media",
+      Key: `Portfolio/${element.pageId}/${element.portfolioLogo}`,
+    }
+    await subscriberPageS3.getObject(params, (err, data) => {
+      element.image = data.Body
+      let temp = searchObject
+      setSearchObject(temp)
+      console.log(searchObject)
     })
   }
 
@@ -62,7 +95,7 @@ const Explore = () => {
         <section className={exploreStyles.searchBarContainer}>
           <input
             ref={searchRef}
-            placeholder="Search..."
+            placeholder="Search page..."
             className={exploreStyles.searchBar}
           />
           <FontAwesomeIcon
@@ -93,13 +126,27 @@ const Explore = () => {
             />
           )}
         >
-          <section className={exploreStyles.selectsHolder}></section>
-          <section className={exploreStyles.selectsHolder}></section>
-          <section className={exploreStyles.selectsHolder}></section>
+          <section className={exploreStyles.selectsHolder}>
+            <img src={Select1} alt="Select 1" />
+          </section>
+          <section className={exploreStyles.selectsHolder}>
+            <img src={Select2} alt="Select 2" />
+          </section>
+          <section className={exploreStyles.selectsHolder}>
+            <img src={Select3} alt="Select 3" />
+          </section>
         </Carousel>
       </section>
 
-      <section className={exploreStyles.searchResultContainer}></section>
+      <section className={exploreStyles.searchResultContainer}>
+        {searchObject !== null &&
+          [...searchObject.Items].map((item, id) => (
+            <section className={exploreStyles.searchItemHolder}>
+              <img src={item.image} alt={item.image} />
+              <label>{item.pageId}</label>
+            </section>
+          ))}
+      </section>
     </Layout>
   )
 }
