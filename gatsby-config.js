@@ -1,3 +1,6 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
 module.exports = {
   siteMetadata: {
     title: `Scan At`,
@@ -12,6 +15,10 @@ module.exports = {
         name: `images`,
         path: `${__dirname}/src/images`,
       },
+      options: {
+        name: `backgrounds`,
+        path: `${__dirname}/src/images/backgrounds`,
+      }
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
