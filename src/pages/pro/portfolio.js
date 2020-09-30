@@ -179,7 +179,7 @@ const AmbiencePost = props => {
       await subscriberPageDb.get(params, (err, result) => {
         result.Item.portfolioAmbiences &&
           getImageList(result.Item.portfolioAmbiences)
-        console.log(result.Item.portfolioAmbiences)
+        console.log(process.env.GATSBY_S3_ACCESS_ID)
       })
     } catch (error) {
       console.log(error)

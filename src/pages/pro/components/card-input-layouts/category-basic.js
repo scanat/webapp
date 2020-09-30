@@ -268,15 +268,16 @@ const CategoryBasic = props => {
     }
   }
 
-  const selectImage = async (e, item) => {
+  const selectImage = async (e, item, id) => {
     setLoading(true)
     const selectedFile = e.target.files[0]
     const reader = new FileReader(selectedFile)
     reader.readAsDataURL(selectedFile)
     reader.onload = async () => {
       item.image = selectedFile["name"]
-      console.log(item)
-      console.log(list)
+      let tempList = [...itemImageList]
+      tempList[id] = reader.result
+      setItemImageList(tempList)
       uploadImage(selectedFile, reader.result)
     }
     setLoading(false)
@@ -428,7 +429,7 @@ const CategoryBasic = props => {
                           ref={uploadItemImageInput}
                           id="itemId"
                           type="file"
-                          onChange={e => selectImage(e, item)}
+                          onChange={e => selectImage(e, item, id)}
                           hidden
                         />
                         <button type="submit"></button>
