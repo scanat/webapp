@@ -12,7 +12,7 @@ import {
 import Carousel from "react-elastic-carousel"
 import AWS from "aws-sdk"
 import Img from "gatsby-image"
-import { graphql, useStaticQuery } from "gatsby"
+import { graphql, navigate, useStaticQuery } from "gatsby"
 import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"
@@ -31,9 +31,9 @@ const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
   secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
 })
 
-const Explore = ({ data }) => {
+const Explore = () => {
   const [width, setWidth] = useState()
-  const [searchObject, setSearchObject] = useState(null)
+  const [searchObjectList, setSearchObjectList] = useState([])
   const searchRef = useRef(null)
 
   useEffect(() => {
@@ -44,6 +44,8 @@ const Explore = ({ data }) => {
   }, [])
 
   const searchItems = async () => {
+    setSearchObjectList([])
+    console.log(searchObjectList)
     const params = {
       TableName: "subscriberPage",
       AttributesToGet: ["pageId", "portfolioLogo"],
@@ -57,32 +59,31 @@ const Explore = ({ data }) => {
 
     await subscriberPageDb.scan(params, (err, data) => {
       if (data) {
-        setSearchObject(data)
-        console.log(data.Items)
         const itemList = data.Items
-        itemList.map(element => {
+        itemList.map((element, id) => {
           if (!element.portfolioLogo) {
             element.image = ""
-            let temp = searchObject
-            setSearchObject(temp)
+            searchObjectList.push(element)
+            let tempList = [...searchObjectList]
+            setSearchObjectList(tempList)
           } else {
-            getItemImages(element)
+            getItemImages(element, id)
           }
         })
       }
     })
   }
 
-  async function getItemImages(element) {
+  async function getItemImages(element, id) {
     const params = {
       Bucket: "subscriber-media",
       Key: `Portfolio/${element.pageId}/${element.portfolioLogo}`,
     }
     await subscriberPageS3.getObject(params, (err, data) => {
       element.image = data.Body
-      let temp = searchObject
-      setSearchObject(temp)
-      console.log(searchObject)
+      searchObjectList.push(element)
+      let tempList = [...searchObjectList]
+      setSearchObjectList(tempList)
     })
   }
 
@@ -139,9 +140,12 @@ const Explore = ({ data }) => {
       </section>
 
       <section className={exploreStyles.searchResultContainer}>
-        {searchObject !== null &&
-          [...searchObject.Items].map((item, id) => (
-            <section className={exploreStyles.searchItemHolder}>
+        {searchObjectList !== null &&
+          searchObjectList.map((item, id) => (
+            <section
+              className={exploreStyles.searchItemHolder}
+              onClick={() => navigate(`/portfolio?org=${item.pageId}`)}
+            >
               <img src={item.image} alt={item.image} />
               <label>{item.pageId}</label>
             </section>
