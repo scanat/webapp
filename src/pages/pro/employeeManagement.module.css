@@ -1,0 +1,70 @@
+.createEmployeeContainer {
+  width: 100%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.createEmployeeContainer h1 {
+  margin: 10px;
+}
+.createEmployeeContainer label {
+  margin: 8px;
+  font-size: 0.8em;
+}
+.createEmployeeContainer input {
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
+  font-size: 0.9em;
+  width: 280px;
+  border: grey 1px dashed;
+}
+.errorText {
+  font-size: 0.8em;
+  color: crimson;
+  text-align: center;
+  margin: 5px 10px;
+}
+.createManagerButton {
+  background: #169188;
+  border-radius: 5px;
+  border: none;
+  padding: 5px;
+  margin: 10px;
+  font-size: 1em;
+  color: whitesmoke;
+  float: right;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.employeesContainer {
+  width: 100%;
+  float: left;
+  display: grid;
+  grid-template-columns: auto auto;
+}
+.card {
+  position: relative;
+  background: white;
+  width: 150px;
+  min-height: 80px;
+  margin: 10px auto;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.cardTopic {
+  letter-spacing: 1px;
+  color: #169188;
+}

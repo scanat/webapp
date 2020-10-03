@@ -2,12 +2,27 @@ import React, { useState, useEffect } from "react"
 import loginModalStyles from "./loginModal.module.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Auth } from "aws-amplify"
+import AWS from "aws-sdk"
 import { navigate } from "gatsby"
 import { setUser, isLoggedIn, getCurrentUser } from "../../utils/auth"
 import SnackBar from "../snackBar"
 import { faArrowAltCircleLeft } from "@fortawesome/free-solid-svg-icons"
 import stateCityList from "../../pre-data/state-city.json"
 import Loader from "../loader"
+
+const globalDb = new AWS.DynamoDB.DocumentClient({
+  region: "ap-south-1",
+  apiVersion: "2012-08-10",
+  accessKeyId: process.env.GATSBY_GLOBAL_DB_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_GLOBAL_DB_SECRET_ACCESS_KEY,
+})
+
+const subscriberDb = new AWS.DynamoDB.DocumentClient({
+  region: "ap-south-1",
+  apiVersion: "2012-08-10",
+  accessKeyId: process.env.GATSBY_SUBSCRIBERPAGE_DB_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
+})
 
 const LoginSection = props => {
   const [username, setUsername] = useState(null)
@@ -16,19 +31,21 @@ const LoginSection = props => {
 
   const userLogin = async () => {
     if (username !== null && password !== null) {
-      setLoading(true)
       try {
+        setLoading(true)
         const user = await Auth.signIn(username, password)
+        console.log(user)
         setUser(user)
         props.switchContent("Success", true)
         navigate("/")
         props.closeLoginModal()
-        setLoading(false)
       } catch (error) {
         props.switchContent(error.message, false)
+        setLoading(false)
       }
     } else {
       props.switchContent("Credentials are required!", false)
+      setLoading(false)
     }
   }
 
@@ -89,6 +106,7 @@ const RegistrationSection = props => {
   const [confirmPass, setConfirmPass] = useState("")
   const [registrationPhase, setRegistrationPhase] = useState(1)
   const [gpsLocale, setGpsLocale] = useState("")
+  const [categories, setCategories] = useState([])
   const [regdApplyFor, setRegdApplyFor] = useState("Digital Restaurant")
   const [selectedState, setSelectedState] = useState("Maharashtra")
   const [selectedCity, setSelectedCity] = useState("Mumbai")
@@ -99,6 +117,7 @@ const RegistrationSection = props => {
   const [regdOrgName, setRegdOrgName] = useState("")
   const [regdEmail, setRegdEmail] = useState("")
   const [loading, setLoading] = useState(false)
+  const [modList, setModList] = useState([])
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -106,7 +125,27 @@ const RegistrationSection = props => {
       () => props.switchContent("User location failed!", false),
       { enableHighAccuracy: true, maximumAge: 10000 }
     )
+    fetchAllCategories()
   }, [])
+
+  async function fetchAllCategories() {
+    try {
+      const params = {
+        TableName: "globalTable",
+        Key: {
+          globalId: "businessCategories",
+        },
+      }
+      await globalDb.get(params, (err, data) => {
+        console.log(err, data)
+        if (data) {
+          setCategories(data.Item.categories)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const registerUser = async () => {
     if (password && confirmPass) {
@@ -138,9 +177,9 @@ const RegistrationSection = props => {
             },
           })
           props.switchPanel("login")
-          props.switchContent("SUCCESS", true)
           props.switchContent("VERIFY REGISTERED EMAIL", true)
           setLoading(false)
+          getSubscriberData(regdApplyFor)
         } catch (error) {
           props.switchContent(error.message, false)
         }
@@ -149,6 +188,55 @@ const RegistrationSection = props => {
       }
     } else {
       props.switchContent("Credentials are required!", false)
+    }
+  }
+
+  async function getSubscriberData(category) {
+    try {
+      const params = {
+        TableName: "globalTable",
+        Key: {
+          globalId: category,
+        },
+      }
+      await globalDb.get(params, (err, data) => {
+        console.log(err, data)
+        data.Item.modules.map(item => {
+          if (item.default) {
+            modList.push(item)
+            let temp = [...modList]
+            setModList(temp)
+          }
+        })
+        setSubscriberData(modList)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function setSubscriberData(list) {
+    try {
+      setLoading(true)
+      const params = {
+        TableName: "subscribers",
+        ExpressionAttributeNames: {
+          "#M": "modules",
+        },
+        ExpressionAttributeValues: {
+          ":ml": list
+        },
+        UpdateExpression: 'SET #M=:ml',
+        Key: {
+          phoneNumber: '+91'+phoneNumber,
+        },
+      }
+      await subscriberDb.update(params, (err, data) => {
+        console.log(err, data)
+      })
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
     }
   }
 
@@ -303,9 +391,11 @@ const RegistrationSection = props => {
             onChange={event => setRegdApplyFor(event.target.value)}
             className={loginModalStyles.selectDropDown}
           >
-            <option value="Digital Restaurant">Digital Restaurant</option>
-            <option value="Digital Rooms">Digital Rooms</option>
-            <option value="Digital Stores">Digital Stores</option>
+            {categories.map((item, id) => (
+              <option key={id} value={item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
           <label className={loginModalStyles.label}>Postal Address</label>
           <input
