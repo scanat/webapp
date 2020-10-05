@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import Header from "../components/header"
 import layoutStyles from "./layout.module.css"
 import LoginModal from "./main/loginModal"
-import BottomNavigation from './bottomNavigation'
 import Footer from "./footer"
 import Amplify from "aws-amplify"
 import config from "../config.json"
@@ -33,7 +32,6 @@ const Layout = ({ children }) => {
       {login && <LoginModal onHandleLoginModal={closeLoginModal} />}
       <main className={layoutStyles.main}>{children}</main>
       <Footer className={layoutStyles.footer} />
-      <BottomNavigation />
     </section>
   )
 }

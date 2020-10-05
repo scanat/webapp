@@ -1,7 +1,7 @@
 .head {
   position: fixed;
   width: 90%;
-  background: rgba(0, 0, 0, 0.8);
+  background: #1691898f;
   height: 44px;
   display: flex;
   align-items: center;
@@ -16,9 +16,6 @@
   width: 38px;
   cursor: pointer;
   margin-top: 2px;
-}
-.topic{
-  color: white;
 }
 
 .loginButton {
@@ -38,18 +35,16 @@
 .headerRightContainer {
   display: flex;
 }
-.dropDownParent{
-  line-height: 44px;
-}
 .dropDownParent:hover ul{
   display: block !important;
 }
 
 .headerRightContainer>li{
+  line-height: 44px;
   float: left;
   margin: 0 5px;
   font-size: 16;
-  color: white;
+  color: whitesmoke;
   position: relative;
   cursor: pointer;
 }
@@ -74,12 +69,12 @@
   line-height: 30px;
 }
 .headerRightContainer li>ul>li:hover{
-  color: #ffffff;
+  color: whitesmoke;
 }
 .headerRightContainer li>ul>li>a{
   color: black;
   cursor: pointer;
 }
 .headerRightContainer li>ul>li>a:hover{
-  color: #ffffff;
+  color: whitesmoke;
 }

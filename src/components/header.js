@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
+import { faBell, faUser, faUserCircle } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
 import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo_textless.png"
@@ -11,6 +11,7 @@ import {
   faSignOutAlt,
   faHome,
   faSignInAlt,
+  faQrcode,
 } from "@fortawesome/free-solid-svg-icons"
 
 const Header = props => {
@@ -45,17 +46,21 @@ const Header = props => {
           alt="Scan At Logo White"
         />
       </Link>
-      <h3 className={headerStyles.topic}>Scan At</h3>
 
       <ul className={headerStyles.headerRightContainer}>
         <li id="dropDownParent" className={headerStyles.dropDownParent}>
-          <FontAwesomeIcon
-            icon={isLoggedIn() ? faUserCircle : faEllipsisV}
-            style={{ width: "20px" }}
-            color="white"
-            size="lg"
-          />
-          <ul
+          <Link to={isLoggedIn() ? "/profile" : "/login" }>
+            {isLoggedIn() &&
+              getCurrentUser().name !== "undefined" &&
+              getCurrentUser().name.split(" ")[0] + " "}
+            <FontAwesomeIcon
+              icon={faUserCircle}
+              style={{ width: "20px" }}
+              color="white"
+              size="lg"
+            />
+          </Link>
+          {/* <ul
             className={headerStyles.submenu}
             style={{ display: subMenu ? "block" : "none" }}
           >
@@ -90,7 +95,27 @@ const Header = props => {
                 />
               </li>
             )}
-          </ul>
+          </ul> */}
+        </li>
+        {/* <li>
+          <Link to="/scanner">
+            <FontAwesomeIcon
+              icon={faQrcode}
+              color="whitesmoke"
+              style={{ width: "20px" }}
+              size="lg"
+            />
+          </Link>
+        </li> */}
+        <li>
+          <Link to="/notifications">
+            <FontAwesomeIcon
+              icon={faBell}
+              color="whitesmoke"
+              style={{ width: "30px" }}
+              size="lg"
+            />
+          </Link>
         </li>
       </ul>
     </header>
