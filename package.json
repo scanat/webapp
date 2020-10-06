@@ -28,6 +28,7 @@
     "gatsby-plugin-your-fonts": "0.0.1",
     "gatsby-source-filesystem": "^2.3.24",
     "gatsby-transformer-sharp": "^2.5.13",
+    "instascan": "^1.0.0",
     "prop-types": "^15.7.2",
     "pure-react-carousel": "^1.27.3",
     "react": "^16.12.0",
@@ -38,6 +39,7 @@
     "react-qr-scanner": "0.0.10",
     "react-qrcode-logo": "^2.2.1",
     "react-responsive-carousel": "^3.2.9",
+    "react-swipeable-views": "^0.13.9",
     "styled-components": "^5.1.1"
   },
   "devDependencies": {

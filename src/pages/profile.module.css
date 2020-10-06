@@ -5,6 +5,20 @@
   justify-content: center;
   margin-top: 44px;
 }
+nav {
+  width: 100%;
+  background: #169188;
+}
+nav ul {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+nav ul li {
+  line-height: 30px;
+  font-size: 0.9em;
+  color: whitesmoke;
+}
 .card {
   position: relative;
   max-width: 300px;
@@ -16,9 +30,6 @@
   -webkit-box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
   -moz-box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
   box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
-}
-.cardContainer {
-  text-align: center;
 }
 .buttonJoinUs {
   width: 60%;
@@ -34,41 +45,79 @@
   box-shadow: 1px 1px 5px 0px rgba(255, 140, 0, 0.75);
   cursor: pointer;
 }
-.detailsContainer{
+.detailsContainer {
   display: flex;
   flex: 1;
   flex-direction: column;
   -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
 }
-.detailsLabels{
+.detailsLabels {
   float: left;
   text-align: left;
   font-size: 12px;
   margin: 5px;
+  display: none;
 }
-.input{
+.input {
   border: none;
+  border-bottom: grey 2px dashed;
   background: white;
   font-size: 16px;
   float: left;
   padding: 5px;
   width: max-content;
-  border-radius: 10px;
   margin-bottom: 10px;
 }
-.button{
+.button {
   border: thistle 1px solid;
   border-radius: 5px;
   padding: 5px;
   margin: 10px;
 }
-.button:hover{
+.button:hover {
   cursor: pointer;
 }
-.editAttributeButton{
+.editAttributeButton {
   padding: 5px 5px 0 5px;
 }
-.editAttributeButton:hover{
+.editAttributeButton:hover {
   cursor: pointer;
+}
+.directoryCardContainer {
+  width: 96%;
+  padding: 8px 2%;
+  border-bottom: grey 1px dashed;
+  display: flex;
+  align-items: center;
+}
+.directoryCardContainer .logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.directoryCardContainer .content {
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  margin-left: 20px;
+}
+.directoryCardContainer .content label {
+  color: grey;
+  font-size: 0.8em;
+}
+.orderContent {
+  width: 96%;
+  padding: 8px 2%;
+  border-bottom: grey 1px dashed;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+}
+.orderContent .smallText{
+  font-size: 0.9em;
+  color: grey;
 }

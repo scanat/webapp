@@ -1,11 +1,11 @@
 .head {
   position: fixed;
-  width: 90%;
-  background: #1691898f;
+  width: 96%;
+  background: rgba(0, 0, 0, 0.75);
   height: 44px;
   display: flex;
   align-items: center;
-  padding: 0 5%;
+  padding: 0 2%;
   justify-content: space-between;
   z-index: 10;
   display: flex;
@@ -13,7 +13,7 @@
 }
 
 .logo {
-  width: 38px;
+  width: 30px;
   cursor: pointer;
   margin-top: 2px;
 }
@@ -48,33 +48,7 @@
   position: relative;
   cursor: pointer;
 }
-.headerRightContainer li>ul{
-  display: none;
-  position: absolute;
-  right: 0;
-  width: 150px;
-  background: #90cac6;
-  border-radius: 5px;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-}
-.headerRightContainer li>ul>li{
-  width: 90%;
-  float: left;
-  text-align: right;
-  color: black;
-  margin: 5px 5%;
-  cursor: pointer;
-  line-height: 30px;
-}
-.headerRightContainer li>ul>li:hover{
+.headerRightContainer li a{
   color: whitesmoke;
-}
-.headerRightContainer li>ul>li>a{
-  color: black;
   cursor: pointer;
-}
-.headerRightContainer li>ul>li>a:hover{
-  color: whitesmoke;
 }
