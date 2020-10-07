@@ -10,30 +10,24 @@ import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo_textless.png"
 import { getCurrentUser, logout, isLoggedIn } from "../utils/auth"
 import { Auth } from "aws-amplify"
-import {
-  faEllipsisV,
-  faSignOutAlt,
-  faHome,
-  faSignInAlt,
-  faQrcode,
-} from "@fortawesome/free-solid-svg-icons"
 
 const Header = props => {
-  const [subMenu, setSubMenu] = useState(false)
-  const [user, setUser] = useState({})
+  const [name, setName] = useState("")
 
   useEffect(() => {
-    setUser()
-  }, [getCurrentUser()])
+    isLoggedIn() &&
+      typeof getCurrentUser().name !== "undefined" &&
+      setName(getCurrentUser().name)
+  }, [])
 
-  const toggleSubmenu = () => {
-    subMenu ? setSubMenu(false) : setSubMenu(true)
-  }
-
-  const logOut = async () => {
-    await Auth.signOut()
-    navigate("/")
-  }
+  useEffect(() => {
+    loged()
+    async function loged() {
+      try {
+        await Auth.currentAuthenticatedUser()
+      } catch (error) {}
+    }
+  }, [])
 
   return (
     <header className={headerStyles.head}>
@@ -57,10 +51,8 @@ const Header = props => {
           </Link>
         </li>
         <li id="dropDownParent" className={headerStyles.dropDownParent}>
-          <Link to={isLoggedIn() ? "/profile" : "/login"}>
-            {isLoggedIn() &&
-              getCurrentUser().name !== "undefined" &&
-              getCurrentUser().name.split(" ")[0] + " "}
+          <Link to={isLoggedIn() ? "/profile/" : "/login/"}>
+            {name.split(" ")[0] + " "}
             <FontAwesomeIcon
               icon={faUserCircle}
               style={{ width: "30px" }}

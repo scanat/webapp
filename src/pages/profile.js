@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
 import profileStyles from "./profile.module.css"
 import Layout from "../components/layout"
-import { faUserEdit } from "@fortawesome/free-solid-svg-icons"
+import { faSignOutAlt, faUserEdit } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faKey, faPenAlt } from "@fortawesome/free-solid-svg-icons"
 import { navigate, useStaticQuery } from "gatsby"
 import { Auth } from "aws-amplify"
-import { getCurrentUser } from "../utils/auth"
+import { getCurrentUser, logout } from "../utils/auth"
 import SnackBar from "../components/snackBar"
 import SwipeableViews from "react-swipeable-views"
 import tmpImage from "../images/stores.png"
@@ -195,6 +195,15 @@ const UserDetails = props => {
     }
   }
 
+  const logoutHandler = async () => {
+    const res = await Auth.signOut()
+    console.log(res)
+    logout(logger)
+    function logger() {
+      navigate("/")
+    }
+  }
+
   return (
     <section className={profileStyles.detailsContainer}>
       <label className={profileStyles.detailsLabels}>Name</label>
@@ -223,14 +232,16 @@ const UserDetails = props => {
       <label className={profileStyles.detailsLabels}>Postal Address</label>
       <input
         className={profileStyles.input}
-        placeholder="Address Line 1"
-        value={getCurrentUser()["custom:address_line_1"]}
+        placeholder={
+          getCurrentUser()["custom:address_line_1"] === null
+            ? "Address Line 1"
+            : getCurrentUser()["custom:address_line_1"]
+        }
         onChange={event => setAddressLine1(event.target.value)}
       />
       <input
         className={profileStyles.input}
-        placeholder="Address Line 2"
-        value={getCurrentUser()["custom:address_line_2"]}
+        placeholder={getCurrentUser()["custom:address_line_2"]}
         onChange={event => setAddressLine2(event.target.value)}
       />
       <label className={profileStyles.detailsLabels}>
@@ -278,6 +289,14 @@ const UserDetails = props => {
           style={{ marginRight: "5px" }}
         />
         CHANGE PASSWORD
+      </button>
+
+      <button
+        type="button"
+        onClick={logoutHandler}
+        className={profileStyles.logoutButton}
+      >
+        Logout
       </button>
     </section>
   )

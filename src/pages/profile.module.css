@@ -121,3 +121,12 @@ nav ul li {
   font-size: 0.9em;
   color: grey;
 }
+.logoutButton{
+  border: none;
+  background: #169188;
+  border-radius: 15px;
+  padding: 5px 20px;
+  font-size: 1em;
+  color: whitesmoke;
+  margin-top: 40px;
+}

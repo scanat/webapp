@@ -174,6 +174,7 @@ const RegistrationSection = props => {
             setResultContent({ msg: "User Created", status: true })
           } catch (error) {
             setResultContent(error.message)
+            console.log(error)
           }
         } else {
           setResultContent({ msg: "Password miss-match", status: false })
