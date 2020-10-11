@@ -5,9 +5,9 @@ import { graphql } from "gatsby"
 import { API, graphqlOperation } from "aws-amplify"
 import * as subscriptions from "../graphql/subscriptions"
 import * as queries from "../graphql/queries"
-import AWSConfig from "../aws-exports"
+import {awsNotificationConfig} from "../aws-exports"
 
-API.configure(AWSConfig)
+API.configure(awsNotificationConfig)
 
 const Notifications = ({ data }) => {
   const [notificationsList, setNotificationsList] = useState([])
