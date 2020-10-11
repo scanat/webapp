@@ -1,0 +1,7 @@
+type Todo @model {
+  id: ID!
+  topic: String!
+  description: String!
+  date: AWSDate!
+  status: Boolean!
+}

@@ -5,7 +5,7 @@ module.exports = {
   siteMetadata: {
     title: `Scan At`,
     description: `A dynamic contactless automation system for food serving organizations or businesses.`,
-    author: `omkarDeshmukh@scanat`
+    author: `omkarDeshmukh@scanat`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -18,7 +18,7 @@ module.exports = {
       options: {
         name: `backgrounds`,
         path: `${__dirname}/src/images/backgrounds`,
-      }
+      },
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
@@ -35,15 +35,24 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-web-font-loader',
+      resolve: "gatsby-plugin-web-font-loader",
       options: {
         google: {
-          families: ['Roboto']
+          families: ["Roboto"],
+        },
+      },
+    },
+    {
+      resolve: "gatsby-source-graphql",
+      options: {
+        typeName: "Todo",
+        fieldName: "notifications",
+        url: "https://soivk57gc5ehbn7yjgfcesrf6q.appsync-api.ap-south-1.amazonaws.com/graphql",
+        headers: {
+          'x-api-key': "da2-xhfvgcqfi5bbpoweyg2dzcyrza"
         }
       }
-    }
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
+    },
     // `gatsby-plugin-offline`,
   ],
 }
