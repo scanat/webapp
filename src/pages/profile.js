@@ -7,7 +7,6 @@ import { faKey, faPenAlt } from "@fortawesome/free-solid-svg-icons"
 import { navigate, useStaticQuery } from "gatsby"
 import { Auth } from "aws-amplify"
 import { getCurrentUser, logout } from "../utils/auth"
-import SnackBar from "../components/snackBar"
 import SwipeableViews from "react-swipeable-views"
 import tmpImage from "../images/stores.png"
 
