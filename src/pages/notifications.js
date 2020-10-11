@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import notificationStyles from "./notifications.module.css"
 import Layout from "../components/layout"
-import { graphql } from "gatsby"
 import { API, graphqlOperation } from "aws-amplify"
 import * as subscriptions from "../graphql/subscriptions"
 import * as queries from "../graphql/queries"

@@ -102,6 +102,7 @@ const Explore = () => {
           <FontAwesomeIcon
             icon={faSearch}
             color="grey"
+            size="lg"
             className={exploreStyles.searchIcon}
             onClick={searchItems}
           />

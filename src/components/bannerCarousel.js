@@ -1,5 +1,4 @@
 import React from "react"
-import bannerCStyles from "./bannerCarousel.module.css"
 import BackgroundSlider from "gatsby-image-background-slider"
 import { graphql, useStaticQuery } from "gatsby"
 
