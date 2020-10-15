@@ -45,11 +45,11 @@ module.exports = {
     {
       resolve: "gatsby-source-graphql",
       options: {
-        typeName: "Todo",
-        fieldName: "notifications",
-        url: "https://soivk57gc5ehbn7yjgfcesrf6q.appsync-api.ap-south-1.amazonaws.com/graphql",
+        typeName: "Subscriber",
+        fieldName: "subscriber",
+        url: "https://hyfppjcmhnekdbhugty7cdcsjm.appsync-api.ap-south-1.amazonaws.com/graphql",
         headers: {
-          'x-api-key': "da2-xhfvgcqfi5bbpoweyg2dzcyrza"
+          "x-api-key": "da2-ikygy37qvjhhphetapy6jfsrr4"
         }
       }
     },

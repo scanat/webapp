@@ -4,9 +4,9 @@ import Layout from "../components/layout"
 import { API, graphqlOperation } from "aws-amplify"
 import * as subscriptions from "../graphql/subscriptions"
 import * as queries from "../graphql/queries"
-import { awsNotificationConfig } from "../aws-exports"
+import { awsmobile } from "../aws-exports"
 
-API.configure(awsNotificationConfig)
+API.configure(awsmobile)
 
 const Notifications = () => {
   const [notificationsList, setNotificationsList] = useState([])
@@ -51,7 +51,7 @@ const Notifications = () => {
   return (
     <Layout>
       {notificationsList.map((item, id) => (
-        <section key={id} className={notificationStyles.cardContainer}>
+        <section key={item.id} className={notificationStyles.cardContainer}>
           <section className={notificationStyles.topicSpace}>
             <h1>{item.topic}</h1>
           </section>

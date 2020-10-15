@@ -1,7 +1,6 @@
-type Todo @model {
+type Notifications @model {
   id: ID!
-  topic: String!
-  description: String!
-  date: AWSDate!
-  status: Boolean!
+  topic: String
+  description: String
+  status: Boolean
 }

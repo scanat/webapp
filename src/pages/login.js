@@ -2,17 +2,21 @@ import React, { useEffect, useState, useRef } from "react"
 import loginStyles from "./login.module.css"
 import Layout from "../components/layout"
 import { isLoggedIn, setUser } from "../utils/auth"
-import { navigate, useStaticQuery } from "gatsby"
-import { Auth } from "aws-amplify"
+import { graphql, navigate, useStaticQuery } from "gatsby"
+import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
+import awsmobile from "../aws-exports"
 
-const LoginPage = () => {
+Amplify.configure(awsmobile)
+
+const LoginPage = ({ data }) => {
   const [panel, setPanel] = useState("login")
   const layoutRef = useRef(null)
   const resetRef = useRef(null)
 
   useEffect(() => {
     isLoggedIn() && navigate("/")
+    console.log(data.subscriber)
   }, [])
 
   const switchPanel = panelId => {
@@ -20,26 +24,30 @@ const LoginPage = () => {
     setPanel(panelId)
     const animeLogin = Anime({
       targets: layoutRef.current,
-      duration: 2000,
+      duration: 800,
       easing: "easeInOutCubic",
       marginLeft: [0, "-100%"],
       autoplay: false,
+      direction:
+        panelId === "login" && prevPanel === "reg" ? "reverse" : "forwards",
     })
     const animeReset = Anime({
       targets: resetRef.current,
-      duration: 2000,
+      duration: 800,
       easing: "easeInOutCubic",
       top: ["100vh", 0],
       autoplay: false,
+      direction:
+        panelId === "login" && prevPanel === "reset" ? "reverse" : "forwards",
     })
     if (prevPanel === "login" && panelId === "reg") {
       animeLogin.play()
     } else if (prevPanel === "reg" && panelId === "login") {
-      animeLogin.reverse()
+      animeLogin.play()
     } else if (prevPanel === "login" && panelId === "reset") {
       animeReset.play()
     } else if (prevPanel === "reset" && panelId === "login") {
-      animeReset.reverse()
+      animeReset.play()
     }
   }
 
@@ -395,3 +403,30 @@ const ResetSection = props => {
     </section>
   )
 }
+
+// API.configure({
+//   aws_appsync_graphqlEndpoint:
+//     "https://hyfppjcmhnekdbhugty7cdcsjm.appsync-api.ap-south-1.amazonaws.com/graphql",
+//   aws_appsync_region: "ap-south-1",
+//   aws_appsync_authenticationType: "API_KEY",
+//   aws_appsync_apiKey: "da2-ikygy37qvjhhphetapy6jfsrr4",
+// })
+// export const checkSubscriber = /* GraphQL */ `
+//   query GetSubscriber($id: ID!) {
+//     getSubscriber(id: $id) {
+//       id
+//     }
+//   }
+// `
+
+export const query = graphql`
+  query GetSubscribers {
+    subscriber {
+      listSubscribers {
+        items {
+          id
+        }
+      }
+    }
+  }
+`

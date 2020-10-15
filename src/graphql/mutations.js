@@ -1,48 +1,45 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createTodo = /* GraphQL */ `
-  mutation CreateTodo(
-    $input: CreateTodoInput!
-    $condition: ModelTodoConditionInput
+export const createNotifications = /* GraphQL */ `
+  mutation CreateNotifications(
+    $input: CreateNotificationsInput!
+    $condition: ModelNotificationsConditionInput
   ) {
-    createTodo(input: $input, condition: $condition) {
+    createNotifications(input: $input, condition: $condition) {
       id
       topic
       description
-      date
       status
       createdAt
       updatedAt
     }
   }
 `;
-export const updateTodo = /* GraphQL */ `
-  mutation UpdateTodo(
-    $input: UpdateTodoInput!
-    $condition: ModelTodoConditionInput
+export const updateNotifications = /* GraphQL */ `
+  mutation UpdateNotifications(
+    $input: UpdateNotificationsInput!
+    $condition: ModelNotificationsConditionInput
   ) {
-    updateTodo(input: $input, condition: $condition) {
+    updateNotifications(input: $input, condition: $condition) {
       id
       topic
       description
-      date
       status
       createdAt
       updatedAt
     }
   }
 `;
-export const deleteTodo = /* GraphQL */ `
-  mutation DeleteTodo(
-    $input: DeleteTodoInput!
-    $condition: ModelTodoConditionInput
+export const deleteNotifications = /* GraphQL */ `
+  mutation DeleteNotifications(
+    $input: DeleteNotificationsInput!
+    $condition: ModelNotificationsConditionInput
   ) {
-    deleteTodo(input: $input, condition: $condition) {
+    deleteNotifications(input: $input, condition: $condition) {
       id
       topic
       description
-      date
       status
       createdAt
       updatedAt
