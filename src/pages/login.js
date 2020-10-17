@@ -35,6 +35,7 @@ const LoginPage = () => {
         bullets={false}
         selected={panel}
         organicArrows={false}
+        mobileTouch={false}
       >
         <div>
           <ResetSection switchPanel={panelId => switchPanel(panelId)} />
