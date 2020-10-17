@@ -1,0 +1,30 @@
+type Subscriber @model {
+  id: String!
+  group: String
+  name: String
+  orgName: String
+  phoneNumber: String
+  email: String
+  address1: String
+  address2: String
+  postalCode: String
+  category: String
+  logo: String
+  employees: [Employees!]
+}
+
+type Employees @model {
+  id: String!
+  name: String
+  access: [Access!]
+}
+
+type Access @model {
+  id: String!
+  name: String
+}
+
+type SubscriberPage @model {
+  id: String!
+  liveSpace: String
+}
