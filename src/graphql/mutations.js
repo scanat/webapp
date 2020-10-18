@@ -18,6 +18,10 @@ export const createSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -52,6 +56,10 @@ export const updateSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -86,6 +94,10 @@ export const deleteSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -233,6 +245,72 @@ export const deleteSubscriberPage = /* GraphQL */ `
     deleteSubscriberPage(input: $input, condition: $condition) {
       id
       liveSpace
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createGlobalTable = /* GraphQL */ `
+  mutation CreateGlobalTable(
+    $input: CreateGlobalTableInput!
+    $condition: ModelGlobalTableConditionInput
+  ) {
+    createGlobalTable(input: $input, condition: $condition) {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateGlobalTable = /* GraphQL */ `
+  mutation UpdateGlobalTable(
+    $input: UpdateGlobalTableInput!
+    $condition: ModelGlobalTableConditionInput
+  ) {
+    updateGlobalTable(input: $input, condition: $condition) {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteGlobalTable = /* GraphQL */ `
+  mutation DeleteGlobalTable(
+    $input: DeleteGlobalTableInput!
+    $condition: ModelGlobalTableConditionInput
+  ) {
+    deleteGlobalTable(input: $input, condition: $condition) {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
       createdAt
       updatedAt
     }

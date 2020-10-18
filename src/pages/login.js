@@ -4,15 +4,14 @@ import Layout from "../components/layout"
 import { getCurrentUser, isLoggedIn, setUser } from "../utils/auth"
 import { navigate } from "gatsby"
 import { createSubscriber, createSubscriberPage } from "../graphql/mutations"
-import { checkSubscriber } from "../graphql/queries"
 import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
-import awsmobile from "../aws-exports"
 import OtpInput from "react-otp-input"
 import AwesomeSlider from "react-awesome-slider"
 import "react-awesome-slider/dist/styles.css"
 import { faDharmachakra } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
 
@@ -44,14 +43,10 @@ const LoginPage = () => {
           <LoginSection switchPanel={panelId => switchPanel(panelId)} />
         </div>
         <div>
-          <RegistrationSection
-            switchPanel={panelId => switchPanel(panelId)}
-          />
+          <RegistrationSection switchPanel={panelId => switchPanel(panelId)} />
         </div>
         <div>
-          <OtpSection
-            switchPanel={panelId => switchPanel(panelId)}
-          />
+          <OtpSection switchPanel={panelId => switchPanel(panelId)} />
         </div>
         <div>
           <CategorySelection
@@ -191,8 +186,8 @@ const RegistrationSection = props => {
             })
             console.log(user)
             user && props.switchPanel(3)
-            localStorage.setItem('username', username)
-            localStorage.setItem('password', password)
+            localStorage.setItem("username", username)
+            localStorage.setItem("password", password)
             setResultContent({ msg: "User Created", status: true })
           } catch (error) {
             setResultContent(error.message)
@@ -439,11 +434,14 @@ const OtpSection = props => {
 
   async function confirmOtp() {
     try {
-      const user = await Auth.confirmSignUp(localStorage.getItem('username'), otp)
+      const user = await Auth.confirmSignUp(
+        localStorage.getItem("username"),
+        otp
+      )
       if (user) {
         const userLogin = await Auth.signIn(
-          localStorage.getItem('username'),
-          localStorage.getItem('password')
+          localStorage.getItem("username"),
+          localStorage.getItem("password")
         )
         userLogin && setUser(userLogin)
         userLogin && props.switchPanel(4)
@@ -468,7 +466,7 @@ const OtpSection = props => {
         <label
           style={{ margin: "10px 0", fontWeight: "lighter", fontSize: "0.8em" }}
         >
-          {localStorage.getItem('username')}
+          {localStorage.getItem("username")}
         </label>
       </h3>
       <OtpInput
@@ -660,3 +658,11 @@ const PageIdSelect = props => {
     </section>
   )
 }
+
+export const checkSubscriber = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      id
+    }
+  }
+`

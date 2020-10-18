@@ -2,15 +2,6 @@
   color: #169188;
   text-align: center;
 }
-.banner {
-  position: relative;
-  width: 100%;
-  max-height: 50vh;
-  overflow: hidden;
-}
-.banner > img {
-  width: 100%;
-}
 .logoContainer {
   position: relative;
   float: left;
@@ -182,6 +173,7 @@
   width: 100px;
   margin: 10px 5%;
 }
+
 .socialLinksContainer {
   width: 100%;
   clear: both;
@@ -192,22 +184,7 @@
   justify-content: center;
   align-items: center;
 }
-.socialLinkInputHolder {
-  margin: 20px 0;
-  border: grey 1px solid;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  max-width: 400px;
-  margin: 10px auto;
-}
-.socialTextInput{
-  border: grey 2px dashed;
-  margin: 0 10px;
-  padding: 5px;
-}
+
 .socialLinksContainer a {
   width: 90%;
   margin: 10px 5%;
@@ -218,21 +195,6 @@
 }
 .shareText {
   font-size: 12px;
-}
-.editHolder {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: whitesmoke;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .editDpHolder {
   width: 30px;
@@ -336,7 +298,7 @@
   text-align: center;
   font-size: 14px;
 }
-.closeTopRight{
+.closeTopRight {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -388,12 +350,13 @@
   border: grey 1px dashed;
   padding: 5px;
 }
-.smallDesc{
+.smallDesc {
+  width: 90%;
   letter-spacing: 1px;
   text-align: center;
-  margin: 20px 0;
+  margin-left: 5%;
 }
-.ambienceImage{
+.ambienceImage {
   width: 100%;
 }
 .ambienceImageCardContainer {
@@ -404,7 +367,7 @@
   position: relative;
   border: grey 2px dashed;
 }
-.ambienceInstructions{
+.ambienceInstructions {
   width: 100%;
   height: 100%;
   display: flex;

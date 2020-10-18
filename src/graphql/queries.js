@@ -15,6 +15,10 @@ export const getSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -29,13 +33,6 @@ export const getSubscriber = /* GraphQL */ `
       }
       createdAt
       updatedAt
-    }
-  }
-`;
-export const checkSubscriber = /* GraphQL */ `
-  query GetSubscriber($id: ID!) {
-    getSubscriber(id: $id) {
-      id
     }
   }
 `;
@@ -58,6 +55,10 @@ export const listSubscribers = /* GraphQL */ `
         postalCode
         category
         logo
+        twitter
+        facebook
+        pinterest
+        instagram
         employees {
           id
           name
@@ -157,6 +158,51 @@ export const listSubscriberPages = /* GraphQL */ `
       items {
         id
         liveSpace
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getGlobalTable = /* GraphQL */ `
+  query GetGlobalTable($id: ID!) {
+    getGlobalTable(id: $id) {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listGlobalTables = /* GraphQL */ `
+  query ListGlobalTables(
+    $filter: ModelGlobalTableFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listGlobalTables(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        categories {
+          name
+          price
+        }
+        modules {
+          name
+          description
+          default
+          price
+        }
         createdAt
         updatedAt
       }

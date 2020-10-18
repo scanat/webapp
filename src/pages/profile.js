@@ -6,16 +6,12 @@ import UserDetails from "../components/profile/userDetails"
 import { navigate } from "gatsby"
 import AWS from "aws-sdk"
 import Modules from "../components/profile/modules"
+import Amplify, { API, graphqlOperation } from "aws-amplify"
+import awsmobile from "../aws-exports"
 
-const subscriberDb = new AWS.DynamoDB.DocumentClient({
-  region: "ap-south-1",
-  apiVersion: "2012-08-10",
-  accessKeyId: process.env.GATSBY_SUBSCRIBERPAGE_DB_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
-})
+Amplify.configure(awsmobile)
 
 export default function Profile() {
-  const [user, setUser] = useState({})
   const [portalContent, setPortalContent] = useState()
   const [refreshModules, setRefreshModules] = useState([])
 
@@ -23,23 +19,20 @@ export default function Profile() {
     fetchAllModules()
   }, [refreshModules])
 
-  useEffect(() => {
-    setUser()
-  }, [getCurrentUser()])
-
   async function fetchAllModules() {
     try {
-      const params = {
-        TableName: "subscribers",
-        Key: {
-          phoneNumber: getCurrentUser().phone_number,
-        },
-        AttributesToGet: ["modules"],
+      const mods = await API.graphql(
+        graphqlOperation(getCategory, {
+          id: getCurrentUser()["custom:page_id"],
+        })
+      )
+      if (mods) {
+        const modules = await API.graphql(
+          graphqlOperation(getModules, { id: mods.data.getSubscriber.category })
+        )
+
+        setRefreshModules(modules.data.getGlobalTable.modules)
       }
-      await subscriberDb.get(params, (err, data) => {
-        data && setRefreshModules(data.Item.modules)
-        console.log(err, data)
-      })
     } catch (error) {
       console.log(error)
     }
@@ -91,7 +84,8 @@ export default function Profile() {
     card === "Business Details" && setPortalContent(card)
     card === "My Modules" && setPortalContent(card)
     card === "Portfolio" && navigate("/pro/portfolio")
-    card === "Products" && navigate("/pro/components/card-input-layouts/category-basic")
+    card === "Products" &&
+      navigate("/pro/components/card-input-layouts/category-basic")
     card === "Live Orders" && navigate("/pro/orders")
     card === "QR Codes" && navigate("/pro/qrCodes")
     card === "Employee Management" && navigate("/pro/employeeManagement")
@@ -111,66 +105,12 @@ export default function Profile() {
                 <h1 className={profileStyles.cardTopic}>
                   {getCurrentUser()["custom:category"]} {item.name}
                 </h1>
+                <label style={{ fontSize: "0.8em", margin: 5, color: "grey" }}>
+                  {item.description}
+                </label>
               </section>
             </ProfileCard>
           ))}
-          {/* <ProfileCard>
-            <section
-              className={profileStyles.cardChild}
-              onClick={() =>
-                navigate("/pro/components/card-input-layouts/category-basic")
-              }
-            >
-              <h1 className={profileStyles.cardTopic}>
-                {getCurrentUser()["custom:category"]} Products
-              </h1>
-            </section>
-          </ProfileCard>
-          <ProfileCard>
-            <section
-              className={profileStyles.cardChild}
-              onClick={navigateToLive}
-            >
-              <h1 className={profileStyles.cardTopic}>
-                {getCurrentUser()["custom:category"]} Live
-              </h1>
-            </section>
-          </ProfileCard>
-          <ProfileCard>
-            <section
-              className={profileStyles.cardChild}
-              onClick={() => navigate("/pro/qrCodes")}
-            >
-              <h1 className={profileStyles.cardTopic}>
-                {getCurrentUser()["custom:category"]} QR Codes
-              </h1>
-            </section>
-          </ProfileCard>
-          <ProfileCard>
-            <section className={profileStyles.cardChild}>
-              <h1 className={profileStyles.cardTopic}>
-                {getCurrentUser()["custom:category"]} Live Space
-              </h1>
-            </section>
-          </ProfileCard>
-          <ProfileCard>
-            <section
-              className={profileStyles.cardChild}
-              onClick={() => navigate("/pro/orders")}
-            >
-              <h1 className={profileStyles.cardTopic}>
-                {getCurrentUser()["custom:category"]} Live Orders
-              </h1>
-            </section>
-          </ProfileCard>
-          <ProfileCard>
-            <section
-              className={profileStyles.cardChild}
-              onClick={() => navigate("/pro/employeeManagement")}
-            >
-              <h1 className={profileStyles.cardTopic}>Employee Management</h1>
-            </section>
-          </ProfileCard> */}
         </section>
       </section>
 
@@ -182,3 +122,23 @@ export default function Profile() {
 const ProfileCard = ({ children }) => {
   return <section className={profileStyles.card}>{children}</section>
 }
+
+export const getCategory = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      category
+    }
+  }
+`;
+export const getModules = /* GraphQL */ `
+  query GetGlobalTable($id: ID!) {
+    getGlobalTable(id: $id) {
+      modules {
+        name
+        description
+        default
+        price
+      }
+    }
+  }
+`;

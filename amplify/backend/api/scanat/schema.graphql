@@ -10,6 +10,10 @@ type Subscriber @model {
   postalCode: String
   category: String
   logo: String
+  twitter: String
+  facebook: String
+  pinterest: String
+  instagram: String
   employees: [Employees!]
 }
 
@@ -27,4 +31,22 @@ type Access @model {
 type SubscriberPage @model {
   id: String!
   liveSpace: String
+}
+
+type GlobalTable @model {
+  id: String!
+  categories: [Category!]
+  modules: [Module!]
+}
+
+type Module {
+  name: String
+  description: String
+  default: Boolean
+  price: String
+}
+
+type Category {
+  name: String
+  price: String
 }

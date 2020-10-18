@@ -15,6 +15,10 @@ export const onCreateSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -46,6 +50,10 @@ export const onUpdateSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -77,6 +85,10 @@ export const onDeleteSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      twitter
+      facebook
+      pinterest
+      instagram
       employees {
         id
         name
@@ -197,6 +209,63 @@ export const onDeleteSubscriberPage = /* GraphQL */ `
     onDeleteSubscriberPage {
       id
       liveSpace
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateGlobalTable = /* GraphQL */ `
+  subscription OnCreateGlobalTable {
+    onCreateGlobalTable {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateGlobalTable = /* GraphQL */ `
+  subscription OnUpdateGlobalTable {
+    onUpdateGlobalTable {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteGlobalTable = /* GraphQL */ `
+  subscription OnDeleteGlobalTable {
+    onDeleteGlobalTable {
+      id
+      categories {
+        name
+        price
+      }
+      modules {
+        name
+        description
+        default
+        price
+      }
       createdAt
       updatedAt
     }
