@@ -18,6 +18,7 @@ export const onCreateSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      banner
       twitter
       facebook
       pinterest
@@ -56,6 +57,7 @@ export const onUpdateSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      banner
       twitter
       facebook
       pinterest
@@ -94,6 +96,7 @@ export const onDeleteSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      banner
       twitter
       facebook
       pinterest

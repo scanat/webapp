@@ -35,6 +35,7 @@ import Loader from "../../components/loader"
 import { API, Auth, graphqlOperation } from "aws-amplify"
 import Banner from "../../components/portfolio/banner"
 import SocialPlatform from "../../components/portfolio/socialPlatform"
+import Logo from "../../components/portfolio/logo"
 
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
@@ -681,138 +682,6 @@ const PageId = () => {
           : pageId}
       </label>
     </section>
-  )
-}
-
-const Logo = props => {
-  const [logoData, setLogoData] = useState(null)
-  const uploadLogoInput = useRef(null)
-  const logoForm = useRef(null)
-  const [imageUrl, setImageUrl] = useState("")
-
-  useEffect(() => {
-    getImageName()
-  }, [])
-
-  async function getImageName() {
-    props.loadHandler(true)
-    try {
-      // const params = {
-      //   TableName: "subscriberPage",
-      //   Key: {
-      //     pageId: getCurrentUser()["custom:pageId"],
-      //   },
-      // }
-      // await subscriberPageDb.get(params, (err, data) => {
-      //   getImage(data.Item.portfolioLogo)
-      //   props.loadHandler(false)
-      // })
-    } catch (error) {
-      props.loadHandler(false)
-      console.log(error)
-    }
-  }
-
-  async function getImage(fileName) {
-    props.loadHandler(true)
-    try {
-      const paramsGet = {
-        Bucket: "subscriber-media",
-        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${fileName}`,
-      }
-
-      await subscriberPageS3.getObject(paramsGet, (err, data) => {
-        if (data) {
-          setLogoData(data.Body)
-          props.loadHandler(false)
-        } else {
-          props.loadHandler(false)
-        }
-      })
-    } catch (error) {
-      props.loadHandler(false)
-    }
-  }
-
-  const selectImage = async e => {
-    props.loadHandler(true)
-    const selectedFile = e.target.files[0]
-    const reader = new FileReader(selectedFile)
-    reader.readAsDataURL(selectedFile)
-    reader.onload = () => {
-      setImageUrl(reader.result)
-      // setFile(selectedFile)
-    }
-
-    const params = {
-      TableName: "subscriberPage",
-      ExpressionAttributeNames: {
-        "#PL": "portfolioLogo",
-      },
-      ExpressionAttributeValues: {
-        ":l": selectedFile["name"],
-      },
-      ReturnValues: "ALL_NEW",
-      Key: {
-        pageId: getCurrentUser()["custom:pageId"],
-      },
-      UpdateExpression: "SET #PL = :l",
-    }
-    await subscriberPageDb.update(params, (err, data) => {
-      data && uploadImage(selectedFile)
-      props.loadHandler(false)
-    })
-  }
-
-  const uploadImage = async selectedFile => {
-    try {
-      props.loadHandler(true)
-      const params = {
-        Bucket: "subscriber-media",
-        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${
-          selectedFile["name"]
-        }`,
-        Body: imageUrl,
-      }
-
-      await subscriberPageS3.upload(params, (err, data) => {
-        props.loadHandler(false)
-        data && getImageName()
-      })
-    } catch (error) {
-      props.loadHandler(false)
-      console.log(error)
-    }
-  }
-
-  return (
-    <>
-      <section className={portfolioStyles.logoContainer}>
-        {logoData === null ? (
-          <label className={portfolioStyles.logoText}>
-            {getCurrentUser().name.substring(0, 2)}
-          </label>
-        ) : (
-          <img src={logoData} alt="Organization Logo" />
-        )}
-      </section>
-      <section
-        className={portfolioStyles.editDpHolder}
-        onClick={() => uploadLogoInput.current.click()}
-      >
-        <FontAwesomeIcon icon={faCamera} size="1x" color="#169188" />
-        <form ref={logoForm} hidden>
-          <input
-            ref={uploadLogoInput}
-            id="itemId"
-            type="file"
-            onChange={selectImage}
-            hidden
-          />
-          <button type="submit"></button>
-        </form>
-      </section>
-    </>
   )
 }
 

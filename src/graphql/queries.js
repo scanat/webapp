@@ -18,6 +18,7 @@ export const getSubscriber = /* GraphQL */ `
       postalCode
       category
       logo
+      banner
       twitter
       facebook
       pinterest
@@ -61,6 +62,7 @@ export const listSubscribers = /* GraphQL */ `
         postalCode
         category
         logo
+        banner
         twitter
         facebook
         pinterest

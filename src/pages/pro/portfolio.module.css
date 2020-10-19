@@ -2,26 +2,6 @@
   color: #169188;
   text-align: center;
 }
-.logoContainer {
-  position: relative;
-  float: left;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 4px whitesmoke solid;
-  overflow: hidden;
-  margin: -50px 0 0 5%;
-  background: #169188;
-  z-index: 2;
-}
-.logoText {
-  font-size: 2.4em;
-  color: whitesmoke;
-  text-transform: uppercase;
-}
 .liveSpaceContainer {
   position: relative;
   width: 100%;
@@ -225,21 +205,6 @@
 }
 .shareText {
   font-size: 12px;
-}
-.editDpHolder {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: whitesmoke;
-  z-index: 2;
-  position: relative;
-  transform: translate(-25px, 10px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .orgTitle {
   clear: both;

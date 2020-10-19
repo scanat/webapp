@@ -13,6 +13,7 @@ type Subscriber @model {
   postalCode: String
   category: String
   logo: String
+  banner: String
   twitter: String
   facebook: String
   pinterest: String
