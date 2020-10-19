@@ -27,13 +27,12 @@ import {
   faTwitter,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
-import { Link, graphql, useStaticQuery } from "gatsby"
+import { Link } from "gatsby"
 import config from "../../config.json"
 import axios from "axios"
-import { faLightbulb, faWindowClose } from "@fortawesome/free-regular-svg-icons"
+import { faWindowClose } from "@fortawesome/free-regular-svg-icons"
 import Loader from "../../components/loader"
 import { API, Auth, graphqlOperation } from "aws-amplify"
-import { getProtfolioSubscriber, getSubscriber } from "../../graphql/queries"
 import Banner from "../../components/portfolio/banner"
 import SocialPlatform from "../../components/portfolio/socialPlatform"
 
@@ -54,7 +53,12 @@ const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
 const Portfolio = () => {
   const [loading, setLoading] = useState(false)
   const [subscriberData, setSubscriberData] = useState({})
-  const val = getCurrentUser()["custom:page_id"]
+  const address1Ref = useRef("")
+  const address2Ref = useRef("")
+  const cityRef = useRef("")
+  const stateRef = useRef("")
+  const postalCodeRef = useRef("")
+  const aboutRef = useRef("")
 
   useEffect(() => {
     getSubscriberPageData()
@@ -68,6 +72,56 @@ const Portfolio = () => {
         })
       )
       setSubscriberData(subData.data.getSubscriber)
+      address1Ref.current.value = subData.data.getSubscriber.address1
+      address2Ref.current.value = subData.data.getSubscriber.address2
+      cityRef.current.value = subData.data.getSubscriber.city
+      stateRef.current.value = subData.data.getSubscriber.state
+      postalCodeRef.current.value = subData.data.getSubscriber.postalCode
+      aboutRef.current.value = subData.data.getSubscriber.about
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function updateAddress() {
+    try {
+      const addressData = await API.graphql(
+        graphqlOperation(updateSubscriberAddress, {
+          input: {
+            id: getCurrentUser()['custom:page_id'],
+            address1: address1Ref.current.value,
+            address2: address2Ref.current.value,
+            city: cityRef.current.value,
+            state: stateRef.current.value,
+            postalCode: postalCodeRef.current.value,
+          },
+        })
+      )
+      let tempData = subscriberData
+      tempData.address1 = addressData.data.updateSubscriber.address1
+      tempData.address2 = addressData.data.updateSubscriber.address1
+      tempData.city = addressData.data.updateSubscriber.city
+      tempData.state = addressData.data.updateSubscriber.state
+      tempData.postalCode = addressData.data.updateSubscriber.postalCode
+      setSubscriberData(tempData)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function updateAbout() {
+    try {
+      const aboutData = await API.graphql(
+        graphqlOperation(updateSubscriberAbout, {
+          input: {
+            id: getCurrentUser()['custom:page_id'],
+            about: aboutRef.current.value,
+          },
+        })
+      )
+      let tempData = subscriberData
+      tempData.about = aboutData.data.updateSubscriber.about
+      setSubscriberData(tempData)
     } catch (error) {
       console.log(error)
     }
@@ -113,9 +167,13 @@ const Portfolio = () => {
           Live Accomodation{" "}
           <label className={portfolioStyles.liveSpaceNumber}>02</label>
         </label>
-        {/* <a href={`https://www.scanat.in${getCurrentUser().website}`}> */}
-        <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
-        {/* </a> */}
+        <a
+          href={`https://www.scanat.in/portfolio&id=${
+            getCurrentUser()["custom:page_id"]
+          }`}
+        >
+          <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
+        </a>
       </section>
 
       <SocialPlatform
@@ -131,15 +189,60 @@ const Portfolio = () => {
         <section className={portfolioStyles.businessLocation}>
           <FontAwesomeIcon icon={faMapMarkerAlt} color="crimson" size="3x" />
           <p className={portfolioStyles.topic}>ADDRESS</p>
-          {/* <label className={portfolioStyles.desc}>
-            {getCurrentUser()["custom:address_line_1"] +
-              " " +
-              getCurrentUser()["custom:address_line_2"] +
-              " " +
-              getCurrentUser()["custom:city"] +
-              " " +
-              getCurrentUser()["custom:state"]}
-          </label> */}
+          <input
+            className={portfolioStyles.socialTextInput}
+            placeholder={
+              subscriberData.address1
+                ? `${subscriberData.address1} (Address Line 1)`
+                : "Address Line 1"
+            }
+            ref={address1Ref}
+          />
+          <br />
+          <input
+            className={portfolioStyles.socialTextInput}
+            placeholder={
+              subscriberData.address2
+                ? `${subscriberData.address2} (Address Line 2)`
+                : "Address Line 2"
+            }
+            ref={address2Ref}
+          />
+          <br />
+          <input
+            className={portfolioStyles.socialTextInput}
+            placeholder={
+              subscriberData.city
+                ? `${subscriberData.city} (City)`
+                : "City"
+            }
+            ref={cityRef}
+          />
+          <br />
+          <input
+            className={portfolioStyles.socialTextInput}
+            placeholder={
+              subscriberData.state
+                ? `${subscriberData.state} (State)`
+                : "State"
+            }
+            ref={stateRef}
+          />
+          <br />
+          <input
+            className={portfolioStyles.socialTextInput}
+            placeholder={
+              subscriberData.postalCode
+                ? `${subscriberData.postalCode} (Postal Code)`
+                : "Postal Code"
+            }
+            ref={postalCodeRef}
+            inputMode="tel"
+          />
+          <br />
+          <button onClick={updateAddress} className={portfolioStyles.button}>
+            Update Address
+          </button>
         </section>
         <br />
 
@@ -149,8 +252,24 @@ const Portfolio = () => {
             About {getCurrentUser()["custom:page_id"]}
           </p>
           <label className={portfolioStyles.desc}>
-            {getCurrentUser()["custom:category"]}
+            {subscriberData.category}
+            <br/>
+            <textarea
+            className={portfolioStyles.aboutTextInput}
+            placeholder={
+              subscriberData.about
+                ? `${subscriberData.about} (max length 80)`
+                : `About ${getCurrentUser()["custom:page_id"]} (max length 80)`
+            }
+            ref={aboutRef}
+            inputMode="tel"
+            maxLength={80}
+          />
           </label>
+          <br />
+          <button onClick={updateAbout} className={portfolioStyles.button}>
+            Update about
+          </button>
         </section>
       </section>
 
@@ -765,8 +884,12 @@ const SocialShare = () => {
 export const portfolioData = /*GraphQL*/ `
   query GetSubscriber($id: ID!) {
     getSubscriber(id: $id) {
+      about
       address1
       address2
+      city
+      state
+      postalCode
       category
       email
       facebook
@@ -775,8 +898,26 @@ export const portfolioData = /*GraphQL*/ `
       orgName
       phoneNumber
       pinterest
-      postalCode
       twitter
+    }
+  }
+`
+export const updateSubscriberAddress = /* GraphQL */ `
+  mutation UpdateSubscriber($input: UpdateSubscriberInput!) {
+    updateSubscriber(input: $input) {
+      address1
+      address2
+      city
+      state
+      postalCode
+    }
+  }
+`
+
+export const updateSubscriberAbout = /* GraphQL */ `
+  mutation UpdateSubscriber($input: UpdateSubscriberInput!) {
+    updateSubscriber(input: $input) {
+      about
     }
   }
 `

@@ -24,5 +24,11 @@
         }
       }
     }
+  },
+  "storage": {
+    "scanatMedia": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

@@ -173,7 +173,16 @@
   width: 100px;
   margin: 10px 5%;
 }
-
+.button{
+  padding: 5px 10px;
+  background: #169188;
+  border: none;
+  border-radius: 8px;
+  margin: 5px 0;
+  color: whitesmoke;
+  font-size: 0.8em;
+  text-transform: uppercase;
+}
 .socialLinksContainer {
   width: 100%;
   clear: both;
@@ -184,7 +193,28 @@
   justify-content: center;
   align-items: center;
 }
-
+.socialTextInput {
+  min-width: 280px;
+  border: grey 2px dashed;
+  margin: 0 10px;
+  padding: 5px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.7em;
+  letter-spacing: 0.5px;
+}
+.aboutTextInput{
+  min-width: 280px;
+  border: grey 2px dashed;
+  margin: 0 10px;
+  padding: 5px;
+  margin: 8px 0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+}
 .socialLinksContainer a {
   width: 90%;
   margin: 10px 5%;

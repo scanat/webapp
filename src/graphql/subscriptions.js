@@ -5,6 +5,7 @@ export const onCreateSubscriber = /* GraphQL */ `
   subscription OnCreateSubscriber {
     onCreateSubscriber {
       id
+      about
       group
       name
       orgName
@@ -12,6 +13,8 @@ export const onCreateSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo
@@ -40,6 +43,7 @@ export const onUpdateSubscriber = /* GraphQL */ `
   subscription OnUpdateSubscriber {
     onUpdateSubscriber {
       id
+      about
       group
       name
       orgName
@@ -47,6 +51,8 @@ export const onUpdateSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo
@@ -75,6 +81,7 @@ export const onDeleteSubscriber = /* GraphQL */ `
   subscription OnDeleteSubscriber {
     onDeleteSubscriber {
       id
+      about
       group
       name
       orgName
@@ -82,6 +89,8 @@ export const onDeleteSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo

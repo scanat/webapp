@@ -1,5 +1,6 @@
 type Subscriber @model {
   id: String!
+  about: String
   group: String
   name: String
   orgName: String
@@ -7,6 +8,8 @@ type Subscriber @model {
   email: String
   address1: String
   address2: String
+  city: String
+  state: String
   postalCode: String
   category: String
   logo: String

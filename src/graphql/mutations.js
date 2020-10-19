@@ -8,6 +8,7 @@ export const createSubscriber = /* GraphQL */ `
   ) {
     createSubscriber(input: $input, condition: $condition) {
       id
+      about
       group
       name
       orgName
@@ -15,6 +16,8 @@ export const createSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo
@@ -46,6 +49,7 @@ export const updateSubscriber = /* GraphQL */ `
   ) {
     updateSubscriber(input: $input, condition: $condition) {
       id
+      about
       group
       name
       orgName
@@ -53,6 +57,8 @@ export const updateSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo
@@ -84,6 +90,7 @@ export const deleteSubscriber = /* GraphQL */ `
   ) {
     deleteSubscriber(input: $input, condition: $condition) {
       id
+      about
       group
       name
       orgName
@@ -91,6 +98,8 @@ export const deleteSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo

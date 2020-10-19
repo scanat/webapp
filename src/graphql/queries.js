@@ -5,6 +5,7 @@ export const getSubscriber = /* GraphQL */ `
   query GetSubscriber($id: ID!) {
     getSubscriber(id: $id) {
       id
+      about
       group
       name
       orgName
@@ -12,6 +13,8 @@ export const getSubscriber = /* GraphQL */ `
       email
       address1
       address2
+      city
+      state
       postalCode
       category
       logo
@@ -45,6 +48,7 @@ export const listSubscribers = /* GraphQL */ `
     listSubscribers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        about
         group
         name
         orgName
@@ -52,6 +56,8 @@ export const listSubscribers = /* GraphQL */ `
         email
         address1
         address2
+        city
+        state
         postalCode
         category
         logo
