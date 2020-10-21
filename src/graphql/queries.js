@@ -23,6 +23,9 @@ export const getSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      ambience {
+        name
+      }
       employees {
         id
         name
@@ -67,6 +70,9 @@ export const listSubscribers = /* GraphQL */ `
         facebook
         pinterest
         instagram
+        ambience {
+          name
+        }
         employees {
           id
           name

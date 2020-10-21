@@ -18,7 +18,12 @@ type Subscriber @model {
   facebook: String
   pinterest: String
   instagram: String
+  ambience: [Ambiences!]
   employees: [Employees!]
+}
+
+type Ambiences {
+  name: String!
 }
 
 type Employees @model {

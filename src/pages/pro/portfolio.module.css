@@ -74,20 +74,10 @@
   float: left;
   margin: 20px 0;
 }
-.ourDealsContainer {
-  clear: both;
-  width: 100%;
-  float: left;
-}
 .headerTopic {
   font-size: 2em;
   text-align: center;
   font-weight: 100;
-}
-.ourDeals {
-  width: 100%;
-  float: left;
-  margin: 20px 0;
 }
 .cardContainer {
   width: 140px;
@@ -153,7 +143,7 @@
   width: 100px;
   margin: 10px 5%;
 }
-.button{
+.button {
   padding: 5px 10px;
   background: #169188;
   border: none;
@@ -184,7 +174,7 @@
   font-size: 0.7em;
   letter-spacing: 0.5px;
 }
-.aboutTextInput{
+.aboutTextInput {
   min-width: 280px;
   border: grey 2px dashed;
   margin: 0 10px;
@@ -350,17 +340,6 @@
   letter-spacing: 1px;
   text-align: center;
   margin-left: 5%;
-}
-.ambienceImage {
-  width: 100%;
-}
-.ambienceImageCardContainer {
-  width: 200px;
-  height: 140px;
-  overflow: hidden;
-  border-radius: 15px;
-  position: relative;
-  border: grey 2px dashed;
 }
 .ambienceInstructions {
   width: 100%;

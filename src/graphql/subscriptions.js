@@ -23,6 +23,9 @@ export const onCreateSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      ambience {
+        name
+      }
       employees {
         id
         name
@@ -62,6 +65,9 @@ export const onUpdateSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      ambience {
+        name
+      }
       employees {
         id
         name
@@ -101,6 +107,9 @@ export const onDeleteSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      ambience {
+        name
+      }
       employees {
         id
         name

@@ -7,13 +7,21 @@ import { graphql, useStaticQuery } from "gatsby"
 import Loader from "../loader"
 import ReactCrop from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
-import Amplify, { Storage } from "aws-amplify"
+import AWS from "aws-sdk"
+import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
 import awsmobile from "../../aws-exports"
 import { getCurrentUser } from "../../utils/auth"
 
+const subscriberPageS3 = new AWS.S3({
+  region: "ap-south-1",
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
+})
+
 Amplify.configure(awsmobile)
 
-const pixelRatio = typeof window !== 'undefined' && window.devicePixelRatio || 1
+const pixelRatio =
+  (typeof window !== "undefined" && window.devicePixelRatio) || 1
 
 const Banner = () => {
   const [bannerData, setBannerData] = useState(null)
@@ -26,6 +34,7 @@ const Banner = () => {
   const [imageUrl, setImageUrl] = useState("")
   const [crop, setCrop] = useState({ aspect: 16 / 9, width: 320 })
   const [completedCrop, setCompletedCrop] = useState(null)
+  const [imageDetails, setImageDetails] = useState({ name: "", type: "" })
   const [loading, setLoading] = useState(false)
 
   const onLoad = useCallback(img => {
@@ -82,11 +91,20 @@ const Banner = () => {
 
   async function getImage() {
     try {
-      Storage.get(
-        `${getCurrentUser()["custom:page_id"]}/portfolioBanner.jpg`
+      const imgName = await API.graphql(
+        graphqlOperation(getSubscriberBanner, {
+          id: getCurrentUser()["custom:page_id"],
+        })
       )
-        .then(data => setBannerData(data))
-        .catch(err => console.log(err))
+      const params = {
+        Bucket: awsmobile.aws_user_files_s3_bucket,
+        Key: `public/${getCurrentUser()["custom:page_id"]}/${
+          imgName.data.getSubscriber.banner
+        }`,
+      }
+      await subscriberPageS3.getObject(params, (err, resp) => {
+        resp && setBannerData(resp.Body)
+      })
     } catch (error) {
       console.log(error)
     }
@@ -118,6 +136,7 @@ const Banner = () => {
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
+      setImageDetails({ name: selectedFile.name, type: selectedFile.type })
     }
     setImageSelector(true)
   }
@@ -129,18 +148,29 @@ const Banner = () => {
 
     const canvas = getCroppedImg(previewCanvas, crop.width, crop.height)
 
-    const readyImage = canvas.toDataURL("image/jpg")
+    const readyImage = canvas.toDataURL(imageDetails.type)
+    console.log(imageDetails)
     try {
       const storeImg = await Storage.put(
-        `${getCurrentUser()["custom:page_id"]}/portfolioBanner.jpg`,
+        `${getCurrentUser()["custom:page_id"]}/banner${imageDetails.name}`,
         readyImage
       )
-      console.log(storeImg)
+      const inputs = {
+        input: {
+          id: getCurrentUser()["custom:page_id"],
+          banner: "banner" + imageDetails.name,
+        },
+      }
+      const data = await API.graphql(
+        graphqlOperation(updateSubscriberBanner, inputs)
+      )
+      if (storeImg && data) {
+        setBannerData(readyImage)
+        setImageSelector(false)
+      }
     } catch (error) {
       console.log(error)
     }
-    setBannerData(readyImage)
-    setImageSelector(false)
   }
 
   return (
@@ -179,11 +209,7 @@ const Banner = () => {
       {bannerData === null ? (
         <Img fluid={query.file.childImageSharp.fluid} />
       ) : (
-        // <img
-        //   src={bannerData}
-        //   alt="Portfolio Banner"
-        // />
-        <Img fluid={bannerData} />
+        <img src={bannerData} alt="Portfolio Banner" />
       )}
       <section
         className={bannerStyles.editHolder}
@@ -206,3 +232,18 @@ const Banner = () => {
   )
 }
 export default Banner
+
+export const updateSubscriberBanner = /* GraphQL */ `
+  mutation UpdateSubscriber($input: UpdateSubscriberInput!) {
+    updateSubscriber(input: $input) {
+      banner
+    }
+  }
+`
+export const getSubscriberBanner = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      banner
+    }
+  }
+`

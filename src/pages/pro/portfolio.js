@@ -5,24 +5,14 @@ import { getCurrentUser, setUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import AWS from "aws-sdk"
 import {
-  faAngleLeft,
-  faAngleRight,
-  faCamera,
   faCheckCircle,
-  faEllipsisH,
   faEllipsisV,
-  faHeart,
   faInfo,
   faMapMarkerAlt,
-  faPlusCircle,
-  faShare,
   faShareAlt,
-  faStar,
 } from "@fortawesome/free-solid-svg-icons"
-import Carousel from "react-elastic-carousel"
 import {
   faFacebookF,
-  faInstagram,
   faPinterestP,
   faTwitter,
   faWhatsapp,
@@ -36,6 +26,7 @@ import { API, Auth, graphqlOperation } from "aws-amplify"
 import Banner from "../../components/portfolio/banner"
 import SocialPlatform from "../../components/portfolio/socialPlatform"
 import Logo from "../../components/portfolio/logo"
+import AmbiencePost from '../../components/portfolio/ambiencePost'
 
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
@@ -161,8 +152,6 @@ const Portfolio = () => {
 
       <SocialShare />
 
-      {/* <PageId /> */}
-
       <section className={portfolioStyles.liveSpaceContainer}>
         <label className={portfolioStyles.liveSpaceText}>
           Live Accomodation{" "}
@@ -274,10 +263,7 @@ const Portfolio = () => {
         </section>
       </section>
 
-      <AmbiencePost
-        loadHandler={val => setLoading(val)}
-        category={subscriberData.category}
-      />
+      <AmbiencePost category={subscriberData.category} />
 
       <DishesWeek />
     </Layout>
@@ -285,192 +271,6 @@ const Portfolio = () => {
 }
 
 export default Portfolio
-
-const AmbiencePost = props => {
-  const [ambienceList, setAmbienceList] = useState([{ name: "", image: "" }])
-  const [width, setWidth] = useState()
-  const uploadAmbienceInput = useRef(null)
-  const ambienceForm = useRef(null)
-
-  useEffect(() => {
-    if (document.body.offsetWidth < 481) setWidth(1)
-    else if (document.body.offsetWidth < 600) setWidth(2)
-    else if (document.body.offsetWidth < 1024) setWidth(4)
-    else setWidth(5)
-
-    getSubscriberPageData()
-  }, [])
-
-  async function getSubscriberPageData() {
-    try {
-      // const params = {
-      //   TableName: "subscriberPage",
-      //   Key: {
-      //     pageId: getCurrentUser()["custom:page_id"],
-      //   },
-      // }
-      // await subscriberPageDb.get(params, (err, result) => {
-      //   result.Item.portfolioAmbiences &&
-      //     getImageList(result.Item.portfolioAmbiences)
-      //   console.log(process.env.GATSBY_S3_ACCESS_ID)
-      // })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  function getImageList(list) {
-    list.map(element => {
-      getImage(element)
-    })
-  }
-
-  async function getImage(fileName) {
-    props.loadHandler(true)
-    try {
-      // const paramsGet = {
-      //   Bucket: "subscriber-media",
-      //   Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${fileName}`,
-      // }
-      // await subscriberPageS3.getObject(paramsGet, (err, resp) => {
-      //   if (resp) {
-      //     let tempAmbienceList = { name: fileName, image: resp.Body }
-      //     ambienceList.push(tempAmbienceList)
-      //     let tempList = [...ambienceList]
-      //     setAmbienceList(tempList)
-      //     props.loadHandler(false)
-      //   } else {
-      //     props.loadHandler(false)
-      //   }
-      // })
-    } catch (error) {
-      props.loadHandler(false)
-    }
-  }
-
-  const selectImage = async e => {
-    props.loadHandler(true)
-    const selectedFile = e.target.files[0]
-    const reader = new FileReader(selectedFile)
-    reader.readAsDataURL(selectedFile)
-    reader.onload = async () => {
-      const params = {
-        TableName: "subscriberPage",
-        ExpressionAttributeNames: {
-          "#PAL": "portfolioAmbiences",
-        },
-        ExpressionAttributeValues: {
-          ":a": selectedFile["name"],
-          ":emptyList": [],
-        },
-        ReturnValues: "ALL_NEW",
-        Key: {
-          pageId: getCurrentUser()["custom:pageId"],
-        },
-        UpdateExpression:
-          "SET #PAL = list_append(if_not_exists(#PAL, :emptyList), :a)",
-      }
-      await subscriberPageDb.update(params, (err, resp) => {
-        resp && uploadImage(selectedFile, reader.result)
-        props.loadHandler(false)
-      })
-    }
-  }
-
-  const uploadImage = async (selectedFile, imgUri) => {
-    try {
-      props.loadHandler(true)
-      const params = {
-        Bucket: "subscriber-media",
-        Key: `Portfolio/${getCurrentUser()["custom:pageId"]}/${
-          selectedFile["name"]
-        }`,
-        Body: imgUri,
-      }
-
-      await subscriberPageS3.upload(params, (err, resp) => {
-        props.loadHandler(false)
-        addNewImage(selectedFile["name"], imgUri)
-      })
-    } catch (error) {
-      props.loadHandler(false)
-      console.log(error)
-    }
-  }
-
-  const addNewImage = (fileName, newImg) => {
-    let tempAmbienceList = [...ambienceList]
-    tempAmbienceList.push({ name: fileName, image: newImg })
-    setAmbienceList(tempAmbienceList)
-    console.log(ambienceList)
-  }
-
-  return (
-    <section className={portfolioStyles.socialLinksContainer}>
-      <p className={portfolioStyles.headerTopic}>
-        Show off your {props.category}
-      </p>
-      <label className={portfolioStyles.smallDesc}>
-        It is like a gallery that attracts your viewers right off to your place
-        of business
-      </label>
-      <section className={portfolioStyles.ourDeals}>
-        <Carousel
-          itemsToShow={width}
-          verticalMode={false}
-          pagination={true}
-          renderPagination={() => (
-            <FontAwesomeIcon icon={faEllipsisH} size="lg" color="grey" />
-          )}
-          focusOnSelect={true}
-          renderArrow={({ type, onClick }) => (
-            <FontAwesomeIcon
-              onClick={onClick}
-              icon={type === "PREV" ? faAngleLeft : faAngleRight}
-              size="2x"
-              color="grey"
-              style={{ marginTop: "50px" }}
-            />
-          )}
-        >
-          {ambienceList.map((element, index) => (
-            <section
-              key={index}
-              className={portfolioStyles.ambienceImageCardContainer}
-            >
-              {element["image"].length > 0 ? (
-                <img
-                  src={element["image"]}
-                  alt={element["name"]}
-                  className={portfolioStyles.ambienceImage}
-                />
-              ) : (
-                <section className={portfolioStyles.ambienceInstructions}>
-                  <FontAwesomeIcon
-                    icon={faPlusCircle}
-                    size="2x"
-                    color="#169188"
-                    onClick={() => uploadAmbienceInput.current.click()}
-                  />
-                  <form ref={ambienceForm} hidden>
-                    <input
-                      ref={uploadAmbienceInput}
-                      id="itemId"
-                      type="file"
-                      onChange={selectImage}
-                      hidden
-                    />
-                    <button type="submit"></button>
-                  </form>
-                </section>
-              )}
-            </section>
-          ))}
-        </Carousel>
-      </section>
-    </section>
-  )
-}
 
 const DishesWeek = () => {
   const [itemList, setItemList] = useState([])

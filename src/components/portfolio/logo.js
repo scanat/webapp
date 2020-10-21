@@ -1,16 +1,24 @@
 import { faCamera } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import Amplify, { Storage } from "aws-amplify"
+import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
 import React, { useRef, useState, useEffect, useCallback } from "react"
 import ReactCrop from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
+import AWS from "aws-sdk"
 import awsmobile from "../../aws-exports"
 import { getCurrentUser } from "../../utils/auth"
 import logoStyles from "./logo.module.css"
 
+const subscriberLogoS3 = new AWS.S3({
+  region: "ap-south-1",
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
+})
+
 Amplify.configure(awsmobile)
 
-const pixelRatio = typeof window !== 'undefined' && window.devicePixelRatio || 1
+const pixelRatio =
+  (typeof window !== "undefined" && window.devicePixelRatio) || 1
 
 const Logo = props => {
   const [logoData, setLogoData] = useState(null)
@@ -23,6 +31,7 @@ const Logo = props => {
   const [imageSelector, setImageSelector] = useState(false)
   const [crop, setCrop] = useState({ aspect: 1 / 1, width: 100 })
   const [completedCrop, setCompletedCrop] = useState(null)
+  const [imageDetails, setImageDetails] = useState({ name: "", type: "" })
 
   const onLoad = useCallback(img => {
     imgRef.current = img
@@ -66,9 +75,20 @@ const Logo = props => {
 
   async function getImage() {
     try {
-      Storage.get(`${getCurrentUser()["custom:page_id"]}/logo.jpg`)
-        .then(data => setLogoData(data))
-        .catch(err => console.log(err))
+      const imgName = await API.graphql(
+        graphqlOperation(getSubscriberLogo, {
+          id: getCurrentUser()["custom:page_id"],
+        })
+      )
+      const params = {
+        Bucket: awsmobile.aws_user_files_s3_bucket,
+        Key: `public/${getCurrentUser()["custom:page_id"]}/${
+          imgName.data.getSubscriber.logo
+        }`,
+      }
+      await subscriberLogoS3.getObject(params, (err, resp) => {
+        resp && setLogoData(resp.Body)
+      })
     } catch (error) {
       console.log(error)
     }
@@ -100,6 +120,7 @@ const Logo = props => {
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
+      setImageDetails({ name: selectedFile.name, type: selectedFile.type })
     }
     setImageSelector(true)
   }
@@ -111,18 +132,28 @@ const Logo = props => {
 
     const canvas = getCroppedImg(previewCanvas, crop.width, crop.height)
 
-    const readyImage = canvas.toDataURL("image/jpg")
+    const readyImage = canvas.toDataURL(imageDetails.type)
     try {
       const storeImg = await Storage.put(
-        `${getCurrentUser()["custom:page_id"]}/logo.jpg`,
+        `${getCurrentUser()["custom:page_id"]}/logo${imageDetails.name}`,
         readyImage
       )
-      console.log(storeImg)
+      const inputs = {
+        input: {
+          id: getCurrentUser()["custom:page_id"],
+          logo: "logo" + imageDetails.name,
+        },
+      }
+      const data = await API.graphql(
+        graphqlOperation(updateSubscriberLogo, inputs)
+      )
+      if (storeImg && data) {
+        setLogoData(readyImage)
+        setImageSelector(false)
+      }
     } catch (error) {
       console.log(error)
     }
-    setLogoData(readyImage)
-    setImageSelector(false)
   }
 
   return (
@@ -163,7 +194,7 @@ const Logo = props => {
             {getCurrentUser().name.substring(0, 2)}
           </label>
         ) : (
-          <img src={logoData} alt="Organization Logo" />
+          <img src={logoData} alt="Logo" />
         )}
       </section>
       <section
@@ -187,3 +218,18 @@ const Logo = props => {
 }
 
 export default Logo
+
+export const updateSubscriberLogo = /* GraphQL */ `
+  mutation UpdateSubscriber($input: UpdateSubscriberInput!) {
+    updateSubscriber(input: $input) {
+      logo
+    }
+  }
+`
+export const getSubscriberLogo = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      logo
+    }
+  }
+`
