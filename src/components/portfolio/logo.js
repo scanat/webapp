@@ -170,7 +170,7 @@ const Logo = props => {
             onImageLoaded={onLoad}
             ref={cropRef}
           />
-          <div>
+          <div style={{height: '70vh'}}>
             <canvas
               ref={previewCanvasRef}
               style={{
