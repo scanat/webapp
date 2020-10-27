@@ -22,17 +22,31 @@ type Subscriber @model {
   employees: [Employees!]
 }
 
+type Items @model {
+  id: String!
+  itemList: [Item!]
+}
+
+type Item {
+  id: ID!
+  category: String
+  itemName: String
+  itemPrice: String
+  image: String
+  status: Boolean
+}
+
 type Ambiences {
   name: String!
 }
 
-type Employees @model {
+type Employees {
   id: String!
   name: String
   access: [Access!]
 }
 
-type Access @model {
+type Access {
   id: String!
   name: String
 }

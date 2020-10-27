@@ -32,11 +32,7 @@ export const getSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -76,8 +72,6 @@ export const listSubscribers = /* GraphQL */ `
         employees {
           id
           name
-          createdAt
-          updatedAt
         }
         createdAt
         updatedAt
@@ -86,65 +80,40 @@ export const listSubscribers = /* GraphQL */ `
     }
   }
 `;
-export const getEmployees = /* GraphQL */ `
-  query GetEmployees($id: ID!) {
-    getEmployees(id: $id) {
+export const getItems = /* GraphQL */ `
+  query GetItems($id: ID!) {
+    getItems(id: $id) {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const listEmployeess = /* GraphQL */ `
-  query ListEmployeess(
-    $filter: ModelEmployeesFilterInput
+export const listItemss = /* GraphQL */ `
+  query ListItemss(
+    $filter: ModelItemsFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listEmployeess(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listItemss(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        name
-        access {
+        itemList {
           id
-          name
-          createdAt
-          updatedAt
+          category
+          itemName
+          itemPrice
+          image
+          status
         }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getAccess = /* GraphQL */ `
-  query GetAccess($id: ID!) {
-    getAccess(id: $id) {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listAccesss = /* GraphQL */ `
-  query ListAccesss(
-    $filter: ModelAccessFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listAccesss(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
         createdAt
         updatedAt
       }

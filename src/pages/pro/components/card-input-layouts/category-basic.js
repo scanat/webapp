@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faPlusSquare,
-  faCheckCircle,
+  faCheckCircle
 } from "@fortawesome/free-regular-svg-icons"
 import {
   faSyncAlt,
@@ -17,27 +17,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import categoryBasicStyles from "./category-basic.module.css"
 import AWS from "aws-sdk"
-import axios from "axios"
-import { navigate } from "gatsby"
 import { getCurrentUser } from "../../../../utils/auth"
-import config from "../../../../config.json"
 import SnackBar from "../../../../components/snackBar"
 import Layout from "../../../../components/layout"
 import Loader from "../../../../components/loader"
+import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
+import ReactCrop from "react-image-crop"
+import awsmobile from "../../../../aws-exports"
 
-const subscriberPageS3 = new AWS.S3({
+const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
-  apiVersion: "2006-03-01",
   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_S3_SECRET_ACCESS_KEY,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
-const itemsPageDb = new AWS.DynamoDB.DocumentClient({
-  region: "ap-south-1",
-  apiVersion: "2012-08-10",
-  accessKeyId: process.env.GATSBY_ITEM_DB_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_ITEM_DB_SECRET_ACCESS_KEY,
-})
+Amplify.configure(awsmobile)
+
+const pixelRatio =
+  (typeof window !== "undefined" && window.devicePixelRatio) || 1
 
 const Card = props => {
   return (
@@ -46,9 +43,6 @@ const Card = props => {
 }
 
 const CategoryBasic = props => {
-  const [itemName, setItemName] = useState("")
-  const [itemPrice, setItemPrice] = useState("")
-  const [itemImage, setItemImage] = useState("")
   const [category, setCategory] = useState("None")
   const [changing, setChanging] = useState(false)
   const [list, setList] = useState([])
@@ -61,6 +55,24 @@ const CategoryBasic = props => {
   const uploadItemImageInput = useRef(null)
   const [loading, setLoading] = useState(false)
 
+  const itemNameRef = useRef("")
+  const itemPriceRef = useRef("")
+  const itemCategoryRef = useRef("")
+  const itemImageRef = useRef("")
+  const [imageUrl, setImageUrl] = useState("")
+
+  const cropRef = useRef("")
+  const previewCanvasRef = useRef(null)
+  const imgRef = useRef(null)
+  const [imageSelector, setImageSelector] = useState(false)
+  const [crop, setCrop] = useState({ aspect: 10 / 7, width: 320 })
+  const [completedCrop, setCompletedCrop] = useState(null)
+  const [imageDetails, setImageDetails] = useState({
+    name: "",
+    type: "",
+    image: "",
+  })
+
   useEffect(() => {
     setTimeout(() => {
       setSnackContent()
@@ -70,6 +82,82 @@ const CategoryBasic = props => {
   useEffect(() => {
     fetchData()
   }, [])
+
+  const onLoad = useCallback(img => {
+    imgRef.current = img
+  })
+
+  useEffect(() => {
+    if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
+      return
+    }
+
+    const image = imgRef.current
+    const canvas = previewCanvasRef.current
+    const crop = completedCrop
+
+    const scaleX = image.naturalWidth / image.width
+    const scaleY = image.naturalHeight / image.height
+    const ctx = canvas.getContext("2d")
+
+    canvas.width = crop.width * pixelRatio
+    canvas.height = crop.height * pixelRatio
+
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+    ctx.imageSmoothingQuality = "medium"
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    )
+  }, [completedCrop])
+
+  async function getIndividualImage(key) {
+    setLoading(true)
+    try {
+      const paramsImg = {
+        Bucket: awsmobile.aws_user_files_s3_bucket,
+        Key: "public/" + key,
+      }
+      await subscriberItemsS3.getObject(paramsImg, (err, resp) => {
+        let temp = imageDetails
+        temp.image = resp.Body
+        setImageDetails(temp)
+        setLoading(false)
+      })
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
+    }
+  }
+
+  function getCroppedImg(canvas, newWidth, newHeight) {
+    const tmpCanvas = document.createElement("canvas")
+    tmpCanvas.width = newWidth
+    tmpCanvas.height = newHeight
+
+    const ctx = tmpCanvas.getContext("2d")
+    ctx.drawImage(
+      canvas,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+      0,
+      0,
+      newWidth,
+      newHeight
+    )
+
+    return tmpCanvas
+  }
 
   // Delete Category
   const deleteCategory = () => {
@@ -83,47 +171,35 @@ const CategoryBasic = props => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const params = {
-        TableName: "items",
-        Key: {
-          phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
-        },
-      }
-      await itemsPageDb.get(params, (err, data) => {
-        if (data) {
-          data.Item.data.map(element => {
-            if (categoryList.indexOf(element.category) < 0) {
-              categoryList.push(element.category)
-            }
-            getImage(element.image)
-          })
-          switchContent("Found Items", true)
-          setList(data.Item.data)
-        }
+      await API.graphql(
+        graphqlOperation(getItemsPressence, {
+          id: getCurrentUser()["custom:page_id"],
+        })
+      ).then(async data => {
+        data.data.getItems === null
+          ? await API.graphql(
+              graphqlOperation(createItemsPressence, {
+                input: { id: getCurrentUser()["custom:page_id"], itemList: [] },
+              })
+            )
+          : await API.graphql(
+              graphqlOperation(getItems, {
+                id: getCurrentUser()["custom:page_id"],
+              })
+            ).then(data => {
+              setList(data.data.getItems.itemList)
+
+              let temp = [...categoryList]
+              data.data.getItems.itemList.map(item => {
+                temp.push(item.category)
+              })
+              setCategoryList(temp)
+            })
         setLoading(false)
       })
     } catch (error) {
-      console.log(error)
       setLoading(false)
     }
-  }
-
-  async function getImage(fileName) {
-    setLoading(true)
-    const paramsGet = {
-      Bucket: "subscriber-media",
-      Key: `Items/${String(getCurrentUser().phone_number).replace(
-        "+91",
-        ""
-      )}/${fileName}`,
-    }
-    await subscriberPageS3.getObject(paramsGet, (err, resp) => {
-      resp && itemImageList.push(resp.Body)
-      err && itemImageList.push("")
-      let tempList = [...itemImageList]
-      setItemImageList(tempList)
-      setLoading(false)
-    })
   }
 
   const setSelectedCategory = () => {
@@ -137,28 +213,24 @@ const CategoryBasic = props => {
   const addItemHandler = () => {
     setLoading(true)
     if (
-      itemName !== null &&
-      itemName !== "" &&
-      itemPrice !== null &&
-      itemPrice !== ""
+      itemNameRef.current.value !== "" &&
+      itemPriceRef.current.value !== "" &&
+      itemCategoryRef.current.value !== ""
     ) {
-      setList(
-        list.concat({
-          _id: Math.random().toString(36).substr(2, 9).toString(),
-          itemName: itemName,
-          itemPrice: itemPrice,
-          status: true,
-          category: category.toString(),
-          image: itemImage,
-        })
-      )
-      setItemImageList(itemImageList.concat(""))
-      setItemName("")
-      setItemPrice("")
-      if (typeof window !== "undefined") {
-        document.getElementById("item-name-input").value = ""
-        document.getElementById("item-price-input").value = ""
-      }
+      let tempList = [...list]
+      tempList.push({
+        id: Math.random().toString(36).substr(2, 9).toString(),
+        itemName: itemNameRef.current.value,
+        itemPrice: itemPriceRef.current.value,
+        status: true,
+        category: itemCategoryRef.current.value,
+        image: imageUrl,
+      })
+      setList(tempList)
+      uploadImage()
+      itemNameRef.current.value = ""
+      itemPriceRef.current.value = ""
+      setImageDetails({ name: "", type: "", image: "" })
       setLoading(false)
     }
     setLoading(false)
@@ -166,22 +238,19 @@ const CategoryBasic = props => {
 
   // Reseting the input blocks to empty
   const resetInputHandler = () => {
-    setItemName("")
-    setItemPrice("")
+    itemNameRef.current.value = ""
+    itemPriceRef.current.value = ""
+
+    setImageDetails({ name: "", type: "", image: "" })
     setChanging(false)
     setChosenItem()
-    if (typeof window !== "undefined") {
-      document.getElementById("item-name-input").value = ""
-      document.getElementById("item-price-input").value = ""
-    }
   }
 
   // Toggling the active status of the item
   const toggleItemHandler = item => {
-    const elementIndex = list.findIndex(element => element._id === item._id)
+    const elementIndex = list.findIndex(element => element.id === item.id)
     let newList = [...list]
-    let newListStatus = newList[elementIndex].status
-    newList[elementIndex].status = newListStatus ? false : true
+    newList[elementIndex].status = newList[elementIndex].status ? false : true
     setList(newList)
   }
 
@@ -212,30 +281,27 @@ const CategoryBasic = props => {
   // Adding the chosen items to input
   const updateItemHandler = item => {
     setChosenItem(item)
-    if (typeof window !== "undefined") {
-      setItemName(item.itemName)
-      setItemPrice(item.itemPrice)
-      document.getElementById("item-name-input").value = item.itemName
-      document.getElementById("item-price-input").value = item.itemPrice
-      setChanging(true)
-    }
+    console.log(item)
+    itemNameRef.current.value = item.itemName
+    itemPriceRef.current.value = item.itemPrice
+    item.image !== ""
+      ? getIndividualImage(item.image)
+      : setImageDetails({ name: "", type: "", image: "" })
+    setChanging(true)
   }
 
   // Updating the item finally
   const updateChangeHandler = () => {
-    const elementIndex = list.findIndex(
-      element => element._id === chosenItem._id
-    )
-    let newList = [...list]
-    newList[elementIndex] = {
-      _id: chosenItem._id,
-      itemName: itemName,
-      itemPrice: itemPrice,
-      status: true,
-      category: category,
-      image: itemImage,
-    }
-    setList(newList)
+    const temp = [...list]
+    temp.map(item => {
+      if (item.id === chosenItem.id) {
+        item.itemName = itemNameRef.current.value
+        item.itemPrice = itemPriceRef.current.value
+        item.category = itemCategoryRef.current.value
+        item.image = imageUrl
+      }
+    })
+    setList(temp)
     setChanging(false)
     resetInputHandler()
   }
@@ -244,64 +310,76 @@ const CategoryBasic = props => {
   const uploadData = async () => {
     setLoading(true)
     try {
-      const params = {
-        TableName: "items",
-        ExpressionAttributeNames: {
-          "#d": "data",
-          "#c": "categories",
+      const inputs = {
+        input: {
+          id: getCurrentUser()["custom:page_id"],
+          itemList: list,
         },
-        ExpressionAttributeValues: {
-          ":dl": list,
-          ":cl": categoryList,
-        },
-        Key: {
-          phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
-        },
-        UpdateExpression: "SET #d = :dl, #c = :cl",
       }
-      itemsPageDb.update(params, (err, data) => {
-        setLoading(false)
-      })
+      await API.graphql(graphqlOperation(updateItemsList, inputs)).then(data =>
+        // navigate("/profile")
+        console.log(data)
+      )
+      setLoading(false)
     } catch (error) {
       console.log(error)
       setLoading(false)
     }
   }
 
-  const selectImage = async (e, item, id) => {
+  const selectImage = async e => {
     setLoading(true)
     const selectedFile = e.target.files[0]
     const reader = new FileReader(selectedFile)
     reader.readAsDataURL(selectedFile)
     reader.onload = async () => {
-      item.image = selectedFile["name"]
-      let tempList = [...itemImageList]
-      tempList[id] = reader.result
-      setItemImageList(tempList)
-      uploadImage(selectedFile, reader.result)
+      setImageUrl(reader.result)
+      setImageDetails({
+        name: selectedFile.name,
+        type: selectedFile.type,
+        image: "",
+      })
     }
+    setImageSelector(true)
     setLoading(false)
   }
 
-  const uploadImage = async (selectedFile, imgUri) => {
+  const setImage = (previewCanvas, crop) => {
+    if (!crop || !previewCanvas) {
+      return
+    }
+
+    const canvas = getCroppedImg(previewCanvas, crop.width, crop.height)
+
+    let temp = imageDetails
+    temp.image = canvas.toDataURL(imageDetails.type)
+    setImageDetails(temp)
+    setImageUrl(
+      `${getCurrentUser()["custom:page_id"]}/items/item${imageDetails.name}`
+    )
+    setImageSelector(false)
+  }
+
+  const uploadImage = async () => {
     setLoading(true)
     try {
-      const params = {
-        Bucket: "subscriber-media",
-        Key: `Items/${String(getCurrentUser().phone_number).replace(
-          "+91",
-          ""
-        )}/${selectedFile["name"]}`,
-        Body: imgUri,
-      }
-
-      await subscriberPageS3.upload(params, (err, resp) => {
+      const storeImg = await Storage.put(
+        `${getCurrentUser()["custom:page_id"]}/items/item${imageDetails.name}`,
+        imageDetails.image,
+        {
+          level: "public",
+          contentType: imageDetails.type,
+        }
+      )
+      if (storeImg) {
         setLoading(false)
-        console.log(resp)
-      })
+        setImageSelector(false)
+        console.log(storeImg)
+      }
     } catch (error) {
-      setLoading(false)
       console.log(error)
+      setLoading(false)
+      setImageSelector(false)
     }
   }
 
@@ -313,33 +391,68 @@ const CategoryBasic = props => {
   return (
     <Layout>
       <Loader loading={loading} />
+      {imageSelector && (
+        <section className={categoryBasicStyles.imageSelectorContainer}>
+          <ReactCrop
+            src={imageUrl}
+            crop={crop}
+            onChange={newCrop => setCrop(newCrop)}
+            style={{ marginTop: 44 }}
+            ruleOfThirds
+            onComplete={c => setCompletedCrop(c)}
+            onImageLoaded={onLoad}
+            ref={cropRef}
+          />
+          <div style={{ height: "70vh" }}>
+            <canvas
+              ref={previewCanvasRef}
+              style={{
+                width: 1920,
+                height: "auto",
+                display: "none",
+              }}
+            />
+          </div>
+          <section className={categoryBasicStyles.buttonButtomContainer}>
+            <button
+              onClick={() => {
+                setImageUrl("")
+                setImageSelector(false)
+              }}
+              className={categoryBasicStyles.button}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => setImage(previewCanvasRef.current, completedCrop)}
+              className={categoryBasicStyles.button}
+            >
+              OK
+            </button>
+          </section>
+        </section>
+      )}
       <section className={categoryBasicStyles.container}>
         <Card>
           <section>
             <h3>{changing ? "Update Item" : "Add Item"}</h3>
             <input
               className={categoryBasicStyles.input}
-              id="item-name-input"
-              onKeyUp={event => setItemName(event.target.value)}
               type="text"
-              name="itemname"
               placeholder="Item name"
+              ref={itemNameRef}
             />
             <input
               className={categoryBasicStyles.input}
-              id="item-price-input"
-              onKeyUp={event => setItemPrice(event.target.value)}
               type="number"
-              name="itemprice"
               placeholder="Item price"
+              ref={itemPriceRef}
             />
-            <select
-              id="item-category-input"
-              style={{ width: "90%" }}
-              onChange={selected => setCategory(selected.target.value)}
-            >
-              {categoryList.map(item => (
-                <option value={item}>{item}</option>
+            <select style={{ width: "90%" }} ref={itemCategoryRef}>
+              {categoryList.map((item, id) => (
+                <option key={id} value={item}>
+                  {item}
+                </option>
               ))}
             </select>
           </section>
@@ -381,7 +494,7 @@ const CategoryBasic = props => {
             <section className={categoryBasicStyles.controlItem}>
               <FontAwesomeIcon
                 icon={faCloudUploadAlt}
-                onClick={list.length > 0 && uploadData}
+                onClick={list.length > 0 ? uploadData : null}
                 size="lg"
                 color={list.length > 0 ? "#169188" : "grey"}
               />
@@ -401,42 +514,46 @@ const CategoryBasic = props => {
               </label>
             </section>
           </section>
+
+          <section className={categoryBasicStyles.itemControls}>
+            <section className={categoryBasicStyles.itemImageContainer}>
+              {imageDetails.image !== "" ? (
+                <img
+                  src={imageDetails.image}
+                  ref={itemImageRef}
+                  className={categoryBasicStyles.itemImage}
+                />
+              ) : (
+                <section className={categoryBasicStyles.itemImageInstructions}>
+                  <FontAwesomeIcon
+                    icon={faPlusCircle}
+                    size="lg"
+                    color="#169188"
+                    onClick={() => uploadItemImageInput.current.click()}
+                  />
+                  <form ref={itemImageForm} hidden>
+                    <input
+                      ref={uploadItemImageInput}
+                      id="itemId"
+                      type="file"
+                      accept="image/*"
+                      onChange={e => {
+                        selectImage(e)
+                      }}
+                      hidden
+                    />
+                    <button type="submit"></button>
+                  </form>
+                </section>
+              )}
+            </section>
+          </section>
         </Card>
 
         <section className={categoryBasicStyles.listContainer}>
           {list.map((item, id) => (
-            <section className={categoryBasicStyles.greenCard} key={item._id}>
+            <section className={categoryBasicStyles.greenCard} key={item.id}>
               <section className={categoryBasicStyles.parentDataContainer}>
-                <section className={categoryBasicStyles.itemImageContainer}>
-                  {item["image"] !== "" ? (
-                    <img
-                      src={itemImageList[id]}
-                      alt={item["image"]}
-                      className={categoryBasicStyles.itemImage}
-                    />
-                  ) : (
-                    <section
-                      className={categoryBasicStyles.itemImageInstructions}
-                    >
-                      <FontAwesomeIcon
-                        icon={faPlusCircle}
-                        size="lg"
-                        color="#169188"
-                        onClick={() => uploadItemImageInput.current.click()}
-                      />
-                      <form ref={itemImageForm} hidden>
-                        <input
-                          ref={uploadItemImageInput}
-                          id="itemId"
-                          type="file"
-                          onChange={e => selectImage(e, item, id)}
-                          hidden
-                        />
-                        <button type="submit"></button>
-                      </form>
-                    </section>
-                  )}
-                </section>
                 <section className={categoryBasicStyles.basicDataContainer}>
                   <section className={categoryBasicStyles.textContainers}>
                     <p className={categoryBasicStyles.itemName}>
@@ -455,20 +572,18 @@ const CategoryBasic = props => {
                 <FontAwesomeIcon
                   icon={faTrash}
                   onClick={() => removeItemHandler(item)}
-                  onMouseUp={() => removeItemHandler(item)}
                   size="lg"
                   color="#db2626"
                 />
                 <FontAwesomeIcon
                   icon={faPencilAlt}
                   onClick={() => updateItemHandler(item)}
-                  onMouseUp={() => updateItemHandler(item)}
                   size="lg"
                   color="grey"
                 />
                 <FontAwesomeIcon
                   icon={item.status ? faToggleOn : faToggleOff}
-                  onMouseDown={() => toggleItemHandler(item)}
+                  onClick={() => toggleItemHandler(item)}
                   size="lg"
                   color={item.status ? "green" : "#db2626"}
                 />
@@ -483,3 +598,39 @@ const CategoryBasic = props => {
 }
 
 export default CategoryBasic
+
+export const updateItemsList = /* GraphQL */ `
+  mutation UpdateItems($input: UpdateItemsInput!) {
+    updateItems(input: $input) {
+      id
+    }
+  }
+`
+export const getItemsPressence = /* GraphQL */ `
+  query GetItems($id: ID!) {
+    getItems(id: $id) {
+      id
+    }
+  }
+`
+export const createItemsPressence = /* GraphQL */ `
+  mutation CreateItems($input: CreateItemsInput!) {
+    createItems(input: $input) {
+      id
+    }
+  }
+`
+export const getItems = /* GraphQL */ `
+  query GetItems($id: ID!) {
+    getItems(id: $id) {
+      itemList {
+        id
+        category
+        itemName
+        itemPrice
+        image
+        status
+      }
+    }
+  }
+`

@@ -32,11 +32,7 @@ export const onCreateSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -74,11 +70,7 @@ export const onUpdateSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -116,90 +108,59 @@ export const onDeleteSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const onCreateEmployees = /* GraphQL */ `
-  subscription OnCreateEmployees {
-    onCreateEmployees {
+export const onCreateItems = /* GraphQL */ `
+  subscription OnCreateItems {
+    onCreateItems {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const onUpdateEmployees = /* GraphQL */ `
-  subscription OnUpdateEmployees {
-    onUpdateEmployees {
+export const onUpdateItems = /* GraphQL */ `
+  subscription OnUpdateItems {
+    onUpdateItems {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const onDeleteEmployees = /* GraphQL */ `
-  subscription OnDeleteEmployees {
-    onDeleteEmployees {
+export const onDeleteItems = /* GraphQL */ `
+  subscription OnDeleteItems {
+    onDeleteItems {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateAccess = /* GraphQL */ `
-  subscription OnCreateAccess {
-    onCreateAccess {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateAccess = /* GraphQL */ `
-  subscription OnUpdateAccess {
-    onUpdateAccess {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteAccess = /* GraphQL */ `
-  subscription OnDeleteAccess {
-    onDeleteAccess {
-      id
-      name
       createdAt
       updatedAt
     }

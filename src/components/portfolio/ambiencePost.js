@@ -94,7 +94,6 @@ const AmbiencePost = props => {
         Prefix: `public/${getCurrentUser()["custom:page_id"]}/ambience/`,
       }
       await subscriberAmbienceS3.listObjects(params, (err, resp) => {
-        console.log(resp)
         resp.Contents.forEach(element => {
           getIndividualImage(element.Key)
         })
@@ -111,7 +110,9 @@ const AmbiencePost = props => {
         Key: key,
       }
       await subscriberAmbienceS3.getObject(paramsImg, (err, resp) => {
-        ambienceList.push({ name: "", image: resp.Body })
+        const temp = [...ambienceList]
+        temp.push({ name: "", image: resp.Body })
+        setAmbienceList(temp)
       })
     } catch (error) {
       console.log(error)
@@ -191,7 +192,7 @@ const AmbiencePost = props => {
             onImageLoaded={onLoad}
             ref={cropRef}
           />
-          <div>
+          <div style={{height: '70vh'}}>
             <canvas
               ref={previewCanvasRef}
               style={{
@@ -231,7 +232,7 @@ const AmbiencePost = props => {
               icon={type === "PREV" ? faAngleLeft : faAngleRight}
               size="2x"
               color="grey"
-              style={{ marginTop: "50px" }}
+              style={{ margin: "50px 10px 0 10px" }}
             />
           )}
         >

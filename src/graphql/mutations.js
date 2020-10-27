@@ -35,11 +35,7 @@ export const createSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -80,11 +76,7 @@ export const updateSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -125,108 +117,68 @@ export const deleteSubscriber = /* GraphQL */ `
         access {
           id
           name
-          createdAt
-          updatedAt
         }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const createEmployees = /* GraphQL */ `
-  mutation CreateEmployees(
-    $input: CreateEmployeesInput!
-    $condition: ModelEmployeesConditionInput
+export const createItems = /* GraphQL */ `
+  mutation CreateItems(
+    $input: CreateItemsInput!
+    $condition: ModelItemsConditionInput
   ) {
-    createEmployees(input: $input, condition: $condition) {
+    createItems(input: $input, condition: $condition) {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const updateEmployees = /* GraphQL */ `
-  mutation UpdateEmployees(
-    $input: UpdateEmployeesInput!
-    $condition: ModelEmployeesConditionInput
+export const updateItems = /* GraphQL */ `
+  mutation UpdateItems(
+    $input: UpdateItemsInput!
+    $condition: ModelItemsConditionInput
   ) {
-    updateEmployees(input: $input, condition: $condition) {
+    updateItems(input: $input, condition: $condition) {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
       createdAt
       updatedAt
     }
   }
 `;
-export const deleteEmployees = /* GraphQL */ `
-  mutation DeleteEmployees(
-    $input: DeleteEmployeesInput!
-    $condition: ModelEmployeesConditionInput
+export const deleteItems = /* GraphQL */ `
+  mutation DeleteItems(
+    $input: DeleteItemsInput!
+    $condition: ModelItemsConditionInput
   ) {
-    deleteEmployees(input: $input, condition: $condition) {
+    deleteItems(input: $input, condition: $condition) {
       id
-      name
-      access {
+      itemList {
         id
-        name
-        createdAt
-        updatedAt
+        category
+        itemName
+        itemPrice
+        image
+        status
       }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createAccess = /* GraphQL */ `
-  mutation CreateAccess(
-    $input: CreateAccessInput!
-    $condition: ModelAccessConditionInput
-  ) {
-    createAccess(input: $input, condition: $condition) {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateAccess = /* GraphQL */ `
-  mutation UpdateAccess(
-    $input: UpdateAccessInput!
-    $condition: ModelAccessConditionInput
-  ) {
-    updateAccess(input: $input, condition: $condition) {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteAccess = /* GraphQL */ `
-  mutation DeleteAccess(
-    $input: DeleteAccessInput!
-    $condition: ModelAccessConditionInput
-  ) {
-    deleteAccess(input: $input, condition: $condition) {
-      id
-      name
       createdAt
       updatedAt
     }

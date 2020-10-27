@@ -35,7 +35,7 @@
 .listContainer {
   width: 100%;
   align-items: center;
-  margin-top: 200px;
+  margin-top: 300px;
   position: relative;
 }
 .input {
@@ -64,20 +64,20 @@
   padding: 10px;
   float: right;
 }
-.categoryName{
+.categoryName {
   padding: 2px 10px;
   color: grey;
   font-size: 14px;
 }
-.parentDataContainer{
+.parentDataContainer {
   width: 100%;
   float: left;
   display: flex;
 }
-.itemImage{
+.itemImage {
   width: 100%;
 }
-.itemImageContainer{
+.itemImageContainer {
   width: 100px;
   height: 70px;
   overflow: hidden;
@@ -86,7 +86,7 @@
   border: grey 2px dashed;
   margin: 5px;
 }
-.itemImageInstructions{
+.itemImageInstructions {
   width: 100%;
   height: 100%;
   display: flex;
@@ -96,7 +96,7 @@
   justify-content: center;
   align-items: center;
 }
-.basicDataContainer{
+.basicDataContainer {
   display: flex;
   flex-direction: column;
   -ms-flex-direction: column;
@@ -106,7 +106,7 @@
   display: flex;
   justify-content: space-between;
 }
-.controlItem{
+.controlItem {
   display: flex;
   flex-direction: column;
   -ms-flex-direction: column;
@@ -114,6 +114,41 @@
   align-items: center;
   text-align: center;
 }
-.controlItemLabel{
+.controlItemLabel {
   font-size: 10px;
+}
+.imageSelectorContainer {
+  position: fixed;
+  z-index: 3;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: grey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  padding: 5px 10px;
+  background: #169188;
+  border: none;
+  margin: 5px 0;
+  color: whitesmoke;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.buttonButtomContainer{
+  width: 100%;
+  height: auto;
+  display: flex;
+  padding: 10px 0;
+  align-items: center;
+  justify-content: space-evenly;
+  position: absolute;
+  bottom: 0;
 }
