@@ -110,7 +110,11 @@ const AmbiencePost = props => {
         Key: key,
       }
       await subscriberAmbienceS3.getObject(paramsImg, (err, resp) => {
+<<<<<<< HEAD
         const temp = [...ambienceList]
+=======
+        const temp = ambienceList
+>>>>>>> 44fcfe2c5a4cc436de435c84cf6983d83d98ac2e
         temp.push({ name: "", image: resp.Body })
         setAmbienceList(temp)
       })
