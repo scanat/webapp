@@ -158,7 +158,7 @@ const Explore = () => {
         {searchObjectList.map(item => (
           <section
             className={exploreStyles.searchItemHolder}
-            onClick={navigate('/profile')}
+            onClick={() => navigate('/profile')}
             key={item.id}
           >
             <img
