@@ -404,21 +404,6 @@ const ResetSection = props => {
   )
 }
 
-// API.configure({
-//   aws_appsync_graphqlEndpoint:
-//     "https://hyfppjcmhnekdbhugty7cdcsjm.appsync-api.ap-south-1.amazonaws.com/graphql",
-//   aws_appsync_region: "ap-south-1",
-//   aws_appsync_authenticationType: "API_KEY",
-//   aws_appsync_apiKey: "da2-ikygy37qvjhhphetapy6jfsrr4",
-// })
-// export const checkSubscriber = /* GraphQL */ `
-//   query GetSubscriber($id: ID!) {
-//     getSubscriber(id: $id) {
-//       id
-//     }
-//   }
-// `
-
 export const query = graphql`
   query GetSubscribers {
     subscriber {

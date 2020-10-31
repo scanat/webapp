@@ -61,7 +61,7 @@
   float: left;
   margin-top: 30px;
   display: grid;
-  /* grid-template-columns: auto auto auto; */
+  grid-template-columns: auto auto auto;
 }
 .searchItemHolder {
   width: max-content;
@@ -88,4 +88,11 @@
 }
 .searchItemHolder label {
   margin: 0 10px;
+}
+.itemId{
+  color: grey;
+  font-size: 0.8em;
+}
+.itemName{
+  color: #169188;
 }

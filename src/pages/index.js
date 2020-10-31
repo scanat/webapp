@@ -16,19 +16,21 @@ import { graphql, navigate, useStaticQuery } from "gatsby"
 import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"
+import Amplify, { API, graphqlOperation } from "aws-amplify"
 
-const subscriberPageS3 = new AWS.S3({
-  region: "ap-south-1",
-  apiVersion: "2006-03-01",
-  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_S3_SECRET_ACCESS_KEY,
+Amplify.configure({
+  API: {
+    aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
+    aws_appsync_region: "ap-south-1",
+    aws_appsync_authenticationType: "API_KEY",
+    aws_appsync_apiKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
+  },
 })
 
-const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
+const subscriberItemS3 = new AWS.S3({
   region: "ap-south-1",
-  apiVersion: "2012-08-10",
-  accessKeyId: process.env.GATSBY_SUBSCRIBERPAGE_DB_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
 const Explore = () => {
@@ -44,47 +46,57 @@ const Explore = () => {
   }, [])
 
   const searchItems = async () => {
-    setSearchObjectList([])
-    console.log(searchObjectList)
+    let empty = []
+    setSearchObjectList(empty)
     const params = {
-      TableName: "subscriberPage",
-      AttributesToGet: ["pageId", "portfolioLogo"],
-      ScanFilter: {
-        pageId: {
-          ComparisonOperator: "CONTAINS",
-          AttributeValueList: [searchRef.current.value],
-        },
-      },
+      id: searchRef.current.value,
     }
 
-    await subscriberPageDb.scan(params, (err, data) => {
-      if (data) {
-        const itemList = data.Items
-        itemList.map((element, id) => {
-          if (!element.portfolioLogo) {
-            element.image = ""
-            searchObjectList.push(element)
-            let tempList = [...searchObjectList]
-            setSearchObjectList(tempList)
-          } else {
-            getItemImages(element, id)
+    try {
+      await API.graphql(graphqlOperation(queryOrg, params)).then(res => {
+        res.data.listSubscribers.items.map(item => {
+          getImage()
+          async function getImage() {
+            try {
+              const paramsImg = {
+                Bucket: process.env.GATSBY_S3_BUCKET,
+                Key: "public/" + item.logo,
+              }
+              await subscriberItemS3.getObject(paramsImg, (err, res) => {
+                item.imageData = Buffer.from(res.Body, "base64").toString("ascii")
+                let temp = [...searchObjectList]
+                temp.push(item)
+                setSearchObjectList(temp)
+              })
+            } catch (error) {
+              console.log(error)
+            }
           }
         })
-      }
-    })
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  async function getItemImages(element, id) {
-    const params = {
-      Bucket: "subscriber-media",
-      Key: `Portfolio/${element.pageId}/${element.portfolioLogo}`,
+  async function getItemImage(image) {
+    try {
+      const paramsImg = {
+        Bucket: process.env.GATSBY_S3_BUCKET,
+        Key: "public/" + image,
+      }
+
+      await subscriberItemS3.getObject(paramsImg, (err, resp) => {
+        console.log(
+          "s3://scanatsubscriber620f032716d7410c9e97e968f28666314831-dev/public/" +
+            image
+        )
+        return btoa(resp.Body)
+      })
+    } catch (error) {
+      console.log(error)
+      return null
     }
-    await subscriberPageS3.getObject(params, (err, data) => {
-      element.image = data.Body
-      searchObjectList.push(element)
-      let tempList = [...searchObjectList]
-      setSearchObjectList(tempList)
-    })
   }
 
   return (
@@ -104,7 +116,9 @@ const Explore = () => {
             color="grey"
             size="lg"
             className={exploreStyles.searchIcon}
-            onClick={searchItems}
+            onClick={() => {
+              searchItems()
+            }}
           />
         </section>
       </section>
@@ -141,19 +155,37 @@ const Explore = () => {
       </section>
 
       <section className={exploreStyles.searchResultContainer}>
-        {searchObjectList !== null &&
-          searchObjectList.map((item, id) => (
-            <section
-              className={exploreStyles.searchItemHolder}
-              onClick={() => navigate(`/portfolio?org=${item.pageId}`)}
-            >
-              <img src={item.image} alt={item.image} />
-              <label>{item.pageId}</label>
-            </section>
-          ))}
+        {searchObjectList.map(item => (
+          <section
+            className={exploreStyles.searchItemHolder}
+            onClick={navigate('/profile')}
+            key={item.id}
+          >
+            <img
+              src={item.imageData}
+              alt={item.image}
+            />
+            <label className={exploreStyles.itemId}>{item.id}</label>
+            <label className={exploreStyles.itemName}>{item.orgName}</label>
+          </section>
+        ))}
       </section>
     </Layout>
   )
 }
 
 export default Explore
+
+export const queryOrg = /*GraphQL*/ `
+  query subscriber($id: String!) {
+    listSubscribers(
+      filter: { orgName: { contains: $id } }
+    ) {
+      items {
+        logo
+        orgName
+        id
+      }
+    }
+  }
+`
