@@ -26,7 +26,8 @@ import { API, Auth, graphqlOperation } from "aws-amplify"
 import Banner from "../../components/portfolio/banner"
 import SocialPlatform from "../../components/portfolio/socialPlatform"
 import Logo from "../../components/portfolio/logo"
-import AmbiencePost from '../../components/portfolio/ambiencePost'
+import AmbiencePost from "../../components/portfolio/ambiencePost"
+import DishesWeek from "../../components/portfolio/dishesWeek"
 
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
@@ -80,7 +81,7 @@ const Portfolio = () => {
       const addressData = await API.graphql(
         graphqlOperation(updateSubscriberAddress, {
           input: {
-            id: getCurrentUser()['custom:page_id'],
+            id: getCurrentUser()["custom:page_id"],
             address1: address1Ref.current.value,
             address2: address2Ref.current.value,
             city: cityRef.current.value,
@@ -106,7 +107,7 @@ const Portfolio = () => {
       const aboutData = await API.graphql(
         graphqlOperation(updateSubscriberAbout, {
           input: {
-            id: getCurrentUser()['custom:page_id'],
+            id: getCurrentUser()["custom:page_id"],
             about: aboutRef.current.value,
           },
         })
@@ -202,9 +203,7 @@ const Portfolio = () => {
           <input
             className={portfolioStyles.socialTextInput}
             placeholder={
-              subscriberData.city
-                ? `${subscriberData.city} (City)`
-                : "City"
+              subscriberData.city ? `${subscriberData.city} (City)` : "City"
             }
             ref={cityRef}
           />
@@ -212,9 +211,7 @@ const Portfolio = () => {
           <input
             className={portfolioStyles.socialTextInput}
             placeholder={
-              subscriberData.state
-                ? `${subscriberData.state} (State)`
-                : "State"
+              subscriberData.state ? `${subscriberData.state} (State)` : "State"
             }
             ref={stateRef}
           />
@@ -243,18 +240,20 @@ const Portfolio = () => {
           </p>
           <label className={portfolioStyles.desc}>
             {subscriberData.category}
-            <br/>
+            <br />
             <textarea
-            className={portfolioStyles.aboutTextInput}
-            placeholder={
-              subscriberData.about
-                ? `${subscriberData.about} (max length 80)`
-                : `About ${getCurrentUser()["custom:page_id"]} (max length 80)`
-            }
-            ref={aboutRef}
-            inputMode="tel"
-            maxLength={80}
-          />
+              className={portfolioStyles.aboutTextInput}
+              placeholder={
+                subscriberData.about
+                  ? `${subscriberData.about} (max length 80)`
+                  : `About ${
+                      getCurrentUser()["custom:page_id"]
+                    } (max length 80)`
+              }
+              ref={aboutRef}
+              inputMode="tel"
+              maxLength={80}
+            />
           </label>
           <br />
           <button onClick={updateAbout} className={portfolioStyles.button}>
@@ -271,219 +270,6 @@ const Portfolio = () => {
 }
 
 export default Portfolio
-
-const DishesWeek = () => {
-  const [itemList, setItemList] = useState([])
-  const [fetchList, setFetchList] = useState([])
-
-  useEffect(() => {
-    itemList.push({ image: "", price: "", itemName: "" })
-    fetchData()
-  }, [])
-
-  // Fetch inital data if available
-  const fetchData = async () => {
-    try {
-      const params = JSON.stringify({
-        phoneNumber: String(getCurrentUser().phone_number).replace("+91", ""),
-      })
-      const res = await axios.post(`${config.userDataAPI}/items/get`, params)
-      setFetchList(res.data.data.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // Add Item to Item List
-  const addItem = e => {
-    fetchList.forEach(element => {
-      if (element.itemName === e.target.value) {
-        let tempList = [...itemList]
-        tempList.unshift(element)
-        setItemList(tempList)
-      }
-    })
-    console.log(fetchList)
-  }
-
-  // Offer and Price Handlers
-  const newItemPriceHandler = (e, id) => {
-    let tempList = [...itemList]
-    tempList[id].offerPrice = e
-    tempList[id].offerValue = ((1 - e / tempList[id].itemPrice) * 100).toFixed(
-      2
-    )
-    setItemList(tempList)
-  }
-
-  const newOfferValueHandler = (e, id) => {
-    let tempList = [...itemList]
-    tempList[id].offerValue = e
-    tempList[id].offerPrice = (
-      tempList[id].itemPrice -
-      (e / 100) * tempList[id].itemPrice
-    ).toFixed(2)
-    setItemList(tempList)
-  }
-
-  return (
-    <section className={portfolioStyles.dishesWeek}>
-      <h2 className={portfolioStyles.headerTopic}>dishes of the week</h2>
-      {itemList.map((item, id) => (
-        <section className={portfolioStyles.dishesContainer} key={id}>
-          <FontAwesomeIcon
-            className={portfolioStyles.closeTopRight}
-            icon={faWindowClose}
-            size="lg"
-            color="whitesmoke"
-          />
-          <section className={portfolioStyles.dishesImage}>
-            {item.image !== "" ? (
-              <img
-                src={item.itemImage}
-                alt={item.itemImage}
-                className={portfolioStyles.ambienceImage}
-              />
-            ) : (
-              <section className={portfolioStyles.ambienceInstructions}>
-                <label
-                  className={portfolioStyles.smallDesc}
-                  style={{ color: "whitesmoke" }}
-                >
-                  Select your offered item
-                </label>
-                <select
-                  className={portfolioStyles.fetchedItemsOptions}
-                  onChange={addItem}
-                >
-                  {fetchList.map((item, id) => (
-                    <option key={id}>{item.itemName}</option>
-                  ))}
-                </select>
-              </section>
-            )}
-          </section>
-          <section style={{ textAlign: "center" }}>
-            <h4 className={portfolioStyles.dishName}>
-              {item.status ? item.itemName : "Dish Name"}
-            </h4>
-            <textarea
-              className={portfolioStyles.textAreaInput}
-              style={{ width: "250px", height: "40px" }}
-              placeholder="This is a little description of the item that has been newly added
-              here."
-            >
-              {item.status && item.itemDesc}
-            </textarea>
-            <p className={portfolioStyles.offerprice}>
-              <strike className={portfolioStyles.strokePrice}>
-                Rs. {item.status ? item.itemPrice : 1000}
-              </strike>{" "}
-              Rs.{" "}
-              <input
-                className={portfolioStyles.textAreaInput}
-                style={{ maxWidth: "40px" }}
-                placeholder="800"
-                inputMode="tel"
-                onChange={e => newItemPriceHandler(e.target.value, id)}
-              />{" "}
-              /- <br />
-              <label className={portfolioStyles.offerOff}>
-                (
-                <input
-                  className={portfolioStyles.textAreaInput}
-                  style={{ maxWidth: "30px" }}
-                  placeholder="20"
-                  inputMode="tel"
-                  onChange={e => newOfferValueHandler(e.target.value, id)}
-                  value={item.offerValue}
-                  disabled
-                />{" "}
-                % OFF)
-              </label>
-            </p>
-          </section>
-        </section>
-      ))}
-    </section>
-  )
-}
-
-const PageId = () => {
-  const [pageId, setPageId] = useState("")
-  const inputRef = useRef(null)
-
-  const pageIdHandler = e => {
-    let inputElement = inputRef.current
-    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
-    let text = e.target.value
-    if (!format.test(text)) {
-      setPageId(text)
-      inputElement.style.borderColor = "grey"
-    } else {
-      inputElement.style.borderColor = "red"
-    }
-  }
-
-  const finalizePageId = async () => {
-    try {
-      const params = {
-        TableName: "subscriberPage",
-        Item: {
-          pageId: pageId,
-        },
-      }
-      const response = await subscriberPageDb.put(params, (err, data) => {
-        console.log(err, data)
-      })
-      const user = await Auth.currentAuthenticatedUser()
-      const result = await Auth.updateUserAttributes(user, {
-        "custom:pageId": pageId,
-      })
-      setUser(result)
-    } catch (error) {}
-  }
-
-  return (
-    <section className={portfolioStyles.orgTitle}>
-      <h1>{getCurrentUser().name}</h1>
-
-      <section className={portfolioStyles.socialLinkInputHolder}>
-        <input
-          ref={inputRef}
-          className={portfolioStyles.socialTextInput}
-          placeholder={
-            getCurrentUser()["custom:pageId"] !== ""
-              ? getCurrentUser()["custom:pageId"]
-              : "New Page ID"
-          }
-          onFocus={e => {
-            typeof window !== "undefined" &&
-              document
-                .getElementById("bulbGlowId")
-                .setAttribute("color", e ? "green" : "grey")
-          }}
-          onChange={pageIdHandler}
-          disabled={getCurrentUser()["custom:pageId"] !== "" ? true : false}
-        />
-        {getCurrentUser()["custom:pageId"] === "" && (
-          <FontAwesomeIcon
-            icon={faCheckCircle}
-            size="lg"
-            color="#169188"
-            onClick={finalizePageId}
-          />
-        )}
-      </section>
-      <label style={{ fontSize: "0.7em" }}>
-        scanat.in/
-        {getCurrentUser()["custom:pageId"] !== ""
-          ? getCurrentUser()["custom:pageId"]
-          : pageId}
-      </label>
-    </section>
-  )
-}
 
 const SocialShare = () => {
   const [shareIconsVisible, setShareIconsVisible] = useState(false)

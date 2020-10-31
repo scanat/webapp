@@ -12,7 +12,7 @@ import {
 import ReactCrop from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
 import AWS from "aws-sdk"
-import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
+import Amplify, { Storage } from "aws-amplify"
 import awsmobile from "../../aws-exports"
 import { getCurrentUser } from "../../utils/auth"
 
@@ -28,7 +28,6 @@ const pixelRatio =
   (typeof window !== "undefined" && window.devicePixelRatio) || 1
 
 const AmbiencePost = props => {
-  const [ambienceList, setAmbienceList] = useState([{ name: "", image: "" }])
   const [loading, setLoading] = useState(false)
   const cropRef = useRef("")
   const [width, setWidth] = useState()
@@ -41,6 +40,9 @@ const AmbiencePost = props => {
   const [crop, setCrop] = useState({ aspect: 10 / 7, width: 320 })
   const [completedCrop, setCompletedCrop] = useState(null)
   const [imageDetails, setImageDetails] = useState({ name: "", type: "" })
+  const [imagesJson, setImagesJson] = useState({
+    images: [{ id: "", imagedata: "" }],
+  })
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -72,7 +74,7 @@ const AmbiencePost = props => {
     canvas.height = crop.height * pixelRatio
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-    ctx.imageSmoothingQuality = "high"
+    ctx.imageSmoothingQuality = "low"
 
     ctx.drawImage(
       image,
@@ -91,28 +93,12 @@ const AmbiencePost = props => {
     try {
       const params = {
         Bucket: awsmobile.aws_user_files_s3_bucket,
-        Prefix: `public/${getCurrentUser()["custom:page_id"]}/ambience/`,
+        Key: `public/${getCurrentUser()["custom:page_id"]}/ambience.json`,
       }
-      await subscriberAmbienceS3.listObjects(params, (err, resp) => {
-        resp.Contents.forEach(element => {
-          getIndividualImage(element.Key)
-        })
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function getIndividualImage(key) {
-    try {
-      const paramsImg = {
-        Bucket: awsmobile.aws_user_files_s3_bucket,
-        Key: key,
-      }
-      await subscriberAmbienceS3.getObject(paramsImg, (err, resp) => {
-        const temp = [...ambienceList]
-        temp.push({ name: "", image: resp.Body })
-        setAmbienceList(temp)
+      await subscriberAmbienceS3.getObject(params, (err, resp) => {
+        let resJson = new TextDecoder("utf-8").decode(resp.Body)
+        resJson = JSON.parse(resJson)
+        setImagesJson({ images: imagesJson.images.concat(resJson.images) })
       })
     } catch (error) {
       console.log(error)
@@ -160,18 +146,19 @@ const AmbiencePost = props => {
 
     const readyImage = canvas.toDataURL(imageDetails.type)
     try {
-      const storeImg = await Storage.put(
-        `${getCurrentUser()["custom:page_id"]}/ambience/ambience${
-          imageDetails.name
-        }`,
-        readyImage
+      let tempJson = imagesJson
+      tempJson.images.push({
+        id: imagesJson.images.length,
+        imagedata: readyImage,
+      })
+      setImagesJson(tempJson)
+
+      await Storage.put(
+        `${getCurrentUser()["custom:page_id"]}/ambience.json`,
+        imagesJson,
+        { level: "public", contentType: "application/json" }
       )
-      if (storeImg) {
-        const temp = ambienceList
-        temp.push({ name: ambienceList.length, image: readyImage })
-        setAmbienceList(temp)
-        setImageSelector(false)
-      }
+      setImageSelector(false)
     } catch (error) {
       console.log(error)
     }
@@ -192,7 +179,7 @@ const AmbiencePost = props => {
             onImageLoaded={onLoad}
             ref={cropRef}
           />
-          <div style={{height: '70vh'}}>
+          <div style={{ height: "70vh" }}>
             <canvas
               ref={previewCanvasRef}
               style={{
@@ -236,15 +223,15 @@ const AmbiencePost = props => {
             />
           )}
         >
-          {ambienceList.map((element, index) => (
+          {imagesJson.images.map((element, index) => (
             <section
               key={index}
               className={ambienceStyles.ambienceImageCardContainer}
             >
-              {element["image"].length > 0 ? (
+              {element.imagedata.length > 0 ? (
                 <img
-                  src={element["image"]}
-                  alt={element["name"]}
+                  src={element.imagedata}
+                  alt={element.id}
                   className={ambienceStyles.ambienceImage}
                 />
               ) : (

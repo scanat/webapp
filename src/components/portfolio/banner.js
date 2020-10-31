@@ -34,7 +34,7 @@ const Banner = () => {
   const [imageUrl, setImageUrl] = useState("")
   const [crop, setCrop] = useState({ aspect: 16 / 9, width: 320 })
   const [completedCrop, setCompletedCrop] = useState(null)
-  const [imageDetails, setImageDetails] = useState({ name: "", type: "" })
+  const [imageDetails, setImageDetails] = useState({ name: "", type: "", url: "" })
   const [loading, setLoading] = useState(false)
 
   const onLoad = useCallback(img => {
@@ -58,7 +58,7 @@ const Banner = () => {
     canvas.height = crop.height * pixelRatio
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-    ctx.imageSmoothingQuality = "high"
+    ctx.imageSmoothingQuality = "low"
 
     ctx.drawImage(
       image,
@@ -96,9 +96,10 @@ const Banner = () => {
           id: getCurrentUser()["custom:page_id"],
         })
       )
+      imageDetails.url = imgName.data.getSubscriber.banner
       const params = {
         Bucket: awsmobile.aws_user_files_s3_bucket,
-        Key: `public/${getCurrentUser()["custom:page_id"]}/${
+        Key: `public/${
           imgName.data.getSubscriber.banner
         }`,
       }
@@ -136,7 +137,7 @@ const Banner = () => {
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
-      setImageDetails({ name: selectedFile.name, type: selectedFile.type })
+      setImageDetails({ name: selectedFile.name, type: selectedFile.type, url: imageDetails.url })
     }
     setImageSelector(true)
   }
@@ -149,16 +150,21 @@ const Banner = () => {
     const canvas = getCroppedImg(previewCanvas, crop.width, crop.height)
 
     const readyImage = canvas.toDataURL(imageDetails.type)
-    console.log(imageDetails)
     try {
+      bannerData && Storage.remove(imageDetails.url)
       const storeImg = await Storage.put(
         `${getCurrentUser()["custom:page_id"]}/banner${imageDetails.name}`,
-        readyImage
+        readyImage,
+        {
+          level: "public",
+          contentType: imageDetails.type,
+          contentEncoding: "base64",
+        }
       )
       const inputs = {
         input: {
           id: getCurrentUser()["custom:page_id"],
-          banner: "banner" + imageDetails.name,
+          banner: storeImg.key,
         },
       }
       const data = await API.graphql(

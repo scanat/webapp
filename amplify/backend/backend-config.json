@@ -16,8 +16,8 @@
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7,
-              "description": "Scan At API Key"
+              "apiKeyExpirationDays": 365,
+              "description": "Subscriber Api Key"
             }
           },
           "additionalAuthenticationProviders": []

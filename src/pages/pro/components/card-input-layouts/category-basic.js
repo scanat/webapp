@@ -369,6 +369,7 @@ const CategoryBasic = props => {
         {
           level: "public",
           contentType: imageDetails.type,
+          contentEncoding: 'base64'
         }
       )
       if (storeImg) {

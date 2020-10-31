@@ -31,7 +31,7 @@ const Logo = props => {
   const [imageSelector, setImageSelector] = useState(false)
   const [crop, setCrop] = useState({ aspect: 1 / 1, width: 100 })
   const [completedCrop, setCompletedCrop] = useState(null)
-  const [imageDetails, setImageDetails] = useState({ name: "", type: "" })
+  const [imageDetails, setImageDetails] = useState({ name: "", type: "", url: "" })
 
   const onLoad = useCallback(img => {
     imgRef.current = img
@@ -54,7 +54,7 @@ const Logo = props => {
     canvas.height = crop.height * pixelRatio
 
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-    ctx.imageSmoothingQuality = "high"
+    ctx.imageSmoothingQuality = "low"
 
     ctx.drawImage(
       image,
@@ -80,9 +80,10 @@ const Logo = props => {
           id: getCurrentUser()["custom:page_id"],
         })
       )
+      imageDetails.url = imgName.data.getSubscriber.logo
       const params = {
         Bucket: awsmobile.aws_user_files_s3_bucket,
-        Key: `public/${getCurrentUser()["custom:page_id"]}/${
+        Key: `public/${
           imgName.data.getSubscriber.logo
         }`,
       }
@@ -120,7 +121,7 @@ const Logo = props => {
     reader.readAsDataURL(selectedFile)
     reader.onload = () => {
       setImageUrl(reader.result)
-      setImageDetails({ name: selectedFile.name, type: selectedFile.type })
+      setImageDetails({ name: selectedFile.name, type: selectedFile.type, url: imageDetails.url })
     }
     setImageSelector(true)
   }
@@ -134,14 +135,20 @@ const Logo = props => {
 
     const readyImage = canvas.toDataURL(imageDetails.type)
     try {
+      logoData && Storage.remove(imageDetails.url)
       const storeImg = await Storage.put(
         `${getCurrentUser()["custom:page_id"]}/logo${imageDetails.name}`,
-        readyImage
+        readyImage,
+        {
+          level: "public",
+          contentType: imageDetails.type,
+          contentEncoding: "base64",
+        }
       )
       const inputs = {
         input: {
           id: getCurrentUser()["custom:page_id"],
-          logo: "logo" + imageDetails.name,
+          logo: storeImg.key,
         },
       }
       const data = await API.graphql(
@@ -170,7 +177,7 @@ const Logo = props => {
             onImageLoaded={onLoad}
             ref={cropRef}
           />
-          <div style={{height: '70vh'}}>
+          <div style={{ height: "70vh" }}>
             <canvas
               ref={previewCanvasRef}
               style={{
@@ -184,7 +191,7 @@ const Logo = props => {
             onClick={() => uploadImage(previewCanvasRef.current, completedCrop)}
             className={logoStyles.button}
           >
-            Upload Banner
+            Upload Logo
           </button>
         </section>
       )}
