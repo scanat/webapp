@@ -12,7 +12,7 @@ import {
 import Carousel from "react-elastic-carousel"
 import AWS from "aws-sdk"
 import Img from "gatsby-image"
-import { graphql, navigate, useStaticQuery } from "gatsby"
+import { graphql, Link, navigate, navigateTo, useStaticQuery } from "gatsby"
 import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"
@@ -46,15 +46,14 @@ const Explore = () => {
   }, [])
 
   const searchItems = async () => {
-    let empty = []
-    setSearchObjectList(empty)
     const params = {
       id: searchRef.current.value,
     }
 
     try {
       await API.graphql(graphqlOperation(queryOrg, params)).then(res => {
-        res.data.listSubscribers.items.map(item => {
+        let list = res.data.listSubscribers.items
+        list.map(item => {
           getImage()
           async function getImage() {
             try {
@@ -63,10 +62,10 @@ const Explore = () => {
                 Key: "public/" + item.logo,
               }
               await subscriberItemS3.getObject(paramsImg, (err, res) => {
-                item.imageData = Buffer.from(res.Body, "base64").toString("ascii")
-                let temp = [...searchObjectList]
-                temp.push(item)
-                setSearchObjectList(temp)
+                item.imageData = Buffer.from(res.Body, "base64").toString(
+                  "ascii"
+                )
+                setSearchObjectList(list)
               })
             } catch (error) {
               console.log(error)
@@ -76,26 +75,6 @@ const Explore = () => {
       })
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  async function getItemImage(image) {
-    try {
-      const paramsImg = {
-        Bucket: process.env.GATSBY_S3_BUCKET,
-        Key: "public/" + image,
-      }
-
-      await subscriberItemS3.getObject(paramsImg, (err, resp) => {
-        console.log(
-          "s3://scanatsubscriber620f032716d7410c9e97e968f28666314831-dev/public/" +
-            image
-        )
-        return btoa(resp.Body)
-      })
-    } catch (error) {
-      console.log(error)
-      return null
     }
   }
 
@@ -116,9 +95,7 @@ const Explore = () => {
             color="grey"
             size="lg"
             className={exploreStyles.searchIcon}
-            onClick={() => {
-              searchItems()
-            }}
+            onClick={searchItems}
           />
         </section>
       </section>
@@ -138,7 +115,7 @@ const Explore = () => {
               icon={type === "PREV" ? faAngleLeft : faAngleRight}
               size="2x"
               color="grey"
-              style={{ marginTop: "50px" }}
+              style={{ margin: "50px 10px 0 10px" }}
             />
           )}
         >
@@ -154,21 +131,24 @@ const Explore = () => {
         </Carousel>
       </section>
 
-      <section className={exploreStyles.searchResultContainer}>
-        {searchObjectList.map(item => (
-          <section
-            className={exploreStyles.searchItemHolder}
-            onClick={() => navigate('/profile')}
-            key={item.id}
-          >
-            <img
-              src={item.imageData}
-              alt={item.image}
-            />
-            <label className={exploreStyles.itemId}>{item.id}</label>
-            <label className={exploreStyles.itemName}>{item.orgName}</label>
-          </section>
-        ))}
+      <section
+        style={{
+          clear: "both",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <section className={exploreStyles.searchResultContainer}>
+          {searchObjectList.map(item => (
+            <Link to="/portfolio">
+              <section className={exploreStyles.searchItemHolder} key={item.id}>
+                <img src={item.imageData} alt={item.image} />
+                <label className={exploreStyles.itemId}>{item.id}</label>
+                <label className={exploreStyles.itemName}>{item.orgName}</label>
+              </section>
+            </Link>
+          ))}
+        </section>
       </section>
     </Layout>
   )
