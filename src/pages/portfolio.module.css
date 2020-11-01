@@ -192,19 +192,11 @@
   justify-content: center;
   align-items: center;
 }
-.socialLinkInputHolder {
-  margin: 20px 0;
-  border: grey 1px solid;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-}
 .socialTextInput{
   border: grey 2px dashed;
-  margin: 0 10px;
   padding: 5px;
+  color: #169188;
+  font-size: 0.7em;
 }
 .socialLinksContainer a {
   width: 90%;
@@ -288,61 +280,6 @@
 }
 .shareSubListContainer li {
   margin: 5px 0;
-}
-.dishesWeek {
-  width: 100%;
-  float: left;
-  display: flex;
-  flex-direction: column;
-  -ms-flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.dishesContainer {
-  width: 300px;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-  -ms-flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: crimson;
-  border-radius: 10px;
-  margin: 80px 0 0 0;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
-}
-.dishesImage {
-  width: 200px;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-top: -50px;
-}
-.dishName {
-  color: whitesmoke;
-  margin: 0 10px;
-  text-align: center;
-}
-.dishDescription {
-  color: white;
-  margin: 10px;
-  text-align: center;
-  font-size: 14px;
-}
-.offerprice {
-  margin: 5px 10px;
-  color: whitesmoke;
-  text-align: center;
-}
-.strokePrice {
-  font-size: 14px;
-  color: rgb(233, 233, 233);
-}
-.offerOff {
-  margin-left: 10px;
-  font-weight: bold;
-  letter-spacing: 2px;
 }
 .reviewContainer {
   width: 100%;

@@ -140,7 +140,7 @@ const Explore = () => {
       >
         <section className={exploreStyles.searchResultContainer}>
           {searchObjectList.map(item => (
-            <Link to="/portfolio">
+            <Link to={`/portfolio?id=${item.id}`}>
               <section className={exploreStyles.searchItemHolder} key={item.id}>
                 <img src={item.imageData} alt={item.image} />
                 <label className={exploreStyles.itemId}>{item.id}</label>

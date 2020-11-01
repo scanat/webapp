@@ -1,0 +1,20 @@
+.logoContainer {
+  position: relative;
+  float: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px whitesmoke solid;
+  overflow: hidden;
+  margin: -50px 0 0 5%;
+  background: #169188;
+  z-index: 2;
+}
+.logoText {
+  font-size: 2.4em;
+  color: whitesmoke;
+  text-transform: uppercase;
+}

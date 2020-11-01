@@ -1,231 +1,70 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import Layout from "../components/layout"
 import portfolioStyles from "./portfolio.module.css"
-import PortfolioBanner from "../images/portfolio-banner.jpg"
 import { getCurrentUser } from "../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
-  faAngleDown,
-  faAngleLeft,
-  faAngleRight,
-  faCamera,
-  faCaretUp,
-  faEllipsisH,
-  faEllipsisV,
-  faHeart,
   faInfo,
   faMapMarkerAlt,
-  faShare,
   faShareAlt,
   faStar,
 } from "@fortawesome/free-solid-svg-icons"
-import Carousel from "react-elastic-carousel"
 import {
   faFacebookF,
-  faInstagram,
   faPinterestP,
   faTwitter,
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
-import { Link, navigate } from "gatsby"
-import config from "../config.json"
-import axios from "axios"
-import dishImage from "../images/burger.jpg"
-import { faLightbulb } from "@fortawesome/free-regular-svg-icons"
+import Logo from "../components/portfolio/logo"
+import Banner from "../components/portfolio/banner"
+import Amplify, { API, graphqlOperation } from "aws-amplify"
+import SocialPage from "../components/portfolio/socialPage"
+import AmbiencePost from "../components/portfolio/ambiencePost"
+import DishesWeek from "../components/portfolio/dishesWeek"
 
-const CardLayout = props => {
-  return (
-    <section className={portfolioStyles.cardContainer}>
-      <img
-        src={props.image}
-        alt={props.image}
-        className={portfolioStyles.image}
-      />
-      {/* <label className={portfolioStyles.hearts}>
-        {props.hearts}
-        <FontAwesomeIcon icon={faHeart} color="crimson" />
-      </label> */}
-    </section>
-  )
-}
+Amplify.configure({
+  API: {
+    aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
+    aws_appsync_region: "ap-south-1",
+    aws_appsync_authenticationType: "API_KEY",
+    aws_appsync_apiKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
+  },
+})
 
-const DishesLayout = () => {
-  return (
-    <section className={portfolioStyles.dishesContainer}>
-      <img
-        src={dishImage}
-        alt="Scan At Dish Image"
-        className={portfolioStyles.dishesImage}
-      />
-      <section>
-        <h4 className={portfolioStyles.dishName}>Dish Name</h4>
-        <p className={portfolioStyles.dishDescription}>
-          This is a little description of the item that has been newly added
-          here.
-        </p>
-        <p className={portfolioStyles.offerprice}>
-          <strike className={portfolioStyles.strokePrice}>Rs. 1000</strike> Rs.
-          840/- <label className={portfolioStyles.offerOff}>(20% OFF)</label>
-        </p>
-      </section>
-    </section>
-  )
-}
-
-const SocialPlatformLink = () => {
-  return (
-    <section className={portfolioStyles.socialLinksContainer}>
-      <p className={portfolioStyles.headerTopic}>
-        {" "}
-        Bring folowers to your social media pages
-      </p>
-      <section className={portfolioStyles.socialLinkInputHolder}>
-        <FontAwesomeIcon icon={faTwitter} size="lg" color="#00acee" />
-        <input
-          className={portfolioStyles.socialTextInput}
-          placeholder="Your Twitter ID"
-        />
-      </section>
-      <section className={portfolioStyles.socialLinkInputHolder}>
-        <FontAwesomeIcon icon={faFacebookF} size="lg" color="#3b5998" />
-        <input
-          className={portfolioStyles.socialTextInput}
-          placeholder="Your Facebook Page"
-        />
-      </section>
-      <section className={portfolioStyles.socialLinkInputHolder}>
-        <FontAwesomeIcon icon={faPinterestP} size="lg" color="#e60023" />
-        <input
-          className={portfolioStyles.socialTextInput}
-          placeholder="Your Pinterest ID"
-        />
-      </section>
-      <section className={portfolioStyles.socialLinkInputHolder}>
-        <FontAwesomeIcon icon={faInstagram} size="lg" color="#3f729b" />
-        <input
-          className={portfolioStyles.socialTextInput}
-          placeholder="Your Instagram Page"
-        />
-      </section>
-    </section>
-  )
-}
-
-const Portfolio = () => {
-  const [subMenu, setSubMenu] = useState(false)
-  const uploadBannerInput = useRef(null)
-  const bannerForm = useRef(null)
-  const [imageUrl, setImageUrl] = useState("")
-  const [file, setFile] = useState("")
+const Portfolio = ({ location }) => {
   const [shareIconsVisible, setShareIconsVisible] = useState(false)
   const [width, setWidth] = useState()
   const [rated, setRated] = useState(0)
+  const [pageData, setPageData] = useState({})
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
     else if (document.body.offsetWidth < 600) setWidth(2)
     else if (document.body.offsetWidth < 1024) setWidth(4)
     else setWidth(5)
+    getPageDetails()
+    async function getPageDetails() {
+      let foundId = String(location.search).substring(4)
+      try {
+        await API.graphql(
+          graphqlOperation(portfolioData, {
+            id: foundId,
+          })
+        ).then(res => {
+          console.log(foundId, res)
+          setPageData(res.data.getSubscriber)
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }, [])
 
-  const selectImage = e => {
-    const selectedFile = e.target.files[0]
-    const reader = new FileReader(selectedFile)
-    reader.readAsDataURL(selectedFile)
-    reader.onload = () => {
-      setImageUrl(reader.result)
-      setFile(selectedFile)
-    }
-    uploadBanner()
-  }
-
-  const uploadBanner = async e => {
-    try {
-      const params = JSON.stringify({
-        phoneNumber: getCurrentUser().phone_number,
-        image: imageUrl,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-      })
-      console.log(params)
-      const res = await axios.post(
-        `${config.invokeUrl}/subscriberdata/add/banner`,
-        params
-      )
-      console.log(res)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  return Object.keys(getCurrentUser()).length === 0 ? (
+  return (
     <Layout>
-      <h1
-        style={{
-          color: "crimson",
-          fontSize: "16px",
-          textAlign: "center",
-          margin: "20px 0",
-        }}
-      >
-        Oops seems like you are not logged in yet!
-      </h1>
-      <label>
-        You can login using [{" "}
-        <FontAwesomeIcon icon={faEllipsisV} size="lg" color="#169188" /> ] on
-        the top right corner
-      </label>
-      <br />
-      OR
-      <br />
-      <Link to="/" style={{ margin: "0 auto" }}>
-        <label className={portfolioStyles.link}>Reach Home</label>
-      </Link>
-    </Layout>
-  ) : (
-    <Layout>
-      <section className={portfolioStyles.banner}>
-        <img src={PortfolioBanner} alt="Portfolio Banner" />
-        <section
-          className={portfolioStyles.editHolder}
-          onClick={() => uploadBannerInput.current.click()}
-        >
-          <FontAwesomeIcon icon={faCamera} size="lg" color="#169188" />
-          <form ref={bannerForm} hidden>
-            <input
-              ref={uploadBannerInput}
-              id="itemId"
-              type="file"
-              onChange={selectImage}
-              hidden
-            />
-            <button type="submit" onSubmit={uploadBanner}></button>
-          </form>
-        </section>
-      </section>
+      <Banner id={String(location.search).substring(4)} />
 
-      <section className={portfolioStyles.logoContainer}>
-        <label className={portfolioStyles.logoText}>
-          {getCurrentUser().name.substring(0, 2)}
-        </label>
-      </section>
-      <section
-        className={portfolioStyles.editDpHolder}
-        onClick={() => uploadBannerInput.current.click()}
-      >
-        <FontAwesomeIcon icon={faCamera} size="1x" color="#169188" />
-        <form ref={bannerForm} hidden>
-          <input
-            ref={uploadBannerInput}
-            id="itemId"
-            type="file"
-            onChange={selectImage}
-            hidden
-          />
-          <button type="submit" onSubmit={uploadBanner}></button>
-        </form>
-      </section>
+      <Logo id={String(location.search).substring(4)} />
 
       <ul className={portfolioStyles.shareListContainer}>
         <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>
@@ -287,23 +126,10 @@ const Portfolio = () => {
       </ul>
 
       <section className={portfolioStyles.orgTitle}>
-        <h1>{getCurrentUser().name}</h1>
-        <section className={portfolioStyles.socialLinkInputHolder}>
-          <label style={{ fontSize: "1rem", margin: "0 5px" }}>
-            Create a ScanAt Page{" "}
-          </label>
-          <FontAwesomeIcon id="bulbGlowId" icon={faLightbulb} color="grey" />
-          <input
-            className={portfolioStyles.socialTextInput}
-            placeholder="New Page ID"
-            onFocus={ () =>
-              typeof window !== "undefined" &&
-              document
-                .getElementById("bulbGlowId")
-                .setAttribute("color", "green")
-            }
-          />
-        </section>
+        <h1>{pageData.orgName}</h1>
+        <label className={portfolioStyles.socialTextInput}>
+          {String(location.search).substring(4)}
+        </label>
       </section>
 
       <section className={portfolioStyles.liveSpaceContainer}>
@@ -311,76 +137,45 @@ const Portfolio = () => {
           Live Accomodation{" "}
           <label className={portfolioStyles.liveSpaceNumber}>02</label>
         </label>
-        <a href={`https://www.scanat.in${getCurrentUser().website}`}>
+        <a
+          href={`https://www.scanat.in/live?id=${String(
+            location.search
+          ).substring(4)}`}
+        >
           <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
         </a>
       </section>
 
-      <SocialPlatformLink />
+      <SocialPage id={String(location.search).substring(4)} />
 
       <section className={portfolioStyles.fullDescription}>
         <section className={portfolioStyles.businessLocation}>
           <FontAwesomeIcon icon={faMapMarkerAlt} color="crimson" size="3x" />
           <p className={portfolioStyles.topic}>ADDRESS</p>
           <label className={portfolioStyles.desc}>
-            {getCurrentUser()["custom:address_line_1"] +
-              " " +
-              getCurrentUser()["custom:address_line_2"] +
-              " " +
-              getCurrentUser()["custom:city"] +
-              " " +
-              getCurrentUser()["custom:state"]}
+            {pageData.address1}
+            <br />
+            {pageData.address2}
+            <br />
+            {pageData.city}
+            <br />
+            {pageData.state}
+            <br />
+            {pageData.postalCode}
           </label>
         </section>
         <br />
 
         <section className={portfolioStyles.businessDescription}>
           <FontAwesomeIcon icon={faInfo} color="crimson" size="3x" />
-          <p className={portfolioStyles.topic}>About {getCurrentUser().name}</p>
-          <label className={portfolioStyles.desc}>
-            {getCurrentUser()["custom:category"]}
-          </label>
+          <p className={portfolioStyles.topic}>About {pageData.orgName}</p>
+          <label className={portfolioStyles.desc}>{pageData.about}</label>
         </section>
       </section>
 
-      <section className={portfolioStyles.ourDealsContainer}>
-        {/* <h2 className={portfolioStyles.headerTopic}>our top deals</h2> */}
-        <section className={portfolioStyles.ourDeals}>
-          <Carousel
-            itemsToShow={width}
-            verticalMode={false}
-            pagination={true}
-            renderPagination={() => (
-              <FontAwesomeIcon icon={faEllipsisH} size="lg" color="grey" />
-            )}
-            focusOnSelect={true}
-            renderArrow={({ type, onClick }) => (
-              <FontAwesomeIcon
-                onClick={onClick}
-                icon={type === "PREV" ? faAngleLeft : faAngleRight}
-                size="2x"
-                color="grey"
-                style={{ marginTop: "50px" }}
-              />
-            )}
-          >
-            {topDeals.map((element, index) => (
-              <CardLayout
-                key={index}
-                image={element.image}
-                hearts={element.hearts}
-              />
-            ))}
-          </Carousel>
-        </section>
-      </section>
+      <AmbiencePost id={String(location.search).substring(4)} />
 
-      <section className={portfolioStyles.dishesWeek}>
-        <h2 className={portfolioStyles.headerTopic}>dishes of the week</h2>
-        {dishes.map((item, id) => (
-          <DishesLayout key={id} />
-        ))}
-      </section>
+      <DishesWeek id={String(location.search).substring(4)} />
 
       <section className={portfolioStyles.reviewContainer}>
         <h2 className={portfolioStyles.headerTopic}>Like what you see?</h2>
@@ -467,50 +262,23 @@ const Portfolio = () => {
 
 export default Portfolio
 
-let topDeals = [
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 100,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 58,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 70,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 88,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 147,
-  },
-  {
-    image:
-      "https://cdn.pixabay.com/photo/2010/12/13/10/05/background-2277_640.jpg",
-    hearts: 1002,
-  },
-]
-
-let dishes = [
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-  {
-    image: "",
-  },
-]
+export const portfolioData = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      about
+      address1
+      address2
+      city
+      state
+      postalCode
+      category
+      email
+      facebook
+      instagram
+      orgName
+      phoneNumber
+      pinterest
+      twitter
+    }
+  }
+`

@@ -1,0 +1,64 @@
+.container {
+  width: 100%;
+  margin-bottom: 40px;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.dishesContainer {
+  position: relative;
+  width: 300px;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: crimson;
+  border-radius: 10px;
+  margin: 80px 0 0 0;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.headerTopic {
+  font-size: 2em;
+  text-align: center;
+  font-weight: 100;
+}
+.dishesImage {
+  width: 200px;
+  height: 140px;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-top: -50px;
+  border: grey 2px dashed;
+}
+.dishName {
+  color: whitesmoke;
+  margin: 0 10px;
+  text-align: center;
+}
+.dishDescription {
+  color: white;
+  margin: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+.offerprice {
+  margin: 5px 10px;
+  color: whitesmoke;
+  text-align: center;
+}
+.strokePrice {
+  font-size: 14px;
+  color: rgb(233, 233, 233);
+}
+.offerOff {
+  margin-left: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}

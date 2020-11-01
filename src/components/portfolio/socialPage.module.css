@@ -1,0 +1,7 @@
+.socialLinksContainer {
+  width: 100%;
+  clear: both;
+  margin: 80px 0 20px 0;
+  display: flex;
+  justify-content: space-around;
+}
