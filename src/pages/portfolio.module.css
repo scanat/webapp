@@ -33,11 +33,8 @@
 }
 .liveSpaceContainer {
   position: relative;
-  width: 100%;
   float: right;
   margin-right: 5%;
-  display: flex;
-  justify-content: space-evenly;
 }
 .liveSpaceText {
   color: green;
@@ -196,7 +193,7 @@
   border: grey 2px dashed;
   padding: 5px;
   color: #169188;
-  font-size: 0.7em;
+  font-size: 0.6em;
 }
 .socialLinksContainer a {
   width: 90%;

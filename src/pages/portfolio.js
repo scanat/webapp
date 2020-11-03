@@ -21,6 +21,7 @@ import Amplify, { API, graphqlOperation } from "aws-amplify"
 import SocialPage from "../components/portfolio/socialPage"
 import AmbiencePost from "../components/portfolio/ambiencePost"
 import DishesWeek from "../components/portfolio/dishesWeek"
+import { Link, navigate } from "gatsby"
 
 Amplify.configure({
   API: {
@@ -133,17 +134,9 @@ const Portfolio = ({ location }) => {
       </section>
 
       <section className={portfolioStyles.liveSpaceContainer}>
-        <label className={portfolioStyles.liveSpaceText}>
-          Live Accomodation{" "}
-          <label className={portfolioStyles.liveSpaceNumber}>02</label>
-        </label>
-        <a
-          href={`https://www.scanat.in/live?id=${String(
-            location.search
-          ).substring(4)}`}
-        >
+        <Link to={`/live?id=${String(location.search).substring(4)}`}>
           <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
-        </a>
+        </Link>
       </section>
 
       <SocialPage id={String(location.search).substring(4)} />
