@@ -9,9 +9,11 @@ import {
   faCaretDown,
   faCaretUp,
   faCartPlus,
+  faInfoCircle,
+  faMinusSquare,
+  faPlusSquare,
 } from "@fortawesome/free-solid-svg-icons"
-import { faMinusSquare, faPlusSquare } from "@fortawesome/free-solid-svg-icons"
-import { navigate } from "gatsby"
+import FurtherDetails from "./furtherDetails"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
@@ -38,6 +40,7 @@ const Default = props => {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [categoryList, setCategoryList] = useState(["All"])
   const [orgName, setOrgName] = useState("")
+  const [openInfo, setOpenInfo] = useState(null)
 
   useEffect(() => {
     getData()
@@ -102,14 +105,17 @@ const Default = props => {
   const addItemToList = item => {
     item.ordered = true
     setOrderList(orderList.concat(item))
-    console.log(orderList)
   }
 
-  const removeItemFromList = id => {
-    orderList.splice(id, 1)
-    var tempList = [...list]
-    tempList[id].ordered = false
-    setList(tempList)
+  const removeItemFromList = sentitem => {
+    var tempList = [...orderList]
+    tempList.map((item, index) => {
+      if (item.id === sentitem.id) {
+        tempList.splice(index, 1)
+        item.ordered = false
+        setOrderList(tempList)
+      }
+    })
   }
 
   const incQty = (givenList, id) => {
@@ -122,6 +128,17 @@ const Default = props => {
     var tempList = [...givenList]
     tempList[id].qty -= 1
     givenList === list ? setList(tempList) : setFilteredList(tempList)
+  }
+
+  const updateItem = () => {
+    let temp = [...list]
+    setList(temp)
+  }
+
+  const updateItemOrder = sentitem => {
+    sentitem.ordered === false
+      ? removeItemFromList(sentitem)
+      : addItemToList(sentitem)
   }
 
   const filterCategoricalList = item => {
@@ -143,6 +160,30 @@ const Default = props => {
     setConfirmOrder(!confirmOrder)
   }
 
+  const openItemInfo = async item => {
+    if (item.image) {
+      try {
+        const params = {
+          Bucket: process.env.GATSBY_S3_BUCKET,
+          Key: `public/${item.image}`,
+        }
+        await subscriberItemsS3.getObject(params, (err, res) => {
+          let temp = [...list]
+          temp.map(itemData => {
+            if (itemData.id === item.id) {
+              itemData.imageData = res.Body
+              setList(temp)
+              setOpenInfo(itemData)
+            }
+          })
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    setOpenInfo(item)
+  }
+
   return (
     <>
       <section className={defaultStyles.container}>
@@ -161,7 +202,7 @@ const Default = props => {
           <h1 className={defaultStyles.categoryTopic}>{selectedCategory}</h1>
           {selectedCategory !== "All" &&
             filteredList.map((item, index) => (
-              <section className={defaultStyles.greenCard} key={item._id}>
+              <section className={defaultStyles.greenCard} key={item.id}>
                 <section className={defaultStyles.textContainers}>
                   <p className={defaultStyles.itemName}>{item.itemName}</p>
                   <p className={defaultStyles.itemPrice}>
@@ -174,7 +215,7 @@ const Default = props => {
                     onClick={() =>
                       !item.ordered
                         ? addItemToList(item)
-                        : removeItemFromList(index)
+                        : removeItemFromList(item)
                     }
                     size="lg"
                     color={!item.ordered ? "green" : "#db2626"}
@@ -198,12 +239,22 @@ const Default = props => {
                       color="green"
                     />
                   </section>
+                  <FontAwesomeIcon
+                    onClick={
+                      item.imageData
+                        ? () => setOpenInfo(item)
+                        : () => openItemInfo(item)
+                    }
+                    icon={faInfoCircle}
+                    size="lg"
+                    color="grey"
+                  />
                 </section>
               </section>
             ))}
           {selectedCategory === "All" &&
             list.map((item, index) => (
-              <section className={defaultStyles.greenCard} key={item._id}>
+              <section className={defaultStyles.greenCard} key={item.id}>
                 <section className={defaultStyles.textContainers}>
                   <p className={defaultStyles.itemName}>{item.itemName}</p>
                   <p className={defaultStyles.itemPrice}>
@@ -216,7 +267,7 @@ const Default = props => {
                     onClick={() =>
                       !item.ordered
                         ? addItemToList(item)
-                        : removeItemFromList(index)
+                        : removeItemFromList(item)
                     }
                     size="lg"
                     color={!item.ordered ? "green" : "#db2626"}
@@ -238,6 +289,16 @@ const Default = props => {
                       color="green"
                     />
                   </section>
+                  <FontAwesomeIcon
+                    onClick={
+                      item.imageData
+                        ? () => setOpenInfo(item)
+                        : () => openItemInfo(item)
+                    }
+                    icon={faInfoCircle}
+                    size="lg"
+                    color="grey"
+                  />
                 </section>
               </section>
             ))}
@@ -262,7 +323,37 @@ const Default = props => {
               </section>
             </section>
             <br></br>
-            {orderList.map((item, index) => (
+            <h1 className={defaultStyles.orgName}>Your Orders</h1>
+            {orderList.map((item, index) => {
+              if (item.ordered) {
+                return (
+                  <section className={defaultStyles.greenCard} key={item._id}>
+                    <section className={defaultStyles.textContainers}>
+                      <p className={defaultStyles.itemName}>{item.itemName}</p>
+                      <p className={defaultStyles.itemPrice}>
+                        Rs {item.itemPrice * item.qty} /-
+                      </p>
+                    </section>
+                    <section className={defaultStyles.OrderItemControls}>
+                      <label className={defaultStyles.orderedQuantity}>
+                        Quantity : {item.qty}
+                      </label>
+                      <FontAwesomeIcon
+                        icon={faCartPlus}
+                        onClick={() =>
+                          !item.ordered
+                            ? addItemToList(item)
+                            : removeItemFromList(item)
+                        }
+                        size="lg"
+                        color={!item.ordered ? "green" : "#db2626"}
+                      />
+                    </section>
+                  </section>
+                )
+              }
+            })}
+            {/* {orderList.map((item, index) => (
               <section className={defaultStyles.greenCard} key={item._id}>
                 <section className={defaultStyles.textContainers}>
                   <p className={defaultStyles.itemName}>{item.itemName}</p>
@@ -279,14 +370,14 @@ const Default = props => {
                     onClick={() =>
                       !item.ordered
                         ? addItemToList(item)
-                        : removeItemFromList(index)
+                        : removeItemFromList(item)
                     }
                     size="lg"
                     color={!item.ordered ? "green" : "#db2626"}
                   />
                 </section>
               </section>
-            ))}
+            ))} */}
             <section className={defaultStyles.confirmSection}>
               <button
                 type="button"
@@ -306,6 +397,23 @@ const Default = props => {
           //   subscriberPhoneNumber={subscriberPhoneNumber}
           switchConfirmOrder={toggleConfirmOrder}
         />
+      )}
+      {openInfo !== null && (
+        <section className={defaultStyles.furtherDetailsContainer}>
+          <FurtherDetails
+            details={openInfo}
+            updateItem={updateItem}
+            updateItemOrder={item => updateItemOrder(item)}
+          />
+          <section
+            onClick={() => setOpenInfo(null)}
+            style={{
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+            }}
+          ></section>
+        </section>
       )}
     </>
   )

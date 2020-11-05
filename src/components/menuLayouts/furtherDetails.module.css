@@ -1,0 +1,43 @@
+.container {
+  width: 280px;
+  height: auto;
+  border-radius: 5px;
+  background: whitesmoke;
+  overflow: hidden;
+  text-align: center;
+  z-index: 6;
+}
+.itemImageContainer {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.itemImage {
+  width: 100%;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+}
+.itemName {
+  letter-spacing: 1px;
+  font-weight: bold;
+  color: #169188;
+  max-width: 60%;
+}
+.flexedStyle {
+  width: 90%;
+  margin: 10px 5%;
+  display: flex;
+  justify-content: space-between;
+}
+.itemControls {
+  width: 100%;
+  float: left;
+  display: flex;
+  padding: 10px 0;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.quantityText {
+  margin: 0 5px;
+}
