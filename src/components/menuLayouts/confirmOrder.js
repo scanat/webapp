@@ -1,8 +1,19 @@
+import Amplify, { API, graphqlOperation } from "aws-amplify"
 import React, { useState } from "react"
 import confirmOrderStyles from "./confirmOrder.module.css"
 
+Amplify.configure({
+  API: {
+    aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
+    aws_appsync_region: "ap-south-1",
+    aws_appsync_authenticationType: "API_KEY",
+    aws_appsync_apiKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
+  },
+})
+
 const ConfirmOrder = props => {
   const [message, setMessage] = useState("")
+
   const calculateTotal = () => {
     var total = 0
     props.orderList.forEach(item => {
@@ -12,18 +23,33 @@ const ConfirmOrder = props => {
   }
 
   const sendOrderRequest = async () => {
+    let orders = []
+    props.orderList.forEach(item => {
+      orders.push({
+        name: item.itemName,
+        qty: item.qty,
+        price: item.itemPrice,
+        rating: null,
+      })
+    })
     try {
-      // const params = {
-      //   subscriberPhoneNumber: props.subscriberPhoneNumber,
-      //   userPhoneNumber: getCurrentUser().phone_number,
-      //   data: props.orderList,
-      //   qrId: props.qrId + "",
-      //   reqMessage: message,
-      // }
-      // const res = await axios.post(`${config.userDataAPI}/orders/add`, params)
-
-      // sendOrderCopy(res.data.orderId)
-      // props.switchConfirmOrder
+      const params = {
+        input: {
+          id: `ORD-${props.id}-${new Date().toISOString()}`,
+          order: orders,
+          totalItems: orders.length,
+          totalPrice: calculateTotal(),
+          states: [
+            { state: "Requested Confirmation", time: new Date().toISOString() },
+          ],
+          rating: null,
+          request: message,
+          status: "Requested Confirmation",
+        },
+      }
+      await API.graphql(graphqlOperation(createOrders, params)).then(res => {
+        res && props.getConfData(params)
+      })
     } catch (error) {
       console.log(error)
     }
@@ -40,7 +66,6 @@ const ConfirmOrder = props => {
       //   params
       // )
       // console.log(res)
-
       // props.switchConfirmOrder
     } catch (error) {
       console.log(error)
@@ -57,7 +82,9 @@ const ConfirmOrder = props => {
           <section className={confirmOrderStyles.orderItems}>
             <p className={confirmOrderStyles.orderItemName}>
               <b>{item.itemName}</b>{" "}
-              <label className={confirmOrderStyles.qtyLabel}>x {item.qty}</label>
+              <label className={confirmOrderStyles.qtyLabel}>
+                x {item.qty}
+              </label>
             </p>
             <p>{item.itemPrice * item.qty}/-</p>
           </section>
@@ -109,3 +136,11 @@ const ConfirmOrder = props => {
 }
 
 export default ConfirmOrder
+
+export const createOrders = /* GraphQL */ `
+  mutation CreateOrders($input: CreateOrdersInput!) {
+    createOrders(input: $input) {
+      id
+    }
+  }
+`

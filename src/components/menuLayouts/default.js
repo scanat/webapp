@@ -9,11 +9,13 @@ import {
   faCaretDown,
   faCaretUp,
   faCartPlus,
+  faCommentDots,
   faInfoCircle,
   faMinusSquare,
   faPlusSquare,
 } from "@fortawesome/free-solid-svg-icons"
 import FurtherDetails from "./furtherDetails"
+import Conversation from "./conversation"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
@@ -41,6 +43,8 @@ const Default = props => {
   const [categoryList, setCategoryList] = useState(["All"])
   const [orgName, setOrgName] = useState("")
   const [openInfo, setOpenInfo] = useState(null)
+  const [conversation, setConversation] = useState([])
+  const [openConversation, setOpenConversation] = useState(false)
 
   useEffect(() => {
     getData()
@@ -182,6 +186,14 @@ const Default = props => {
       }
     }
     setOpenInfo(item)
+  }
+
+  const getConfData = data => {
+    conversation.push(data)
+    let temp = [...conversation]
+    setConversation(temp)
+    setConfirmOrder(false)
+    setOpenConversation(true)
   }
 
   return (
@@ -353,31 +365,6 @@ const Default = props => {
                 )
               }
             })}
-            {/* {orderList.map((item, index) => (
-              <section className={defaultStyles.greenCard} key={item._id}>
-                <section className={defaultStyles.textContainers}>
-                  <p className={defaultStyles.itemName}>{item.itemName}</p>
-                  <p className={defaultStyles.itemPrice}>
-                    Rs {item.itemPrice * item.qty} /-
-                  </p>
-                </section>
-                <section className={defaultStyles.OrderItemControls}>
-                  <label className={defaultStyles.orderedQuantity}>
-                    Quantity : {item.qty}
-                  </label>
-                  <FontAwesomeIcon
-                    icon={faCartPlus}
-                    onClick={() =>
-                      !item.ordered
-                        ? addItemToList(item)
-                        : removeItemFromList(item)
-                    }
-                    size="lg"
-                    color={!item.ordered ? "green" : "#db2626"}
-                  />
-                </section>
-              </section>
-            ))} */}
             <section className={defaultStyles.confirmSection}>
               <button
                 type="button"
@@ -393,8 +380,8 @@ const Default = props => {
       {confirmOrder && (
         <ConfirmOrder
           orderList={orderList}
-          //   qrId={qrId}
-          //   subscriberPhoneNumber={subscriberPhoneNumber}
+          id={String(props.location.search).substring(4)}
+          getConfData={data => getConfData(data)}
           switchConfirmOrder={toggleConfirmOrder}
         />
       )}
@@ -414,6 +401,16 @@ const Default = props => {
             }}
           ></section>
         </section>
+      )}
+      {openConversation && <Conversation content={conversation} />}
+      {conversation.length > 0 && (
+        <FontAwesomeIcon
+          icon={faCommentDots}
+          onClick={() => setOpenConversation(!openConversation)}
+          size="2x"
+          color="#169188"
+          style={{ position: "fixed", bottom: 30, right: "5%", zIndex: 7 }}
+        />
       )}
     </>
   )

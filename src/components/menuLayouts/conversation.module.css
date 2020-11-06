@@ -1,0 +1,38 @@
+.container {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  z-index: 6;
+  background: whitesmoke;
+}
+.contentContainer {
+  width: 70%;
+  float: left;
+  clear: both;
+  background: white;
+  border-radius: 6px;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.5);
+  margin: 10px 5px;
+  padding: 5px;
+}
+.contentTopic {
+  letter-spacing: 1px;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-decoration: underline 1px grey;
+}
+.contentData {
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+}
+.contentItemContainer {
+  width: 80%;
+  margin: 5px 10%;
+  background: #169188;
+  color: whitesmoke;
+  border-radius: 6px;
+  padding: 5px;
+}
