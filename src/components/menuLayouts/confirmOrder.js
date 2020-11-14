@@ -49,24 +49,39 @@ const ConfirmOrder = props => {
       }
       await API.graphql(graphqlOperation(createOrders, params)).then(res => {
         res && props.getConfData(params)
+        getOrders(params.input.id)
       })
     } catch (error) {
       console.log(error)
     }
   }
 
-  const sendOrderCopy = async orderId => {
+  const getOrders = async (orderId) => {
     try {
-      // const params = {
-      //   phoneNumber: "+91" + props.subscriberPhoneNumber,
-      //   orderId: orderId,
-      // }
-      // const res = await axios.post(
-      //   `${config.userDataAPI}/orders/addcopy`,
-      //   params
-      // )
-      // console.log(res)
-      // props.switchConfirmOrder
+      let params = {
+        id: props.id,
+      }
+      await API.graphql(graphqlOperation(getSubscriber, params)).then(res => {
+        let data = res.data.getSubscriber.orders ? res.data.getSubscriber.orders : []
+        sendOrderCopy(orderId, data)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const sendOrderCopy = async (orderId, resultOrders) => {
+    resultOrders.push(orderId)
+    try {
+      let params = {
+        input: {
+          id: props.id,
+          orders: resultOrders
+        },
+      }
+      await API.graphql(graphqlOperation(updateSubscriber, params)).then(res =>
+        console.log(res)
+      )
     } catch (error) {
       console.log(error)
     }
@@ -141,6 +156,23 @@ export const createOrders = /* GraphQL */ `
   mutation CreateOrders($input: CreateOrdersInput!) {
     createOrders(input: $input) {
       id
+    }
+  }
+`
+
+export const updateSubscriber = /* GraphQL */ `
+  mutation UpdateSubscriber($input: UpdateSubscriberInput!) {
+    updateSubscriber(input: $input) {
+      id
+      orders
+    }
+  }
+`
+
+export const getSubscriber = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      orders
     }
   }
 `

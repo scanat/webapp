@@ -87,6 +87,7 @@ const Default = props => {
           let temp = [...list]
           setList(temp)
           getData()
+          console.log(data)
         }
       },
       error: err => {

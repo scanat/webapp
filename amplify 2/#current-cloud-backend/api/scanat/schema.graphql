@@ -1,0 +1,6 @@
+type Todo @model {
+  phoneTime: String!
+  reqMessage: String!
+  orderStatus: String!
+  data: String
+}

@@ -2,7 +2,6 @@ import React from "react"
 import conversationStyles from "./conversation.module.css"
 
 const Conversation = props => {
-  console.log(props.content)
   return (
     <section className={conversationStyles.container}>
       {props.content.map(item => (
