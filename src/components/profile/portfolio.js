@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
-import Layout from "../../components/layout"
+import Layout from "../layout"
 import portfolioStyles from "./portfolio.module.css"
-import { getCurrentUser, setUser } from "../../utils/auth"
+import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import AWS from "aws-sdk"
 import {
-  faCheckCircle,
   faEllipsisV,
   faInfo,
   faMapMarkerAlt,
@@ -18,16 +17,13 @@ import {
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
 import { Link } from "gatsby"
-import config from "../../config.json"
-import axios from "axios"
-import { faWindowClose } from "@fortawesome/free-regular-svg-icons"
-import Loader from "../../components/loader"
+import Loader from "../loader"
 import { API, Auth, graphqlOperation } from "aws-amplify"
-import Banner from "../../components/portfolio/banner"
-import SocialPlatform from "../../components/portfolio/socialPlatform"
-import Logo from "../../components/portfolio/logo"
-import AmbiencePost from "../../components/portfolio/ambiencePost"
-import DishesWeek from "../../components/portfolio/dishesWeek"
+import Banner from "../portfolio/banner"
+import SocialPlatform from "../portfolio/socialPlatform"
+import Logo from "../portfolio/logo"
+import AmbiencePost from "../portfolio/ambiencePost"
+import DishesWeek from "../portfolio/dishesWeek"
 
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",

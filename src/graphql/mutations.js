@@ -26,6 +26,8 @@ export const createSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -37,6 +39,7 @@ export const createSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -67,6 +70,8 @@ export const updateSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -78,6 +83,7 @@ export const updateSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -108,6 +114,8 @@ export const deleteSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -119,6 +127,7 @@ export const deleteSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -284,6 +293,93 @@ export const deleteGlobalTable = /* GraphQL */ `
         default
         price
       }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createOrders = /* GraphQL */ `
+  mutation CreateOrders(
+    $input: CreateOrdersInput!
+    $condition: ModelOrdersConditionInput
+  ) {
+    createOrders(input: $input, condition: $condition) {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateOrders = /* GraphQL */ `
+  mutation UpdateOrders(
+    $input: UpdateOrdersInput!
+    $condition: ModelOrdersConditionInput
+  ) {
+    updateOrders(input: $input, condition: $condition) {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteOrders = /* GraphQL */ `
+  mutation DeleteOrders(
+    $input: DeleteOrdersInput!
+    $condition: ModelOrdersConditionInput
+  ) {
+    deleteOrders(input: $input, condition: $condition) {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
       createdAt
       updatedAt
     }

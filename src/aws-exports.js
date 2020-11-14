@@ -12,7 +12,7 @@ const awsmobile = {
     "aws_appsync_region": "ap-south-1",
     "aws_appsync_authenticationType": "API_KEY",
     "aws_appsync_apiKey": process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
-    "aws_user_files_s3_bucket": "scanatsubscriber620f032716d7410c9e97e968f28666314831-dev",
+    "aws_user_files_s3_bucket": process.env.GATSBY_S3_BUCKET,
     "aws_user_files_s3_bucket_region": "ap-south-1"
 };
 

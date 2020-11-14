@@ -72,17 +72,17 @@ const LoginSection = props => {
   const [password, setPassword] = useState(null)
   const [resultContent, setResultContent] = useState({ msg: "", status: true })
   const loginRef = useRef(null)
+  const noticeRef = useRef("")
 
   const userLogin = async () => {
     if (username !== null && password !== null) {
       try {
-        const user = await Auth.signIn(username, password)
-        console.log(user)
-        setUser(user)
-        setResultContent({ msg: "Success", status: true })
-        navigate("/profile")
+        await Auth.signIn(username, password).then(res => {
+          setUser(res)
+          navigate("/profile")
+        })
       } catch (error) {
-        setResultContent({ msg: error.message, status: false })
+        noticeRef.current.innerHTML = error.message
       }
     } else {
       setResultContent({ msg: "Credentials are required!", status: false })
@@ -141,6 +141,7 @@ const LoginSection = props => {
       >
         {resultContent.message}
       </label>
+      <p ref={noticeRef} style={{ fontSize: "0.8em", color: "crimson" }}></p>
       <p
         className={loginStyles.resetLabel}
         onClick={() => props.switchPanel(2)}

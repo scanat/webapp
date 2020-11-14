@@ -17,13 +17,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import categoryBasicStyles from "./category-basic.module.css"
 import AWS from "aws-sdk"
-import { getCurrentUser } from "../../../../utils/auth"
-import SnackBar from "../../../../components/snackBar"
-import Layout from "../../../../components/layout"
-import Loader from "../../../../components/loader"
+import { getCurrentUser } from "../../utils/auth"
+import SnackBar from "../snackBar"
+import Layout from "../layout"
+import Loader from "../loader"
 import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
 import ReactCrop from "react-image-crop"
-import awsmobile from "../../../../aws-exports"
+import awsmobile from "../../aws-exports"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
@@ -273,7 +273,7 @@ const CategoryBasic = props => {
   const deleteItem = item => {
     const elementIndex = list.findIndex(element => element._id === item._id)
     let newList = [...list]
-    var removedItem = newList.splice(elementIndex, 1)[0]
+    const removedItem = newList.splice(elementIndex, 1)[0]
     setList(newList)
     resetInputHandler()
   }

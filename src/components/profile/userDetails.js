@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react"
 import detailStyles from "./userDetails.module.css"
-import { faUserEdit } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faKey, faPenAlt } from "@fortawesome/free-solid-svg-icons"
-import { Auth } from "aws-amplify"
+import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import { getCurrentUser } from "../../utils/auth"
+import awsmobile from "../../aws-exports"
+import Layout from "../layout"
+
+Amplify.configure(awsmobile)
 
 const DetailsCard = ({ children }) => {
   return <section className={detailStyles.card}>{children}</section>
@@ -15,7 +18,6 @@ const UserDetails = () => {
   const [oldPass, setOldPass] = useState()
   const [newPass, setNewPass] = useState()
   const [newConfirmPass, setNewConfirmPass] = useState()
-  const [enableEdit, setEnableEdit] = useState(false)
   const [name, setName] = useState(getCurrentUser().name)
   const [nickName, setNickName] = useState(getCurrentUser()["custom:nick_name"])
   const [email, setEmail] = useState(getCurrentUser().email)
@@ -27,23 +29,24 @@ const UserDetails = () => {
     getCurrentUser().address_line_1
   )
   const [postalCode, setPostalCode] = useState(getCurrentUser().postal_code)
-  const [snackMessage, setSnackMessage] = useState()
-  const [snackError, setSnackError] = useState()
-  const [user, setUser] = useState({})
+  const [userData, setUserData] = useState(null)
 
   useEffect(() => {
-    setUser()
-  }, [getCurrentUser()])
+    getData()
+  }, [])
 
-  useEffect(() => {
-    setTimeout(() => {
-      setSnackMessage()
-    }, 5000)
-  }, [snackMessage, snackError])
-
-  const snackHandler = (msg, err) => {
-    setSnackMessage(msg)
-    setSnackError(err)
+  async function getData() {
+    try {
+      let params = {
+        id: getCurrentUser()["custom:page_id"],
+      }
+      await API.graphql(graphqlOperation(getSubscriber, params)).then(res =>
+        // setUserData(res.data.getSubscriber)
+        console.log(res.data.getSubscriber)
+      )
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const changeUserPassword = async () => {
@@ -61,18 +64,15 @@ const UserDetails = () => {
             const user = await Auth.currentAuthenticatedUser()
             await Auth.changePassword(user, oldPass, newPass)
             setPassCode(false)
-            snackHandler("Success", true)
-          } catch (error) {
-            snackHandler(error.message, false)
-          }
+          } catch (error) {}
         } else {
-          snackHandler("Confirmation Password do not match", false)
+          // snackHandler("Confirmation Password do not match", false)
         }
       } else {
-        snackHandler("Enter a new password!", false)
+        // snackHandler("Enter a new password!", false)
       }
     } else {
-      snackHandler("Inputs spaces cannot be empty!", false)
+      // snackHandler("Inputs spaces cannot be empty!", false)
     }
   }
   const changeUserAttributes = async () => {
@@ -88,63 +88,25 @@ const UserDetails = () => {
           "custom:postal_code": postalCode,
         }
       )
-      snackHandler(update, true)
+      // snackHandler(update, true)
     } catch (error) {
-      snackHandler(error.message, false)
+      // snackHandler(error.message, false)
     }
   }
 
-  const toggleEnableEdit = () => {
-    enableEdit ? setEnableEdit(false) : setEnableEdit(true)
-  }
-
   return (
-    <DetailsCard>
+    <Layout>
       <section id="cardContainer" className={detailStyles.cardContainer}>
-        <h1>
-          <u style={{ fontSize: "1.4em", margin: "10px 30px" }}>Your Details</u>
-          <FontAwesomeIcon
-            icon={faUserEdit}
-            color={enableEdit ? "#db2626" : "green"}
-            size="lg"
-            onMouseDown={toggleEnableEdit}
-            textAnchor="Some"
-            className={detailStyles.editAttributeButton}
-          />
-          <label onMouseDown={toggleEnableEdit}>
-            Update
-          </label>
-        </h1>
-
         <section className={detailStyles.detailsContainer}>
           <label className={detailStyles.detailsLabels}>Name</label>
           <input
             className={detailStyles.input}
-            disabled={!enableEdit}
-            placeholder={getCurrentUser()["custom:nick_name"]}
-            onChange={event => setNickName(event.target.value)}
-          />
-          <label className={detailStyles.detailsLabels}>
-            Organization Name
-          </label>
-          <input
-            className={detailStyles.input}
-            disabled={!enableEdit}
             placeholder={getCurrentUser().name}
-            onChange={event => setName(event.target.value)}
-          />
-          <label className={detailStyles.detailsLabels}>Email</label>
-          <input
-            className={detailStyles.input}
-            disabled={!enableEdit}
-            inputMode="email"
-            placeholder={getCurrentUser().email}
-            onChange={event => setEmail(event.target.value)}
+            onChange={event => setNickName(event.target.value)}
           />
           <label className={detailStyles.detailsLabels}>Phone Number</label>
           <input
             className={detailStyles.input}
-            disabled={!enableEdit}
             inputMode="tel"
             placeholder={getCurrentUser().phone_number}
             onChange={event => setPhoneNumber(event.target.value)}
@@ -152,13 +114,11 @@ const UserDetails = () => {
           <label className={detailStyles.detailsLabels}>Postal Address</label>
           <input
             className={detailStyles.input}
-            disabled={!enableEdit}
             placeholder={getCurrentUser()["custom:address_line_1"]}
             onChange={event => setAddressLine1(event.target.value)}
           />
           <input
             className={detailStyles.input}
-            disabled={!enableEdit}
             placeholder={getCurrentUser()["custom:address_line_2"]}
             onChange={event => setAddressLine2(event.target.value)}
           />
@@ -167,27 +127,23 @@ const UserDetails = () => {
           </label>
           <input
             className={detailStyles.input}
-            disabled={!enableEdit}
             inputMode="tel"
             placeholder={getCurrentUser()["custom:postal_code"]}
             onChange={event => setPostalCode(event.target.value)}
           />
-          {enableEdit && (
-            <button
-              type="button"
-              onClick={changeUserAttributes}
-              onMouseUp={changeUserAttributes}
-              className={detailStyles.button}
-            >
-              <FontAwesomeIcon
-                icon={faPenAlt}
-                size="lg"
-                color="green"
-                style={{ marginRight: "5px" }}
-              />
-              Update Details
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={changeUserAttributes}
+            className={detailStyles.button}
+          >
+            <FontAwesomeIcon
+              icon={faPenAlt}
+              size="lg"
+              color="green"
+              style={{ marginRight: "5px" }}
+            />
+            Update Details
+          </button>
           {passCode && (
             <>
               <label className={detailStyles.detailsLabels}>
@@ -229,8 +185,20 @@ const UserDetails = () => {
           </button>
         </section>
       </section>
-    </DetailsCard>
+    </Layout>
   )
 }
 
 export default UserDetails
+
+export const getSubscriber = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      address1
+      address2
+      city
+      state
+      postalCode
+    }
+  }
+`

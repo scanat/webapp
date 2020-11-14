@@ -23,6 +23,8 @@ export const onCreateSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -34,6 +36,7 @@ export const onCreateSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -61,6 +64,8 @@ export const onUpdateSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -72,6 +77,7 @@ export const onUpdateSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -99,6 +105,8 @@ export const onDeleteSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -110,6 +118,7 @@ export const onDeleteSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -248,6 +257,84 @@ export const onDeleteGlobalTable = /* GraphQL */ `
         default
         price
       }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateOrders = /* GraphQL */ `
+  subscription OnCreateOrders {
+    onCreateOrders {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateOrders = /* GraphQL */ `
+  subscription OnUpdateOrders {
+    onUpdateOrders {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteOrders = /* GraphQL */ `
+  subscription OnDeleteOrders {
+    onDeleteOrders {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
       createdAt
       updatedAt
     }

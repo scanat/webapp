@@ -10,7 +10,7 @@ import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
 
-export default function Profile() {
+const Profile = () => {
   const [portalContent, setPortalContent] = useState()
   const [refreshModules, setRefreshModules] = useState([])
 
@@ -69,7 +69,9 @@ export default function Profile() {
       var dataId = String(getCurrentUser().phone_number).replace("+91", "")
       var encodedId = window.btoa(dataId)
 
-      const orgActiveUrl = `https://www.scanat.in?org=${dataOrg}&pn=${encodedId}`
+      const orgActiveUrl = `https://www.scanat.in?id=${
+        getCurrentUser()["custom:page_id"]
+      }`
 
       window.location.href = orgActiveUrl
     }
@@ -80,14 +82,14 @@ export default function Profile() {
   }
 
   const handleCardClick = card => {
-    card === "Business Details" && setPortalContent(card)
-    card === "My Modules" && setPortalContent(card)
-    card === "Portfolio" && navigate("/pro/portfolio")
-    card === "Products" &&
-      navigate("/pro/components/card-input-layouts/category-basic")
-    card === "Live Orders" && navigate("/pro/orders")
-    card === "QR Codes" && navigate("/pro/qrCodes")
-    card === "Employee Management" && navigate("/pro/employeeManagement")
+    card === "Business Details" && navigate(`/pro/portal?id=businessdetails`)
+    card === "My Modules" && navigate(`/pro/portal?id=modules`)
+    card === "Portfolio" && navigate(`/pro/portal?id=portfolio`)
+    card === "Products" && navigate(`/pro/portal?id=products`)
+    card === "Live Orders" && navigate(`/pro/portal?id=liveorders`)
+    card === "QR Codes" && navigate(`/pro/portal?id=qrcodes`)
+    card === "Employee Management" &&
+      navigate(`/pro/portal?id=employeemanagement`)
   }
 
   return (
@@ -95,7 +97,7 @@ export default function Profile() {
       <section className={profileStyles.container}>
         <section className={profileStyles.subContainer}>
           {refreshModules.map((item, id) => (
-            <ProfileCard>
+            <ProfileCard key={id}>
               <section
                 key={id}
                 className={profileStyles.cardChild}
@@ -113,10 +115,12 @@ export default function Profile() {
         </section>
       </section>
 
-      <Portal content={portalContent} switchPortal={() => setPortalContent()} />
+      {/* <Portal content={portalContent} switchPortal={() => setPortalContent()} /> */}
     </Layout>
   )
 }
+
+export default Profile
 
 const ProfileCard = ({ children }) => {
   return <section className={profileStyles.card}>{children}</section>
@@ -128,7 +132,7 @@ export const getCategory = /* GraphQL */ `
       category
     }
   }
-`;
+`
 export const getModules = /* GraphQL */ `
   query GetGlobalTable($id: ID!) {
     getGlobalTable(id: $id) {
@@ -140,4 +144,4 @@ export const getModules = /* GraphQL */ `
       }
     }
   }
-`;
+`

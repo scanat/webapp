@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import CategoryBasicSystem from "./components/card-input-layouts/category-basic"
+import CategoryBasicSystem from "../../components/profile/category-basic"
 import Layout from "../../components/layout"
 
 const CategoricalLayout = () => {

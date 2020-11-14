@@ -4,6 +4,7 @@ import AWS from "aws-sdk"
 import { getCurrentUser } from "../../utils/auth"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons"
+import Layout from "../layout"
 
 const globalDb = new AWS.DynamoDB.DocumentClient({
   region: "ap-south-1",
@@ -93,7 +94,7 @@ const Modules = () => {
   }
 
   return (
-    <DetailsCard>
+    <Layout>
       <h1>
         Select your modules, <u>they are free!</u>
       </h1>
@@ -135,7 +136,7 @@ const Modules = () => {
       <button className={moduleStyles.addButton} onClick={uploadModuleList}>
         Upload Modules
       </button>
-    </DetailsCard>
+    </Layout>
   )
 }
 

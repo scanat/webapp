@@ -1,18 +1,30 @@
 .container {
-  width: 100%;
-  min-height: 100vh;
-  float: left;
+  position: fixed;
+  width: 90%;
+  height: 90%;
+  margin: 5%;
   display: flex;
   flex-direction: column;
   -ms-flex-direction: column;
-  justify-content: center;
+  align-items: center;
   text-align: center;
   padding-top: 10px;
-  background: whitesmoke;
+  background: #169188;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  overflow-y: scroll;
+  border-radius: 5px;
+}
+u{
+  color: whitesmoke;
 }
 .topic {
-  color: #169188;
+  color: whitesmoke;
   margin: 10px 0;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .desc {
   width: 80%;
@@ -42,9 +54,9 @@
   padding: 5px 10px;
   background: linear-gradient(315deg, #ffffff, #91f8f1);
   border-radius: 10px;
-  -webkit-box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
-  -moz-box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
-  box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 4px 4px 5px 0px rgba(0, 0, 0, 0.75);
   text-align: center;
   margin: 10px auto;
 }
@@ -53,9 +65,9 @@
   cursor: pointer;
   margin: 10px 0;
 }
-canvas{
+/* canvas{
   background-image: url('../../images/sticker.png');
-}
+} */
 @media screen and (min-width: 992px){
   .qrGridContainer {
     width: 100%;

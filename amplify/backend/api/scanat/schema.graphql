@@ -18,8 +18,11 @@ type Subscriber @model {
   facebook: String
   pinterest: String
   instagram: String
+  seqQr: String
+  customQr: [String!]
   ambience: [Ambiences!]
   employees: [Employees!]
+  orders: [String!]
 }
 
 type Items @model {
@@ -72,4 +75,29 @@ type Module {
 type Category {
   name: String
   price: String
+}
+
+type Orders @model {
+  id: String!
+  key: String
+  orgId: String
+  order: [Order!]
+  totalItems: String
+  totalPrice: String
+  states: [State!]
+  rating: String
+  request: String
+  status: String
+}
+
+type Order {
+  name: String
+  qty: String
+  price: String
+  rating: String
+}
+
+type State {
+  state: String
+  time: AWSDateTime
 }

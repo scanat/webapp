@@ -23,6 +23,8 @@ export const getSubscriber = /* GraphQL */ `
       facebook
       pinterest
       instagram
+      seqQr
+      customQr
       ambience {
         name
       }
@@ -34,6 +36,7 @@ export const getSubscriber = /* GraphQL */ `
           name
         }
       }
+      orders
       createdAt
       updatedAt
     }
@@ -66,6 +69,8 @@ export const listSubscribers = /* GraphQL */ `
         facebook
         pinterest
         instagram
+        seqQr
+        customQr
         ambience {
           name
         }
@@ -73,6 +78,7 @@ export const listSubscribers = /* GraphQL */ `
           id
           name
         }
+        orders
         createdAt
         updatedAt
       }
@@ -186,6 +192,65 @@ export const listGlobalTables = /* GraphQL */ `
           default
           price
         }
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getOrders = /* GraphQL */ `
+  query GetOrders($id: ID!) {
+    getOrders(id: $id) {
+      id
+      key
+      orgId
+      order {
+        name
+        qty
+        price
+        rating
+      }
+      totalItems
+      totalPrice
+      states {
+        state
+        time
+      }
+      rating
+      request
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listOrderss = /* GraphQL */ `
+  query ListOrderss(
+    $filter: ModelOrdersFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listOrderss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        key
+        orgId
+        order {
+          name
+          qty
+          price
+          rating
+        }
+        totalItems
+        totalPrice
+        states {
+          state
+          time
+        }
+        rating
+        request
+        status
         createdAt
         updatedAt
       }

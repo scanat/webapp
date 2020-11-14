@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react"
 import employeeStyles from "./employeeManagement.module.css"
-import Layout from "../../components/layout"
+import Layout from "../layout"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { getCurrentUser } from "../../utils/auth"
 import AWS from "aws-sdk"
-import Loader from "../../components/loader"
+import Loader from "../loader"
 import { Auth } from "aws-amplify"
 
 const subscribersDb = new AWS.DynamoDB.DocumentClient({
