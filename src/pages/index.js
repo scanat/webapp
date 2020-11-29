@@ -17,6 +17,7 @@ import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"
 import Amplify, { API, graphqlOperation } from "aws-amplify"
+import Anime from 'animejs'
 
 Amplify.configure({
   API: {
@@ -37,12 +38,14 @@ const Explore = () => {
   const [width, setWidth] = useState()
   const [searchObjectList, setSearchObjectList] = useState([])
   const searchRef = useRef(null)
+  const carouselRef = useRef(null)
+  const searchContainerRef = useRef(null)
 
   useEffect(() => {
-    if (document.body.offsetWidth < 481) setWidth(1)
-    else if (document.body.offsetWidth < 600) setWidth(2)
-    else if (document.body.offsetWidth < 1024) setWidth(4)
-    else setWidth(5)
+    if (document.body.offsetWidth < 481) setWidth(2)
+    else if (document.body.offsetWidth < 600) setWidth(3)
+    else if (document.body.offsetWidth < 1024) setWidth(6)
+    else setWidth(8)
   }, [])
 
   const searchItems = async () => {
@@ -53,6 +56,11 @@ const Explore = () => {
     try {
       await API.graphql(graphqlOperation(queryOrg, params)).then(res => {
         let list = res.data.listSubscribers.items
+        Anime({
+          targets: searchContainerRef.current,
+          bottom: ['100%', 0],
+          duration: 600
+        })
         list.map(item => {
           getImage()
           async function getImage() {
@@ -85,39 +93,38 @@ const Explore = () => {
       </section>
       <section className={exploreStyles.searchContainer}>
         <section className={exploreStyles.searchBarContainer}>
+          <select className={exploreStyles.locationselect}>
+            <option>Kolkata</option>
+          </select>
           <input
             ref={searchRef}
-            placeholder="Search page..."
+            placeholder="What are you looking for?"
             className={exploreStyles.searchBar}
           />
-          <FontAwesomeIcon
-            icon={faSearch}
-            color="grey"
-            size="lg"
-            className={exploreStyles.searchIcon}
-            onClick={searchItems}
-          />
+          <label className={exploreStyles.gosearch} onClick={searchItems}>
+            GO
+          </label>
         </section>
       </section>
 
       <section className={exploreStyles.selectsContainer}>
         <Carousel
-          itemsToShow={width}
+          ref={carouselRef}
+          itemsToShow={1}
           verticalMode={false}
-          pagination={true}
-          renderPagination={() => (
-            <FontAwesomeIcon icon={faEllipsisH} size="lg" color="grey" />
-          )}
-          focusOnSelect={true}
-          renderArrow={({ type, onClick }) => (
-            <FontAwesomeIcon
-              onClick={onClick}
-              icon={type === "PREV" ? faAngleLeft : faAngleRight}
-              size="2x"
-              color="grey"
-              style={{ margin: "50px 10px 0 10px" }}
-            />
-          )}
+          showArrows={false}
+          pagination={false}
+          enableSwipe={true}
+          enableAutoPlay={true}
+          enableMouseSwipe={true}
+          onNextEnd={({ index }) => {
+            clearTimeout(2000)
+            if (index + 1 === 3) {
+              setTimeout(() => {
+                carouselRef.current.goTo(0)
+              }, 2000)
+            }
+          }}
         >
           <section className={exploreStyles.selectsHolder}>
             <img src={Select1} alt="Select 1" />
@@ -131,23 +138,65 @@ const Explore = () => {
         </Carousel>
       </section>
 
-      <section
-        style={{
-          clear: "both",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <section className={exploreStyles.searchResultContainer}>
-          {searchObjectList.map(item => (
-            <Link to={`/portfolio?id=${item.id}`}>
-              <section className={exploreStyles.searchItemHolder} key={item.id}>
-                <img src={item.imageData} alt={item.image} />
-                <label className={exploreStyles.itemId}>{item.id}</label>
-                <label className={exploreStyles.itemName}>{item.orgName}</label>
-              </section>
-            </Link>
-          ))}
+      <section className={exploreStyles.scanatSelectsContainer}>
+        <h1>Scan at selects</h1>
+        <label>We bring you the best</label>
+        <section className={exploreStyles.selectsContainer}>
+          <Carousel
+            itemsToShow={width}
+            verticalMode={false}
+            pagination={false}
+            focusOnSelect={true}
+            renderArrow={({ type, onClick }) => (
+              <FontAwesomeIcon
+                onClick={onClick}
+                icon={type === "PREV" ? faAngleLeft : faAngleRight}
+                size="2x"
+                color="grey"
+                style={{ margin: "50px 10px 0 10px" }}
+              />
+            )}
+          >
+            <section className={exploreStyles.scanatselectsHolder}>
+              <img src={Select1} alt="Select 1" />
+              <label>Trending this week</label>
+            </section>
+            <section className={exploreStyles.scanatselectsHolder}>
+              <img src={Select2} alt="Select 2" />
+              <label>Best Offers</label>
+            </section>
+            <section className={exploreStyles.scanatselectsHolder}>
+              <img src={Select3} alt="Select 3" />
+              <label>Where friends hangout</label>
+            </section>
+          </Carousel>
+        </section>
+      </section>
+
+      <section className={exploreStyles.searchListContainer} ref={searchContainerRef}>
+        <section
+          style={{
+            clear: "both",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <section className={exploreStyles.searchResultContainer}>
+            {searchObjectList.map(item => (
+              <Link to={`/portfolio?id=${item.id}`}>
+                <section
+                  className={exploreStyles.searchItemHolder}
+                  key={item.id}
+                >
+                  <img src={item.imageData} alt={item.image} />
+                  <label className={exploreStyles.itemId}>{item.id}</label>
+                  <label className={exploreStyles.itemName}>
+                    {item.orgName}
+                  </label>
+                </section>
+              </Link>
+            ))}
+          </section>
         </section>
       </section>
     </Layout>

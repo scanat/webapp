@@ -21,7 +21,7 @@ const Conversation = props => {
                 Rs. {orderItem.price} /-
               </p>
               <p className={conversationStyles.contentData}>
-                {orderItem.qty} units
+                {orderItem.qty} unit/s
               </p>
             </section>
           ))}

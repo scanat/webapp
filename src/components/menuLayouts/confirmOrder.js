@@ -36,6 +36,8 @@ const ConfirmOrder = props => {
       const params = {
         input: {
           id: `ORD-${props.id}-${new Date().toISOString()}`,
+          orgId: props.id,
+          key: props.key,
           order: orders,
           totalItems: orders.length,
           totalPrice: calculateTotal(),
@@ -49,43 +51,43 @@ const ConfirmOrder = props => {
       }
       await API.graphql(graphqlOperation(createOrders, params)).then(res => {
         res && props.getConfData(params)
-        getOrders(params.input.id)
+        // getOrders(params.input.id)
       })
     } catch (error) {
       console.log(error)
     }
   }
 
-  const getOrders = async (orderId) => {
-    try {
-      let params = {
-        id: props.id,
-      }
-      await API.graphql(graphqlOperation(getSubscriber, params)).then(res => {
-        let data = res.data.getSubscriber.orders ? res.data.getSubscriber.orders : []
-        sendOrderCopy(orderId, data)
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getOrders = async (orderId) => {
+  //   try {
+  //     let params = {
+  //       id: props.id,
+  //     }
+  //     await API.graphql(graphqlOperation(getSubscriber, params)).then(res => {
+  //       let data = res.data.getSubscriber.orders ? res.data.getSubscriber.orders : []
+  //       sendOrderCopy(orderId, data)
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  const sendOrderCopy = async (orderId, resultOrders) => {
-    resultOrders.push(orderId)
-    try {
-      let params = {
-        input: {
-          id: props.id,
-          orders: resultOrders
-        },
-      }
-      await API.graphql(graphqlOperation(updateSubscriber, params)).then(res =>
-        console.log(res)
-      )
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const sendOrderCopy = async (orderId, resultOrders) => {
+  //   resultOrders.push(orderId)
+  //   try {
+  //     let params = {
+  //       input: {
+  //         id: props.id,
+  //         orders: resultOrders
+  //       },
+  //     }
+  //     await API.graphql(graphqlOperation(updateSubscriber, params)).then(res =>
+  //       console.log(res)
+  //     )
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   return (
     <section className={confirmOrderStyles.billContainer}>

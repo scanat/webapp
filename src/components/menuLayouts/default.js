@@ -51,11 +51,10 @@ const Default = props => {
   }, [])
   async function getData() {
     try {
-      await API.graphql(
-        graphqlOperation(itemsData, {
-          id: String(props.location.search).substring(4),
-        })
-      ).then(res => {
+      let params = {
+        id: new URLSearchParams(props.location.search).get("id"),
+      }
+      await API.graphql(graphqlOperation(itemsData, params)).then(res => {
         setOrgName(res.data.getSubscriber.orgName)
         res.data.getItems.itemList.map(dataItem => {
           if (dataItem.status) {
@@ -76,25 +75,25 @@ const Default = props => {
     }
   }
 
-  useEffect(() => {
-    API.graphql(graphqlOperation(onUpdateItems)).subscribe({
-      next: data => {
-        if (
-          String(props.location.search).substring(4) ===
-          data.value.data.onUpdateItems.id
-        ) {
-          list.splice(0, list.length)
-          let temp = [...list]
-          setList(temp)
-          getData()
-          console.log(data)
-        }
-      },
-      error: err => {
-        console.log(err)
-      },
-    })
-  }, [])
+  // useEffect(() => {
+  //   API.graphql(graphqlOperation(onUpdateItems)).subscribe({
+  //     next: data => {
+  //       if (
+  //         new URLSearchParams(props.location.search).get("id") ===
+  //         data.value.data.onUpdateItems.id
+  //       ) {
+  //         list.splice(0, list.length)
+  //         let temp = [...list]
+  //         setList(temp)
+  //         getData()
+  //         console.log(data)
+  //       }
+  //     },
+  //     error: err => {
+  //       console.log(err)
+  //     },
+  //   })
+  // }, [])
 
   useEffect(() => {
     Anime({
@@ -381,7 +380,8 @@ const Default = props => {
       {confirmOrder && (
         <ConfirmOrder
           orderList={orderList}
-          id={String(props.location.search).substring(4)}
+          id={new URLSearchParams(props.location.search).get("id")}
+          key={new URLSearchParams(props.location.search).get("key")}
           getConfData={data => getConfData(data)}
           switchConfirmOrder={toggleConfirmOrder}
         />
