@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Layout from "../components/layout"
 import portfolioStyles from "./portfolio.module.css"
 import { getCurrentUser } from "../utils/auth"
@@ -8,6 +8,8 @@ import {
   faMapMarkerAlt,
   faShareAlt,
   faStar,
+  faAngleDown,
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons"
 import {
   faFacebookF,
@@ -22,6 +24,13 @@ import SocialPage from "../components/portfolio/socialPage"
 import AmbiencePost from "../components/portfolio/ambiencePost"
 import DishesWeek from "../components/portfolio/dishesWeek"
 import { Link, navigate } from "gatsby"
+import Anime from "animejs"
+
+import camera from "../images/icon/camera.png"
+import delivery from "../images/icon/delivery.png"
+import livemenu from "../images/icon/livemenu.png"
+import review from "../images/icon/review.png"
+import share from "../images/icon/share.png"
 
 Amplify.configure({
   API: {
@@ -37,6 +46,8 @@ const Portfolio = ({ location }) => {
   const [width, setWidth] = useState()
   const [rated, setRated] = useState(0)
   const [pageData, setPageData] = useState({})
+  const timingPanelRef = useRef(null)
+  const backLayoutPanel = useRef(null)
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -61,13 +72,36 @@ const Portfolio = ({ location }) => {
     }
   }, [])
 
+  const openTiming = () => {
+    backLayoutPanel.current.style.display = "block"
+    Anime({
+      targets: timingPanelRef.current,
+      opacity: [0, 1],
+      duration: 400,
+    }).play()
+  }
+
+  const closeTiming = () => {
+    backLayoutPanel.current.style.display = "none"
+    Anime({
+      targets: timingPanelRef.current,
+      opacity: [1, 0],
+      duration: 400,
+    }).play()
+  }
+
   return (
     <Layout>
+      <section
+        className={portfolioStyles.backLayout}
+        ref={backLayoutPanel}
+        onClick={closeTiming}
+      ></section>
       <Banner id={String(location.search).substring(4)} />
 
       <Logo id={String(location.search).substring(4)} />
 
-      <ul className={portfolioStyles.shareListContainer}>
+      {/* <ul className={portfolioStyles.shareListContainer}>
         <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>
           <FontAwesomeIcon
             icon={faShareAlt}
@@ -124,24 +158,110 @@ const Portfolio = ({ location }) => {
             </li>
           </ul>
         </li>
-      </ul>
+      </ul> */}
 
       <section className={portfolioStyles.orgTitle}>
+        <section className={portfolioStyles.orgRate}>
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffc400"
+            size="xs"
+            style={{ margin: "0 2px" }}
+          />
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffc400"
+            size="xs"
+            style={{ margin: "0 2px" }}
+          />
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffc400"
+            size="xs"
+            style={{ margin: "0 2px" }}
+          />
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffc400"
+            size="xs"
+            style={{ margin: "0 2px" }}
+          />
+          <FontAwesomeIcon
+            icon={faStar}
+            color="#ffc400"
+            size="xs"
+            style={{ margin: "0 2px" }}
+          />
+        </section>
         <h1>{pageData.orgName}</h1>
-        <label className={portfolioStyles.socialTextInput}>
-          {String(location.search).substring(4)}
+        <label className={portfolioStyles.openTimes} onClick={openTiming}>
+          <label>Open now</label> - 10am - 11pm (today)
+          <FontAwesomeIcon
+            icon={faAngleDown}
+            style={{ margin: "0 0 -3px 5px" }}
+          />
         </label>
+        <section ref={timingPanelRef} className={portfolioStyles.timingPanel}>
+          <label>(Mon - Sun) : 10am - 11pm</label>
+          <br />
+          <hr />
+          <h5>Happy hours</h5>
+          <br />
+          <label>(Mon and Fri) : 4pm - 7pm</label>
+        </section>
+        {/* <label className={portfolioStyles.socialTextInput}>
+          {String(location.search).substring(4)}
+        </label> */}
       </section>
 
-      <section className={portfolioStyles.liveSpaceContainer}>
+      <section className={portfolioStyles.tabs}>
+        <ul>
+          <li>
+            <img src={livemenu} />
+            <label>Live menu</label>
+          </li>
+
+          <li>
+            <img src={delivery} />
+            <label>Delivery</label>
+          </li>
+
+          <li>
+            <img src={review} />
+            <label>Review</label>
+          </li>
+
+          <li>
+            <img src={camera} />
+            <label>Photos</label>
+          </li>
+
+          <li>
+            <img src={share} />
+            <label>Share</label>
+          </li>
+        </ul>
+      </section>
+
+      <section className={portfolioStyles.liveMenuSearchPanel}>
+        <h1>Burger</h1>
+        <FontAwesomeIcon
+          icon={faSearch}
+          style={{ position: "absolute", bottom: '3px' }}
+          color="grey"
+        />
+        <input type="text" placeholder="Search" ></input>
+      </section>
+
+      {/* <section className={portfolioStyles.liveSpaceContainer}>
         <Link to={`/live?id=${String(location.search).substring(4)}`}>
           <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
         </Link>
-      </section>
+      </section> */}
 
-      <SocialPage id={String(location.search).substring(4)} />
+      {/* <SocialPage id={String(location.search).substring(4)} /> */}
 
-      <section className={portfolioStyles.fullDescription}>
+      {/* <section className={portfolioStyles.fullDescription}>
         <section className={portfolioStyles.businessLocation}>
           <FontAwesomeIcon icon={faMapMarkerAlt} color="crimson" size="3x" />
           <p className={portfolioStyles.topic}>ADDRESS</p>
@@ -164,13 +284,13 @@ const Portfolio = ({ location }) => {
           <p className={portfolioStyles.topic}>About {pageData.orgName}</p>
           <label className={portfolioStyles.desc}>{pageData.about}</label>
         </section>
-      </section>
+      </section> */}
 
-      <AmbiencePost id={String(location.search).substring(4)} />
+      {/* <AmbiencePost id={String(location.search).substring(4)} /> */}
 
-      <DishesWeek id={String(location.search).substring(4)} />
+      {/* <DishesWeek id={String(location.search).substring(4)} /> */}
 
-      <section className={portfolioStyles.reviewContainer}>
+      {/* <section className={portfolioStyles.reviewContainer}>
         <h2 className={portfolioStyles.headerTopic}>Like what you see?</h2>
         <section className={portfolioStyles.reviewHolder}>
           <label className={portfolioStyles.labelTopic}>Rate Us</label>
@@ -223,9 +343,9 @@ const Portfolio = ({ location }) => {
           <label className={portfolioStyles.labelTopic}>Any Comments!</label>
           <textarea className={portfolioStyles.textAreaInput} />
         </section>
-      </section>
+      </section> */}
 
-      <section className={portfolioStyles.bulkOrders}>
+      {/* <section className={portfolioStyles.bulkOrders}>
         <h2 style={{ margin: "20px 5%", textDecoration: "underline" }}>
           For more
         </h2>
@@ -248,7 +368,7 @@ const Portfolio = ({ location }) => {
         <button className={portfolioStyles.button} type="submit">
           Submit
         </button>
-      </section>
+      </section> */}
     </Layout>
   )
 }

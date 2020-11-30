@@ -1,3 +1,11 @@
+.backLayout {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.37);
+  z-index: 3;
+  display: none;
+}
 .link {
   color: #169188;
   text-align: center;
@@ -189,7 +197,7 @@
   justify-content: center;
   align-items: center;
 }
-.socialTextInput{
+.socialTextInput {
   border: grey 2px dashed;
   padding: 5px;
   color: #169188;
@@ -236,11 +244,54 @@
   -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
+.orgRate {
+  margin: 10px 0;
+}
 .orgTitle {
   clear: both;
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
   font-size: 1.4em;
+}
+.orgTitle h1 {
+  margin: -5px auto -5px auto;
+  max-width: 240px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.openTimes {
+  font-size: 0.7em;
+}
+.openTimes label {
+  color: rgb(53, 53, 53);
+}
+.timingPanel {
+  opacity: 0;
+  min-width: 200px;
+  max-width: 80%;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  background: white;
+  border-radius: 5px;
+  z-index: 4;
+  text-align: center;
+  padding: 5px;
+}
+.timingPanel label {
+  width: 100%;
+  float: left;
+  font-size: 0.7em;
+  text-align: center;
+  clear: both;
+}
+.timingPanel h5 {
+  font-size: 0.7em;
+  float: left;
+  margin: 10px 0;
 }
 .servicesProvided {
   background: #169188;
@@ -309,4 +360,61 @@
 .textAreaInput {
   margin: 0 0 10px 0;
   border: grey 1px dashed;
+}
+.tabs {
+  width: 100%;
+  overflow-x: scroll;
+  margin: 20px 0;
+}
+.tabs ul {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.tabs ul li {
+  width: 50px;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  margin: 20px 12px;
+  background: white;
+  -webkit-box-shadow: 0 6px 13px 0px #e6e6e6;
+  -moz-box-shadow: 0 6px 13px 0px #e6e6e6;
+  box-shadow: 0 6px 13px 0px #e6e6e6;
+}
+.tabs ul li img {
+  width: 25px;
+}
+.tabs ul li label {
+  font-size: 7px;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+.tabs ul li:first-of-type {
+  background: #169188;
+}
+.tabs ul li:first-of-type label {
+  color: whitesmoke;
+}
+.liveMenuSearchPanel {
+  position: relative;
+  width: 80%;
+  float: left;
+  padding: 0 10%;
+}
+.liveMenuSearchPanel h1 {
+  text-transform: uppercase;
+  font-size: 1.4em;
+}
+.liveMenuSearchPanel input {
+  width: 100%;
+  margin-top: 5px;
+  border: none;
+  border-bottom: 1px solid grey;
+  font-size: 14px;
+  padding: 3px 0 3px 20px;
 }

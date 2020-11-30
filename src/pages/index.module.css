@@ -38,15 +38,11 @@
 .locationselect::-ms-expand {
   display: none;
 }
-:root {
-  --select-border: #777;
-  --sellect-arrow: var(--select-border);
-}
 .searchBar {
   width: 100%;
   margin: 0 auto;
   position: relative;
-  padding: 4px 10px 5px 10px;
+  padding: 5px 10px 5px 10px;
   border: none;
   border-radius: 5px 0 0 5px;
   font-size: 0.7em;
@@ -54,6 +50,9 @@
   -moz-box-shadow: 1px 1px 5px 0px rgba(151, 144, 144, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(151, 144, 144, 0.75);
   background: rgba(255, 255, 255, 0.9);
+}
+.searchBar::before{
+  content: url(../images/icon/arrow-down.png);
 }
 .gosearch {
   border-radius: 0 3px 3px 0;
@@ -138,11 +137,15 @@
   font-size: 0.9em;
 }
 .scanatselectsHolder {
-  width: 150px;
+  width: 100px;
   height: 200px;
 }
 .scanatselectsHolder img {
-  width: 100%;
+  width: 100px;
+  height: 100px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
 .searchListContainer {
   position: fixed;

@@ -42,8 +42,8 @@ const Explore = () => {
   const searchContainerRef = useRef(null)
 
   useEffect(() => {
-    if (document.body.offsetWidth < 481) setWidth(2)
-    else if (document.body.offsetWidth < 600) setWidth(3)
+    if (document.body.offsetWidth < 481) setWidth(3)
+    else if (document.body.offsetWidth < 600) setWidth(4)
     else if (document.body.offsetWidth < 1024) setWidth(6)
     else setWidth(8)
   }, [])
@@ -163,7 +163,7 @@ const Explore = () => {
             </section>
             <section className={exploreStyles.scanatselectsHolder}>
               <img src={Select2} alt="Select 2" />
-              <label>Best Offers</label>
+              <label>Best offers</label>
             </section>
             <section className={exploreStyles.scanatselectsHolder}>
               <img src={Select3} alt="Select 3" />

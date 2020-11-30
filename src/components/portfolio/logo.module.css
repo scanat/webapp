@@ -1,17 +1,21 @@
 .logoContainer {
   position: relative;
-  float: left;
   display: flex;
+  margin-left: auto;
+  margin-right: auto;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   border: 4px whitesmoke solid;
   overflow: hidden;
-  margin: -50px 0 0 5%;
-  background: #169188;
+  margin-top: -150px;
+  background: #16918979;
   z-index: 2;
+}
+.logoContainer img{
+  width: 100%;
 }
 .logoText {
   font-size: 2.4em;
