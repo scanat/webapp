@@ -10,6 +10,8 @@ import {
   faStar,
   faAngleDown,
   faSearch,
+  faEllipsisH,
+  faFilter,
 } from "@fortawesome/free-solid-svg-icons"
 import {
   faFacebookF,
@@ -25,12 +27,14 @@ import AmbiencePost from "../components/portfolio/ambiencePost"
 import DishesWeek from "../components/portfolio/dishesWeek"
 import { Link, navigate } from "gatsby"
 import Anime from "animejs"
+import LiveMenu from "../components/menuLayouts/default"
 
 import camera from "../images/icon/camera.png"
 import delivery from "../images/icon/delivery.png"
 import livemenu from "../images/icon/livemenu.png"
 import review from "../images/icon/review.png"
 import share from "../images/icon/share.png"
+import { Carousel } from "react-responsive-carousel"
 
 Amplify.configure({
   API: {
@@ -81,7 +85,7 @@ const Portfolio = ({ location }) => {
     }).play()
   }
 
-  const closeTiming = () => {
+  const closeBackLayout = () => {
     backLayoutPanel.current.style.display = "none"
     Anime({
       targets: timingPanelRef.current,
@@ -95,7 +99,7 @@ const Portfolio = ({ location }) => {
       <section
         className={portfolioStyles.backLayout}
         ref={backLayoutPanel}
-        onClick={closeTiming}
+        onClick={closeBackLayout}
       ></section>
       <Banner id={String(location.search).substring(4)} />
 
@@ -206,7 +210,6 @@ const Portfolio = ({ location }) => {
           <br />
           <hr />
           <h5>Happy hours</h5>
-          <br />
           <label>(Mon and Fri) : 4pm - 7pm</label>
         </section>
         {/* <label className={portfolioStyles.socialTextInput}>
@@ -243,15 +246,10 @@ const Portfolio = ({ location }) => {
         </ul>
       </section>
 
-      <section className={portfolioStyles.liveMenuSearchPanel}>
-        <h1>Burger</h1>
-        <FontAwesomeIcon
-          icon={faSearch}
-          style={{ position: "absolute", bottom: '3px' }}
-          color="grey"
-        />
-        <input type="text" placeholder="Search" ></input>
-      </section>
+      <LiveMenu
+        id={new URLSearchParams(location.search).get("id")}
+        table={new URLSearchParams(location.search).get("table")}
+      />
 
       {/* <section className={portfolioStyles.liveSpaceContainer}>
         <Link to={`/live?id=${String(location.search).substring(4)}`}>

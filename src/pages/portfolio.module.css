@@ -290,7 +290,6 @@
 }
 .timingPanel h5 {
   font-size: 0.7em;
-  float: left;
   margin: 10px 0;
 }
 .servicesProvided {
@@ -400,21 +399,6 @@
 .tabs ul li:first-of-type label {
   color: whitesmoke;
 }
-.liveMenuSearchPanel {
-  position: relative;
-  width: 80%;
-  float: left;
-  padding: 0 10%;
-}
-.liveMenuSearchPanel h1 {
-  text-transform: uppercase;
-  font-size: 1.4em;
-}
-.liveMenuSearchPanel input {
-  width: 100%;
-  margin-top: 5px;
-  border: none;
-  border-bottom: 1px solid grey;
-  font-size: 14px;
-  padding: 3px 0 3px 20px;
+.tabs ul li:hover{
+  scale: 1.1;
 }

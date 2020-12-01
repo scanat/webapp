@@ -10,12 +10,18 @@ import {
   faCaretUp,
   faCartPlus,
   faCommentDots,
+  faEllipsisH,
+  faFilter,
   faInfoCircle,
   faMinusSquare,
   faPlusSquare,
+  faSearch,
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons"
 import FurtherDetails from "./furtherDetails"
 import Conversation from "./conversation"
+import { Carousel } from "react-responsive-carousel"
+import burger from "../../images/icon/burger.png"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
@@ -45,6 +51,7 @@ const Default = props => {
   const [openInfo, setOpenInfo] = useState(null)
   const [conversation, setConversation] = useState([])
   const [openConversation, setOpenConversation] = useState(false)
+  const filterPanelRef = useRef(null)
 
   useEffect(() => {
     getData()
@@ -52,7 +59,7 @@ const Default = props => {
   async function getData() {
     try {
       let params = {
-        id: new URLSearchParams(props.location.search).get("id"),
+        id: props.id,
       }
       await API.graphql(graphqlOperation(itemsData, params)).then(res => {
         setOrgName(res.data.getSubscriber.orgName)
@@ -196,10 +203,134 @@ const Default = props => {
     setOpenConversation(true)
   }
 
+  const openFilter = () => {
+    Anime({
+      targets: filterPanelRef.current,
+      opacity: [0, 1],
+      duration: 400,
+      begin: () => {
+        filterPanelRef.current.style.display = 'block'
+      }
+    }).play()
+  }
+
+  const closeFilter = () => {
+    Anime({
+      targets: filterPanelRef.current,
+      opacity: [1, 0],
+      duration: 400,
+      begin: () => {
+        filterPanelRef.current.style.display = 'none'
+      }
+    }).play()
+  }
+
   return (
     <>
+      <section className={defaultStyles.liveMenuSearchPanel}>
+        <h1>Burger</h1>
+        <ul>
+          <li className={defaultStyles.liveMenuFilter} onClick={openFilter}>
+            Menu
+            {/* <ul className={defaultStyles.categoryContainer}>
+              {categoryList.map((item, index) => (
+                <li key={index}>
+                  <label>{item}</label>
+                  <hr />
+                </li>
+              ))}
+            </ul> */}
+          </li>
+        </ul>
+        <FontAwesomeIcon
+          icon={faSearch}
+          style={{ transform: "translate(-90px, 40px)" }}
+          color="grey"
+        />
+        <input type="text" placeholder="Search" />
+      </section>
+      <section ref={filterPanelRef} className={defaultStyles.filterPanel}>
+        <FontAwesomeIcon
+          icon={faTimesCircle}
+          style={{ position: "absolute", right: "-10px", top: "-10px" }}
+          size="lg"
+          onClick={closeFilter}
+        />
+        {categoryList.map((item, index) => (
+          <section
+            key={index}
+            onClick={() => {
+              filterCategoricalList(item)
+              closeFilter()
+            }}
+          >
+            <label>{item}</label>
+          </section>
+        ))}
+      </section>
       <section className={defaultStyles.container}>
-        <h1 className={defaultStyles.orgName}>{orgName}</h1>
+        <section className={defaultStyles.itemsContainer}>
+          {selectedCategory !== "All" &&
+            filteredList.map((item, index) => (
+              <section className={defaultStyles.item}>
+                <img src={burger} title={index} />
+                <label className={defaultStyles.itemName}>
+                  {item.itemName}
+                </label>
+                <p className={defaultStyles.itemDescription}>
+                  {item.description}iuvlivliuvluyvl
+                </p>
+                <label className={defaultStyles.itemPrice}>
+                  {item.itemPrice}
+                </label>
+                <section
+                  className={defaultStyles.itemOrderToggle}
+                  style={{
+                    justifyContent: !item.ordered ? "right" : "left",
+                    background: !item.ordered ? "grey" : "green",
+                  }}
+                  onClick={() =>
+                    !item.ordered
+                      ? addItemToList(item)
+                      : removeItemFromList(item)
+                  }
+                >
+                  {!item.ordered ? "+" : "-"}
+                </section>
+              </section>
+            ))}
+          {selectedCategory === "All" &&
+            list.map((item, index) => (
+              <section className={defaultStyles.item}>
+                <img src={burger} title={index} />
+                <label className={defaultStyles.itemName}>
+                  {item.itemName}
+                </label>
+                <p className={defaultStyles.itemDescription}>
+                  {item.description}iuvlivliuvluyvl
+                </p>
+                <label className={defaultStyles.itemPrice}>
+                  {item.itemPrice}
+                </label>
+                <section
+                  className={defaultStyles.itemOrderToggle}
+                  style={{
+                    justifyContent: !item.ordered ? "right" : "left",
+                    background: !item.ordered ? "grey" : "green",
+                  }}
+                  onClick={() =>
+                    !item.ordered
+                      ? addItemToList(item)
+                      : removeItemFromList(item)
+                  }
+                >
+                  {!item.ordered ? "+" : "-"}
+                </section>
+              </section>
+            ))}
+        </section>
+
+        {/* <h1 className={defaultStyles.orgName}>{orgName}</h1>
 
         <section className={defaultStyles.menuNav}>
           <ul>
@@ -314,7 +445,7 @@ const Default = props => {
                 </section>
               </section>
             ))}
-        </section>
+        </section> */}
 
         {orderList.length > 0 && (
           <section
@@ -380,8 +511,8 @@ const Default = props => {
       {confirmOrder && (
         <ConfirmOrder
           orderList={orderList}
-          id={new URLSearchParams(props.location.search).get("id")}
-          key={new URLSearchParams(props.location.search).get("key")}
+          id={props.id}
+          key={props.table}
           getConfData={data => getConfData(data)}
           switchConfirmOrder={toggleConfirmOrder}
         />
