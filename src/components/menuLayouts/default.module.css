@@ -1,6 +1,5 @@
 .backLayout {
   width: 100%;
-  height: 100vh;
   position: fixed;
   background: rgba(0, 0, 0, 0.37);
   z-index: 3;
@@ -265,6 +264,7 @@
   padding: 2px 5px;
   border-radius: 8px;
   font-size: 0.8em;
+  margin-top: 2px;
 }
 .categoryContainer {
   width: max-content;

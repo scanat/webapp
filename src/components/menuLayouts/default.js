@@ -209,45 +209,29 @@ const Default = props => {
       opacity: [0, 1],
       duration: 400,
       begin: () => {
-        filterPanelRef.current.style.display = 'block'
-      }
+        filterPanelRef.current.style.display = "block"
+      },
     }).play()
   }
 
   const closeFilter = () => {
-    Anime({
-      targets: filterPanelRef.current,
-      opacity: [1, 0],
-      duration: 400,
-      begin: () => {
-        filterPanelRef.current.style.display = 'none'
-      }
-    }).play()
+    filterPanelRef.current.style.display = "none"
   }
 
   return (
     <>
       <section className={defaultStyles.liveMenuSearchPanel}>
-        <h1>Burger</h1>
-        <ul>
-          <li className={defaultStyles.liveMenuFilter} onClick={openFilter}>
-            Menu
-            {/* <ul className={defaultStyles.categoryContainer}>
-              {categoryList.map((item, index) => (
-                <li key={index}>
-                  <label>{item}</label>
-                  <hr />
-                </li>
-              ))}
-            </ul> */}
-          </li>
-        </ul>
+        <h1>{selectedCategory}</h1>
+        <label className={defaultStyles.liveMenuFilter} onClick={openFilter}>
+          Menu
+        </label>
+
+        <input type="text" placeholder="Search" />
         <FontAwesomeIcon
           icon={faSearch}
-          style={{ transform: "translate(-90px, 40px)" }}
+          style={{ position: "absolute", left: '10%', top: '36px' }}
           color="grey"
         />
-        <input type="text" placeholder="Search" />
       </section>
       <section ref={filterPanelRef} className={defaultStyles.filterPanel}>
         <FontAwesomeIcon

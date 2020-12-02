@@ -23,7 +23,8 @@ import Logo from "../components/portfolio/logo"
 import Banner from "../components/portfolio/banner"
 import Amplify, { API, graphqlOperation } from "aws-amplify"
 import SocialPage from "../components/portfolio/socialPage"
-import AmbiencePost from "../components/portfolio/ambiencePost"
+import SocialPlatform from "../components/portfolio/socialPlatform"
+import Gallery from "../components/portfolio/gallery"
 import DishesWeek from "../components/portfolio/dishesWeek"
 import { Link, navigate } from "gatsby"
 import Anime from "animejs"
@@ -50,6 +51,8 @@ const Portfolio = ({ location }) => {
   const [width, setWidth] = useState()
   const [rated, setRated] = useState(0)
   const [pageData, setPageData] = useState({})
+  const [shareShow, setShareShow] = useState(false)
+  const [galleryShow, setGalleryShow] = useState(false)
   const timingPanelRef = useRef(null)
   const backLayoutPanel = useRef(null)
 
@@ -67,7 +70,6 @@ const Portfolio = ({ location }) => {
             id: foundId,
           })
         ).then(res => {
-          console.log(foundId, res)
           setPageData(res.data.getSubscriber)
         })
       } catch (error) {
@@ -212,9 +214,6 @@ const Portfolio = ({ location }) => {
           <h5>Happy hours</h5>
           <label>(Mon and Fri) : 4pm - 7pm</label>
         </section>
-        {/* <label className={portfolioStyles.socialTextInput}>
-          {String(location.search).substring(4)}
-        </label> */}
       </section>
 
       <section className={portfolioStyles.tabs}>
@@ -234,12 +233,12 @@ const Portfolio = ({ location }) => {
             <label>Review</label>
           </li>
 
-          <li>
+          <li onClick={() => setGalleryShow(!galleryShow)}>
             <img src={camera} />
             <label>Photos</label>
           </li>
 
-          <li>
+          <li onClick={() => setShareShow(!shareShow)}>
             <img src={share} />
             <label>Share</label>
           </li>
@@ -249,6 +248,16 @@ const Portfolio = ({ location }) => {
       <LiveMenu
         id={new URLSearchParams(location.search).get("id")}
         table={new URLSearchParams(location.search).get("table")}
+      />
+
+      <SocialPlatform
+        id={new URLSearchParams(location.search).get("id")}
+        show={shareShow}
+      />
+
+      <Gallery
+        id={new URLSearchParams(location.search).get("id")}
+        show={galleryShow}
       />
 
       {/* <section className={portfolioStyles.liveSpaceContainer}>

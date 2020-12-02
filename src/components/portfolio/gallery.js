@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react"
-import ambienceStyles from "./ambiencePost.module.css"
+import galleryStyles from "./gallery.module.css"
 import Carousel from "react-elastic-carousel"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
@@ -8,6 +8,7 @@ import {
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons"
 import AWS from "aws-sdk"
+import Anime from 'animejs'
 
 const subscriberAmbienceS3 = new AWS.S3({
   region: "ap-south-1",
@@ -15,9 +16,26 @@ const subscriberAmbienceS3 = new AWS.S3({
   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
-const AmbiencePost = props => {
+const Gallery = props => {
   const [width, setWidth] = useState()
   const [imagesJson, setImagesJson] = useState({ images: [] })
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    props.show
+      ? Anime({
+          targets: containerRef.current,
+          bottom: ["-300px", 0],
+          easing: "linear",
+          duration: 200,
+        }).play()
+      : Anime({
+          targets: containerRef.current,
+          bottom: [0, "-300px"],
+          easing: "linear",
+          duration: 200,
+        }).play()
+  }, [props.show])
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -45,8 +63,25 @@ const AmbiencePost = props => {
   }
 
   return (
-    <section className={ambienceStyles.socialLinksContainer}>
-      <section className={ambienceStyles.ourDeals}>
+    <section ref={containerRef} className={galleryStyles.container}>
+      <ul>
+        <li>Ambience</li>
+        <li>Gallery</li>
+        <li>All</li>
+      </ul>
+      <section className={galleryStyles.galleryContainer}>
+        {imagesJson.images.map((element, index) => (
+          <section key={index} className={galleryStyles.galleryImageContainer}>
+            <img
+              src={element.imagedata}
+              alt={element.id}
+              className={galleryStyles.galleryImage}
+            />
+          </section>
+        ))}
+      </section>
+
+      {/* <section className={ambienceStyles.ourDeals}>
         <Carousel
           itemsToShow={width}
           verticalMode={false}
@@ -78,9 +113,9 @@ const AmbiencePost = props => {
             </section>
           ))}
         </Carousel>
-      </section>
+      </section> */}
     </section>
   )
 }
 
-export default AmbiencePost
+export default Gallery
