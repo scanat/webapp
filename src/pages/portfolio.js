@@ -29,13 +29,14 @@ import DishesWeek from "../components/portfolio/dishesWeek"
 import { Link, navigate } from "gatsby"
 import Anime from "animejs"
 import LiveMenu from "../components/menuLayouts/default"
+import Info from "../components/portfolio/info"
 
 import camera from "../images/icon/camera.png"
 import delivery from "../images/icon/delivery.png"
 import livemenu from "../images/icon/livemenu.png"
 import review from "../images/icon/review.png"
 import share from "../images/icon/share.png"
-import { Carousel } from "react-responsive-carousel"
+import Review from "../components/portfolio/review"
 
 Amplify.configure({
   API: {
@@ -53,6 +54,8 @@ const Portfolio = ({ location }) => {
   const [pageData, setPageData] = useState({})
   const [shareShow, setShareShow] = useState(false)
   const [galleryShow, setGalleryShow] = useState(false)
+  const [infoShow, setInfoShow] = useState(false)
+  const [reviewShow, setReviewShow] = useState(false)
   const timingPanelRef = useRef(null)
   const backLayoutPanel = useRef(null)
 
@@ -228,7 +231,7 @@ const Portfolio = ({ location }) => {
             <label>Delivery</label>
           </li>
 
-          <li>
+          <li onClick={() => setReviewShow(!reviewShow)}>
             <img src={review} />
             <label>Review</label>
           </li>
@@ -241,6 +244,11 @@ const Portfolio = ({ location }) => {
           <li onClick={() => setShareShow(!shareShow)}>
             <img src={share} />
             <label>Share</label>
+          </li>
+
+          <li onClick={() => setInfoShow(!infoShow)}>
+            <img src={share} />
+            <label>Info.</label>
           </li>
         </ul>
       </section>
@@ -258,6 +266,26 @@ const Portfolio = ({ location }) => {
       <Gallery
         id={new URLSearchParams(location.search).get("id")}
         show={galleryShow}
+      />
+
+      <Info
+        id={new URLSearchParams(location.search).get("id")}
+        show={infoShow}
+        address={{
+          address1: pageData.address1,
+          address2: pageData.address2,
+          city: pageData.city,
+          state: pageData.state,
+          postalCode: pageData.postalCode,
+        }}
+        phoneNumber={pageData.phoneNumber}
+        about={pageData.about}
+      />
+
+      <Review
+        id={new URLSearchParams(location.search).get("id")}
+        show={reviewShow}
+        orgName={pageData.orgName}
       />
 
       {/* <section className={portfolioStyles.liveSpaceContainer}>

@@ -41,7 +41,6 @@
     "react-icons": "^3.10.0",
     "react-qr-scanner": "0.0.10",
     "react-qrcode-logo": "^2.2.1",
-    "react-responsive-carousel": "^3.2.9",
     "react-swipeable-views": "^0.13.9",
     "styled-components": "^5.1.1"
   },

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import galleryStyles from "./gallery.module.css"
 import Carousel from "react-elastic-carousel"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -81,7 +81,7 @@ const Gallery = props => {
         ))}
       </section>
 
-      {/* <section className={ambienceStyles.ourDeals}>
+      {/* <section className={galleryStyles.ourDeals}>
         <Carousel
           itemsToShow={width}
           verticalMode={false}
@@ -103,12 +103,12 @@ const Gallery = props => {
           {imagesJson.images.map((element, index) => (
             <section
               key={index}
-              className={ambienceStyles.ambienceImageCardContainer}
+              className={galleryStyles.ambienceImageCardContainer}
             >
               <img
                 src={element.imagedata}
                 alt={element.id}
-                className={ambienceStyles.ambienceImage}
+                className={galleryStyles.ambienceImage}
               />
             </section>
           ))}

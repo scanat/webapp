@@ -103,7 +103,7 @@ const SocialPlatform = props => {
         <li>
           <span ref={copiedTextRef}>Copied!</span>
           <CopyToClipboard
-            text={`https://www.scanat.in/portfolio?id=${props.id}`}
+            text={`https://www.scanat.in/portfolio/?id=${props.id}`}
           >
             <FontAwesomeIcon
               icon={faLink}

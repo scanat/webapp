@@ -20,7 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import FurtherDetails from "./furtherDetails"
 import Conversation from "./conversation"
-import { Carousel } from "react-responsive-carousel"
+import Carousel from "react-elastic-carousel"
 import burger from "../../images/icon/burger.png"
 
 const subscriberItemsS3 = new AWS.S3({
@@ -229,7 +229,7 @@ const Default = props => {
         <input type="text" placeholder="Search" />
         <FontAwesomeIcon
           icon={faSearch}
-          style={{ position: "absolute", left: '10%', top: '36px' }}
+          style={{ position: "absolute", left: 0, top: "36px" }}
           color="grey"
         />
       </section>
@@ -252,68 +252,75 @@ const Default = props => {
           </section>
         ))}
       </section>
+
       <section className={defaultStyles.container}>
         <section className={defaultStyles.itemsContainer}>
-          {selectedCategory !== "All" &&
-            filteredList.map((item, index) => (
-              <section className={defaultStyles.item}>
-                <img src={burger} title={index} />
-                <label className={defaultStyles.itemName}>
-                  {item.itemName}
-                </label>
-                <p className={defaultStyles.itemDescription}>
-                  {item.description}iuvlivliuvluyvl
-                </p>
-                <label className={defaultStyles.itemPrice}>
-                  {item.itemPrice}
-                </label>
-                <section
-                  className={defaultStyles.itemOrderToggle}
-                  style={{
-                    justifyContent: !item.ordered ? "right" : "left",
-                    background: !item.ordered ? "grey" : "green",
-                  }}
-                  onClick={() =>
-                    !item.ordered
-                      ? addItemToList(item)
-                      : removeItemFromList(item)
-                  }
-                >
-                  {!item.ordered ? "+" : "-"}
-                </section>
-              </section>
-            ))}
-          {selectedCategory === "All" &&
-            list.map((item, index) => (
-              <section className={defaultStyles.item}>
-                <img src={burger} title={index} />
-                <label className={defaultStyles.itemName}>
-                  {item.itemName}
-                </label>
-                <p className={defaultStyles.itemDescription}>
-                  {item.description}iuvlivliuvluyvl
-                </p>
-                <label className={defaultStyles.itemPrice}>
-                  {item.itemPrice}
-                </label>
-                <section
-                  className={defaultStyles.itemOrderToggle}
-                  style={{
-                    justifyContent: !item.ordered ? "right" : "left",
-                    background: !item.ordered ? "grey" : "green",
-                  }}
-                  onClick={() =>
-                    !item.ordered
-                      ? addItemToList(item)
-                      : removeItemFromList(item)
-                  }
-                >
-                  {!item.ordered ? "+" : "-"}
-                </section>
-              </section>
-            ))}
+          <Carousel
+            enableSwipe
+            itemsToShow={3}
+            verticalMode={false}
+            pagination={false}
+            showArrows={false}
+          >
+            {selectedCategory === "All"
+              ? list.map((item, index) => (
+                  <section className={defaultStyles.item}>
+                    <img src={burger} title={index} />
+                    <label className={defaultStyles.itemName}>
+                      {item.itemName}
+                    </label>
+                    <p className={defaultStyles.itemDescription}>
+                      {item.description}iuvlivliuvluyvl
+                    </p>
+                    <label className={defaultStyles.itemPrice}>
+                      {item.itemPrice}
+                    </label>
+                    <section
+                      className={defaultStyles.itemOrderToggle}
+                      style={{
+                        justifyContent: !item.ordered ? "right" : "left",
+                        background: !item.ordered ? "grey" : "green",
+                      }}
+                      onClick={() =>
+                        !item.ordered
+                          ? addItemToList(item)
+                          : removeItemFromList(item)
+                      }
+                    >
+                      {!item.ordered ? "+" : "-"}
+                    </section>
+                  </section>
+                ))
+              : filteredList.map((item, index) => (
+                  <section className={defaultStyles.item}>
+                    <img src={burger} title={index} />
+                    <label className={defaultStyles.itemName}>
+                      {item.itemName}
+                    </label>
+                    <p className={defaultStyles.itemDescription}>
+                      {item.description}iuvlivliuvluyvl
+                    </p>
+                    <label className={defaultStyles.itemPrice}>
+                      {item.itemPrice}
+                    </label>
+                    <section
+                      className={defaultStyles.itemOrderToggle}
+                      style={{
+                        justifyContent: !item.ordered ? "right" : "left",
+                        background: !item.ordered ? "grey" : "green",
+                      }}
+                      onClick={() =>
+                        !item.ordered
+                          ? addItemToList(item)
+                          : removeItemFromList(item)
+                      }
+                    >
+                      {!item.ordered ? "+" : "-"}
+                    </section>
+                  </section>
+                ))}
+          </Carousel>
         </section>
-
         {/* <h1 className={defaultStyles.orgName}>{orgName}</h1>
 
         <section className={defaultStyles.menuNav}>

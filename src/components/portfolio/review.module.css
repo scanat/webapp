@@ -1,0 +1,79 @@
+.container {
+  width: 90%;
+  height: 300px;
+  position: fixed;
+  bottom: -350px;
+  background: whitesmoke;
+  -webkit-box-shadow: 0 4px 13px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0 4px 13px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 4px 13px 0px rgba(0, 0, 0, 0.75);
+  overflow-y: scroll;
+  border-radius: 20px 20px 0 0;
+  padding: 15px 5%;
+}
+.itemContainer {
+  width: 80%;
+  margin: 30px 10%;
+  -webkit-box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+  -moz-box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+  box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+  text-align: center;
+  padding: 20px 0;
+}
+.itemContainer h3 {
+  text-transform: uppercase;
+}
+.itemContainer label {
+  line-height: 40px;
+  color: cornflowerblue;
+  font-size: 1.1em;
+}
+.itemContainer .comment {
+  margin: 10px 20px;
+}
+.itemContainer h5 {
+  margin: 10px 0;
+}
+.writeReviewContainer {
+  width: 80%;
+  position: absolute;
+  left: -100%;
+  top: 40px;
+  z-index: 2;
+  background: white;
+  -webkit-box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+  -moz-box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+  box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
+}
+.writeReviewContainer input:first-of-type {
+  width: 63%;
+  float: right;
+  border: none;
+  margin: 35px 20px;
+  border-bottom: 1px solid grey;
+  font-size: 1.1em;
+}
+.writeReviewContainer textarea {
+  width: 90%;
+  height: 100px;
+  margin: 5% 20px;
+  border: 1px grey solid;
+  font-size: 1em;
+}
+.writeReviewContainer label {
+  width: 90%;
+  float: left;
+  margin-left: 5%;
+  font-size: 0.8em;
+}
+.buttonContainer {
+  display: flex;
+  float: right;
+  margin: 10px 20px;
+}
+.buttonContainer button {
+  background: transparent;
+  border: none;
+  color: #169188;
+  font-size: 1em;
+}
