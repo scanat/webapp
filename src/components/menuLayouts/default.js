@@ -43,7 +43,10 @@ const Default = props => {
   const [orderListPulled, setOrderListPulled] = useState(false)
   const [list, setList] = useState([])
   const [orderList, setOrderList] = useState([])
+  const [filterOpen, setFilterOpen] = useState(false)
   const [filteredList, setFilteredList] = useState([])
+  const [itemSearch, setItemSearch] = useState("")
+  const [searchList, setSearchList] = useState([])
   const [confirmOrder, setConfirmOrder] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [categoryList, setCategoryList] = useState(["All"])
@@ -203,34 +206,61 @@ const Default = props => {
     setOpenConversation(true)
   }
 
-  const openFilter = () => {
-    Anime({
-      targets: filterPanelRef.current,
-      opacity: [0, 1],
-      duration: 400,
-      begin: () => {
-        filterPanelRef.current.style.display = "block"
-      },
-    }).play()
-  }
+  useEffect(() => {
+    filterOpen
+      ? Anime({
+          targets: filterPanelRef.current,
+          opacity: [0, 1],
+          duration: 400,
+          begin: () => {
+            filterPanelRef.current.style.display = "block"
+          },
+        }).play()
+      : Anime({
+          targets: filterPanelRef.current,
+          opacity: [1, 0],
+          duration: 400,
+          complete: () => {
+            filterPanelRef.current.style.display = "none"
+          },
+        }).play()
+  }, [filterOpen])
 
-  const closeFilter = () => {
-    filterPanelRef.current.style.display = "none"
-  }
+  useEffect(() => {
+    if (itemSearch !== "") {
+      var tempList = []
+      list.map(item => {
+        String(item.itemName).includes(itemSearch) && tempList.push(item)
+      })
+      setSearchList(tempList)
+      console.log(searchList)
+    } else {
+      let emptyList = []
+      setSearchList(emptyList)
+    }
+  }, [itemSearch])
 
   return (
     <>
       <section className={defaultStyles.liveMenuSearchPanel}>
         <h1>{selectedCategory}</h1>
-        <label className={defaultStyles.liveMenuFilter} onClick={openFilter}>
+        <label
+          className={defaultStyles.liveMenuFilter}
+          onClick={() => setFilterOpen(!filterOpen)}
+        >
           Menu
         </label>
 
-        <input type="text" placeholder="Search" />
+        <input
+          type="text"
+          placeholder="Search"
+          onChange={e => setItemSearch(e.target.value)}
+        />
         <FontAwesomeIcon
           icon={faSearch}
-          style={{ position: "absolute", left: 0, top: "36px" }}
+          style={{ position: "absolute", left: 0, top: "37px" }}
           color="grey"
+          size="sm"
         />
       </section>
       <section ref={filterPanelRef} className={defaultStyles.filterPanel}>
@@ -238,14 +268,14 @@ const Default = props => {
           icon={faTimesCircle}
           style={{ position: "absolute", right: "-10px", top: "-10px" }}
           size="lg"
-          onClick={closeFilter}
+          onClick={() => setFilterOpen(false)}
         />
         {categoryList.map((item, index) => (
           <section
             key={index}
             onClick={() => {
               filterCategoricalList(item)
-              closeFilter()
+              setFilterOpen(false)
             }}
           >
             <label>{item}</label>
@@ -255,71 +285,92 @@ const Default = props => {
 
       <section className={defaultStyles.container}>
         <section className={defaultStyles.itemsContainer}>
-          <Carousel
-            enableSwipe
-            itemsToShow={3}
-            verticalMode={false}
-            pagination={false}
-            showArrows={false}
-          >
-            {selectedCategory === "All"
-              ? list.map((item, index) => (
-                  <section className={defaultStyles.item}>
-                    <img src={burger} title={index} />
-                    <label className={defaultStyles.itemName}>
-                      {item.itemName}
-                    </label>
-                    <p className={defaultStyles.itemDescription}>
-                      {item.description}iuvlivliuvluyvl
-                    </p>
-                    <label className={defaultStyles.itemPrice}>
-                      {item.itemPrice}
-                    </label>
-                    <section
-                      className={defaultStyles.itemOrderToggle}
-                      style={{
-                        justifyContent: !item.ordered ? "right" : "left",
-                        background: !item.ordered ? "grey" : "green",
-                      }}
-                      onClick={() =>
-                        !item.ordered
-                          ? addItemToList(item)
-                          : removeItemFromList(item)
-                      }
-                    >
-                      {!item.ordered ? "+" : "-"}
-                    </section>
+          {searchList.length !== 0 &&
+            searchList.map((item, index) => (
+              <section className={defaultStyles.item}>
+                <img src={burger} title={index} />
+                <label className={defaultStyles.itemName}>
+                  {item.itemName}
+                </label>
+                <p className={defaultStyles.itemDescription}>
+                  {item.description}iuvlivliuvluyvl
+                </p>
+                <label className={defaultStyles.itemPrice}>
+                  {item.itemPrice}
+                </label>
+                <section
+                  className={defaultStyles.itemOrderToggle}
+                  style={{
+                    justifyContent: !item.ordered ? "right" : "left",
+                    background: !item.ordered ? "grey" : "green",
+                  }}
+                  onClick={() =>
+                    !item.ordered
+                      ? addItemToList(item)
+                      : removeItemFromList(item)
+                  }
+                >
+                  {!item.ordered ? "+" : "-"}
+                </section>
+              </section>
+            ))}
+          {searchList.length === 0 && selectedCategory === "All"
+            ? list.map((item, index) => (
+                <section className={defaultStyles.item}>
+                  <img src={burger} title={index} />
+                  <label className={defaultStyles.itemName}>
+                    {item.itemName}
+                  </label>
+                  <p className={defaultStyles.itemDescription}>
+                    {item.description}iuvlivliuvluyvl
+                  </p>
+                  <label className={defaultStyles.itemPrice}>
+                    {item.itemPrice}
+                  </label>
+                  <section
+                    className={defaultStyles.itemOrderToggle}
+                    style={{
+                      justifyContent: !item.ordered ? "right" : "left",
+                      background: !item.ordered ? "grey" : "green",
+                    }}
+                    onClick={() =>
+                      !item.ordered
+                        ? addItemToList(item)
+                        : removeItemFromList(item)
+                    }
+                  >
+                    {!item.ordered ? "+" : "-"}
                   </section>
-                ))
-              : filteredList.map((item, index) => (
-                  <section className={defaultStyles.item}>
-                    <img src={burger} title={index} />
-                    <label className={defaultStyles.itemName}>
-                      {item.itemName}
-                    </label>
-                    <p className={defaultStyles.itemDescription}>
-                      {item.description}iuvlivliuvluyvl
-                    </p>
-                    <label className={defaultStyles.itemPrice}>
-                      {item.itemPrice}
-                    </label>
-                    <section
-                      className={defaultStyles.itemOrderToggle}
-                      style={{
-                        justifyContent: !item.ordered ? "right" : "left",
-                        background: !item.ordered ? "grey" : "green",
-                      }}
-                      onClick={() =>
-                        !item.ordered
-                          ? addItemToList(item)
-                          : removeItemFromList(item)
-                      }
-                    >
-                      {!item.ordered ? "+" : "-"}
-                    </section>
+                </section>
+              ))
+            : filteredList.map((item, index) => (
+                <section className={defaultStyles.item}>
+                  <img src={burger} title={index} />
+                  <label className={defaultStyles.itemName}>
+                    {item.itemName}
+                  </label>
+                  <p className={defaultStyles.itemDescription}>
+                    {item.description}iuvlivliuvluyvl
+                  </p>
+                  <label className={defaultStyles.itemPrice}>
+                    {item.itemPrice}
+                  </label>
+                  <section
+                    className={defaultStyles.itemOrderToggle}
+                    style={{
+                      justifyContent: !item.ordered ? "right" : "left",
+                      background: !item.ordered ? "grey" : "green",
+                    }}
+                    onClick={() =>
+                      !item.ordered
+                        ? addItemToList(item)
+                        : removeItemFromList(item)
+                    }
+                  >
+                    {!item.ordered ? "+" : "-"}
                   </section>
-                ))}
-          </Carousel>
+                </section>
+              ))}
         </section>
         {/* <h1 className={defaultStyles.orgName}>{orgName}</h1>
 

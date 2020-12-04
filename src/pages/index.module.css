@@ -28,7 +28,8 @@
   -moz-box-shadow: 1px 1px 5px 0px rgba(151, 144, 144, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(151, 144, 144, 0.75);
   border: none;
-  padding: 3px 15px 4px 15px;
+  padding: 0 15px 0 15px;
+  line-height: 25px;
 }
 .locationselect::after {
   content: "";
@@ -42,7 +43,8 @@
   width: 100%;
   margin: 0 auto;
   position: relative;
-  padding: 5px 10px 5px 10px;
+  padding: 0 10px 0 10px;
+  line-height: 25px;
   border: none;
   border-radius: 5px 0 0 5px;
   font-size: 0.7em;
@@ -51,12 +53,13 @@
   box-shadow: 1px 1px 5px 0px rgba(151, 144, 144, 0.75);
   background: rgba(255, 255, 255, 0.9);
 }
-.searchBar::before{
+.searchBar::before {
   content: url(../images/icon/arrow-down.png);
 }
 .gosearch {
   border-radius: 0 3px 3px 0;
-  padding: 3px 15px 4px 15px;
+  padding: 0 15px 0 15px;
+  line-height: 25px;
   background: rgb(104, 79, 79);
   color: whitesmoke;
 }
@@ -146,6 +149,7 @@
   -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
 }
 .searchListContainer {
   position: fixed;

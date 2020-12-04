@@ -1,6 +1,6 @@
 .container {
   width: 90%;
-  height: 300px;
+  height: 250px;
   position: fixed;
   bottom: -350px;
   background: whitesmoke;
@@ -10,6 +10,11 @@
   overflow-y: scroll;
   border-radius: 20px 20px 0 0;
   padding: 15px 5%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.container::-webkit-scrollbar{
+  display: none;
 }
 .itemContainer {
   width: 80%;
@@ -46,17 +51,17 @@
   box-shadow: 0 6px 10px 0px rgba(109, 109, 109, 0.75);
 }
 .writeReviewContainer input:first-of-type {
-  width: 63%;
+  width: 60%;
   float: right;
   border: none;
-  margin: 35px 20px;
+  margin: 35px 10px;
   border-bottom: 1px solid grey;
-  font-size: 1.1em;
+  font-size: 0.9em;
 }
 .writeReviewContainer textarea {
   width: 90%;
   height: 100px;
-  margin: 5% 20px;
+  margin: 5% 5%;
   border: 1px grey solid;
   font-size: 1em;
 }
@@ -69,7 +74,7 @@
 .buttonContainer {
   display: flex;
   float: right;
-  margin: 10px 20px;
+  margin: 10px 5%;
 }
 .buttonContainer button {
   background: transparent;

@@ -155,14 +155,19 @@
 }
 .itemsContainer {
   position: relative;
-  width: 100%;
-  display: block;
+  width: calc(100%+20px);
   display: flex;
-  margin: 20px 0;
+  margin: 20px 0 20px -20px;
+  overflow-x: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.itemsContainer::-webkit-scrollbar{
+  display: none;
 }
 .item {
   position: relative;
-  width: 130px;
+  min-width: 130px;
   height: 160px;
   display: flex;
   flex-direction: column;
@@ -170,7 +175,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 15px;
-  margin: 60px 0;
+  margin: 60px 10px;
   background: white;
   -webkit-box-shadow: 0 6px 13px 0px #e6e6e6;
   -moz-box-shadow: 0 6px 13px 0px #e6e6e6;
@@ -217,11 +222,11 @@
 }
 .filterPanel {
   opacity: 0;
-  min-width: 50%;
-  max-width: 80%;
+  width: 160px;
   position: fixed;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -140px);
+  transform: translate(-50%, -50%);
   -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
@@ -255,7 +260,8 @@
   border: none;
   border-bottom: 1px solid grey;
   font-size: 14px;
-  padding: 3px 0 3px 5%;
+  padding: 3px 0 3px 18px;
+  border-radius: 0;
 }
 .liveMenuSearchPanel .liveMenuFilter {
   position: relative;

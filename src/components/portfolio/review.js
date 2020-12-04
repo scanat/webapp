@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import reviewStyles from "./review.module.css"
 import Carousel from "react-elastic-carousel"
 import {
@@ -11,6 +11,7 @@ import Anime from "animejs"
 import { text } from "@fortawesome/fontawesome-svg-core"
 
 const Review = props => {
+  const [writeReview, setWriteReview] = useState(false)
   const containerRef = useRef(null)
   const writeReviewRef = useRef(null)
 
@@ -30,14 +31,21 @@ const Review = props => {
         }).play()
   }, [props.show])
 
-  const writeReviewShow = () => {
-    Anime({
-      targets: writeReviewRef.current,
-      left: ["-100%", "10%"],
-      easing: 'linear',
-      duration: 200,
-    })
-  }
+  useEffect(() => {
+    writeReview
+      ? Anime({
+          targets: writeReviewRef.current,
+          left: ["-100%", "10%"],
+          easing: "linear",
+          duration: 200,
+        })
+      : Anime({
+          targets: writeReviewRef.current,
+          left: ["10%", "-100%"],
+          easing: "linear",
+          duration: 200,
+        })
+  }, [writeReview])
 
   return (
     <section ref={containerRef} className={reviewStyles.container}>
@@ -45,7 +53,7 @@ const Review = props => {
         icon={faCommentAlt}
         size="lg"
         style={{ position: "absolute", right: "5%", top: "20px" }}
-        onClick={writeReviewShow}
+        onClick={() => setWriteReview(!writeReview)}
       />
       <Carousel
         enableSwipe
@@ -80,7 +88,7 @@ const Review = props => {
       >
         <FontAwesomeIcon
           icon={faUserCircle}
-          size="5x"
+          size="4x"
           color="rgb(104, 79, 79)"
           style={{ margin: "10px 5px", float: "left" }}
         />
