@@ -231,22 +231,50 @@ const Portfolio = ({ location }) => {
             <label>Delivery</label>
           </li>
 
-          <li onClick={() => setReviewShow(!reviewShow)}>
+          <li
+            onClick={() => {
+              setReviewShow(!reviewShow)
+              setInfoShow(false)
+              setGalleryShow(false)
+              setShareShow(false)
+            }}
+          >
             <img src={review} />
             <label>Review</label>
           </li>
 
-          <li onClick={() => setGalleryShow(!galleryShow)}>
+          <li
+            onClick={() => {
+              setGalleryShow(!galleryShow)
+              setInfoShow(false)
+              setReviewShow(false)
+              setShareShow(false)
+            }}
+          >
             <img src={camera} />
             <label>Photos</label>
           </li>
 
-          <li onClick={() => setShareShow(!shareShow)}>
+          <li
+            onClick={() => {
+              setShareShow(!shareShow)
+              setInfoShow(false)
+              setReviewShow(false)
+              setGalleryShow(false)
+            }}
+          >
             <img src={share} />
             <label>Share</label>
           </li>
 
-          <li onClick={() => setInfoShow(!infoShow)}>
+          <li
+            onClick={() => {
+              setInfoShow(!infoShow)
+              setReviewShow(false)
+              setGalleryShow(false)
+              setShareShow(false)
+            }}
+          >
             <img src={share} />
             <label>Info.</label>
           </li>

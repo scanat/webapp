@@ -230,7 +230,9 @@ const Default = props => {
     if (itemSearch !== "") {
       var tempList = []
       list.map(item => {
-        String(item.itemName).includes(itemSearch) && tempList.push(item)
+        String(item.itemName)
+          .toLowerCase()
+          .includes(String(itemSearch).toLowerCase()) && tempList.push(item)
       })
       setSearchList(tempList)
       console.log(searchList)

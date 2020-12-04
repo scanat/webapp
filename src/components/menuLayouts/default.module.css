@@ -155,9 +155,9 @@
 }
 .itemsContainer {
   position: relative;
-  width: calc(100%+20px);
+  width: 100%;
   display: flex;
-  margin: 20px 0 20px -20px;
+  margin: 20px 0;
   overflow-x: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
