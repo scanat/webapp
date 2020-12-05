@@ -409,10 +409,10 @@
   text-transform: uppercase;
 }
 .tabs ul li:first-of-type {
-  background: #169188;
+  background: rgb(231, 231, 231);
 }
 .tabs ul li:first-of-type label {
-  color: whitesmoke;
+  /* color: rgb(230, 227, 197); */
 }
 .tabs ul li:hover {
   scale: 1.1;

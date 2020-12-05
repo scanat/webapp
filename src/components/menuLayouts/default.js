@@ -290,7 +290,10 @@ const Default = props => {
           {searchList.length !== 0 &&
             searchList.map((item, index) => (
               <section className={defaultStyles.item}>
-                <img src={burger} title={index} />
+                <img
+                  src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                  title={index}
+                />
                 <label className={defaultStyles.itemName}>
                   {item.itemName}
                 </label>
@@ -319,7 +322,10 @@ const Default = props => {
           {searchList.length === 0 && selectedCategory === "All"
             ? list.map((item, index) => (
                 <section className={defaultStyles.item}>
-                  <img src={burger} title={index} />
+                  <img
+                    src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                    title={index}
+                  />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
@@ -347,7 +353,10 @@ const Default = props => {
               ))
             : filteredList.map((item, index) => (
                 <section className={defaultStyles.item}>
-                  <img src={burger} title={index} />
+                  <img
+                    src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                    title={index}
+                  />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
@@ -619,3 +628,5 @@ export const onUpdateItems = /* GraphQL */ `
     }
   }
 `
+
+const imagesArray = ["pizza", "burger", "meal"]

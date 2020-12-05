@@ -184,10 +184,8 @@
 .item img {
   width: 110px;
   height: 110px;
-  background: black;
   position: absolute;
   top: -50px;
-  border-radius: 50%;
   overflow: hidden;
 }
 .item .itemName {
