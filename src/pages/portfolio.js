@@ -31,11 +31,11 @@ import Anime from "animejs"
 import LiveMenu from "../components/menuLayouts/default"
 import Info from "../components/portfolio/info"
 
-import camera from "../images/icon/camera.png"
-import delivery from "../images/icon/delivery.png"
-import livemenu from "../images/icon/livemenu.png"
+import gallery from "../images/icon/gallery.svg"
+import delivery from "../images/icon/delivery.svg"
+import livemenu from "../images/icon/livemenu.svg"
 import review from "../images/icon/review.png"
-import share from "../images/icon/share.png"
+import share from "../images/icon/share.svg"
 import Review from "../components/portfolio/review"
 
 Amplify.configure({
@@ -222,7 +222,7 @@ const Portfolio = ({ location }) => {
       <section className={portfolioStyles.tabs}>
         <ul>
           <li>
-            <img src={require("../images/icon/livemenu.svg")} color="white" />
+            <img src={livemenu} color="white" />
             <label>Live menu</label>
           </li>
 
@@ -251,7 +251,7 @@ const Portfolio = ({ location }) => {
               setShareShow(false)
             }}
           >
-            <img src={camera} />
+            <img src={gallery} />
             <label>Photos</label>
           </li>
 

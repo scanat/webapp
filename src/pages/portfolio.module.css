@@ -373,15 +373,16 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.tabs ul::-webkit-scrollbar{
+.tabs ul::-webkit-scrollbar {
   display: none;
 }
-@media screen and (min-width: 360px){
-  .tabs ul{
+@media screen and (min-width: 360px) {
+  .tabs ul {
     justify-content: center;
   }
 }
 .tabs ul li {
+  position: relative;
   min-width: 45px;
   height: 70px;
   display: flex;
@@ -400,16 +401,19 @@
   width: 25px;
 }
 .tabs ul li label {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
   font-size: 0.4em;
-  margin-top: 5px;
   text-transform: uppercase;
 }
 .tabs ul li:first-of-type {
-  /* background: #169188; */
+  background: #169188;
 }
 .tabs ul li:first-of-type label {
-  /* color: whitesmoke; */
+  color: whitesmoke;
 }
-.tabs ul li:hover{
+.tabs ul li:hover {
   scale: 1.1;
 }
