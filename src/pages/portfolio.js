@@ -224,7 +224,7 @@ const Portfolio = ({ location }) => {
         <ul>
           <li>
             <img src={livemenu} color="white" />
-            <label>Live menu</label>
+            <label>Live</label>
           </li>
 
           <li>
@@ -277,7 +277,7 @@ const Portfolio = ({ location }) => {
             }}
           >
             <img src={info} />
-            <label>Info.</label>
+            <label>Info</label>
           </li>
         </ul>
       </section>
