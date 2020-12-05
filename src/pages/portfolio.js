@@ -222,7 +222,7 @@ const Portfolio = ({ location }) => {
       <section className={portfolioStyles.tabs}>
         <ul>
           <li>
-            <img src={livemenu} />
+            <img src={require("../images/icon/livemenu.svg")} color="white" />
             <label>Live menu</label>
           </li>
 

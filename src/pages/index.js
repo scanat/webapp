@@ -183,7 +183,7 @@ const Explore = () => {
         >
           <section className={exploreStyles.searchResultContainer}>
             {searchObjectList.map(item => (
-              <Link to={`/portfolio?id=${item.id}`}>
+              <Link to={`/portfolio/?id=${item.id}`}>
                 <section
                   className={exploreStyles.searchItemHolder}
                   key={item.id}
