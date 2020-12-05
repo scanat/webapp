@@ -34,8 +34,9 @@ import Info from "../components/portfolio/info"
 import gallery from "../images/icon/gallery.svg"
 import delivery from "../images/icon/delivery.svg"
 import livemenu from "../images/icon/livemenu.svg"
-import review from "../images/icon/review.png"
+import review from "../images/icon/review.svg"
 import share from "../images/icon/share.svg"
+import info from "../images/icon/info.svg"
 import Review from "../components/portfolio/review"
 
 Amplify.configure({
@@ -275,7 +276,7 @@ const Portfolio = ({ location }) => {
               setShareShow(false)
             }}
           >
-            <img src={share} />
+            <img src={info} />
             <label>Info.</label>
           </li>
         </ul>
