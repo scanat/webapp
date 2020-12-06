@@ -6,6 +6,7 @@ import Anime from "animejs"
 import ConfirmOrder from "./confirmOrder"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
+  faAngleLeft,
   faCaretDown,
   faCaretUp,
   faCartPlus,
@@ -13,11 +14,13 @@ import {
   faEllipsisH,
   faFilter,
   faInfoCircle,
-  faMinusSquare,
-  faPlusSquare,
   faSearch,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons"
+import {
+  faPlusSquare,
+  faMinusSquare,
+} from "@fortawesome/free-regular-svg-icons"
 import FurtherDetails from "./furtherDetails"
 import Conversation from "./conversation"
 import Carousel from "react-elastic-carousel"
@@ -55,6 +58,8 @@ const Default = props => {
   const [conversation, setConversation] = useState([])
   const [openConversation, setOpenConversation] = useState(false)
   const filterPanelRef = useRef(null)
+  const orderListPanel = useRef(null)
+  const [openOrderListPanel, setOpenOrderListPanel] = useState(false)
 
   useEffect(() => {
     getData()
@@ -241,6 +246,24 @@ const Default = props => {
       setSearchList(emptyList)
     }
   }, [itemSearch])
+
+  useEffect(() => {}, [])
+
+  useEffect(() => {
+    openOrderListPanel
+      ? Anime({
+          targets: orderListPanel.current,
+          bottom: ["-300px", 0],
+          easing: "linear",
+          duration: 200,
+        })
+      : Anime({
+          targets: orderListPanel.current,
+          bottom: [0, "-300px"],
+          easing: "linear",
+          duration: 200,
+        })
+  }, [openOrderListPanel])
 
   return (
     <>
@@ -499,8 +522,60 @@ const Default = props => {
               </section>
             ))}
         </section> */}
-
         {orderList.length > 0 && (
+          <section
+            className={defaultStyles.orderListBottomPanel}
+            onClick={() => setOrderListPulled(!orderListPulled)}
+          >
+            <label>
+              {orderList.length} {orderList.length > 1 ? "items" : "item"}{" "}
+              selected
+            </label>
+            <button onClick={() => setOpenOrderListPanel(!openOrderListPanel)}>
+              Next
+            </button>
+          </section>
+        )}
+
+        <section
+          ref={orderListPanel}
+          className={defaultStyles.orderListPanelContainer}
+        >
+          <label onClick={() => setOpenOrderListPanel(false)}>
+            <FontAwesomeIcon icon={faAngleLeft} size="lg" color="grey" />
+          </label>
+          <br />
+          <br />
+          {orderList.map((item, index) => (
+            <section key={index}>
+              <label>{item.itemName}</label>
+              <section>
+                <FontAwesomeIcon
+                  icon={faPlusSquare}
+                  size="lg"
+                  onClick={() => incQty(orderList, index)}
+                />
+                <label>{item.qty}</label>
+                <FontAwesomeIcon
+                  icon={faMinusSquare}
+                  size="lg"
+                  onClick={() => decQty(orderList, index)}
+                />
+              </section>
+            </section>
+          ))}
+          <hr />
+          <textarea
+            className={defaultStyles.orderListPanelSuggestion}
+            maxLength={100}
+            placeholder="Suggest your requirements"
+          />
+          <button onClick={() => setOpenOrderListPanel(!openOrderListPanel)}>
+            Send for cooking
+          </button>
+        </section>
+
+        {/* {orderList.length > 0 && (
           <section
             ref={orderListContainer}
             className={defaultStyles.orderListContainer}
@@ -510,12 +585,8 @@ const Default = props => {
                 className={defaultStyles.orderListPuller}
                 onClick={() => setOrderListPulled(!orderListPulled)}
               >
-                <FontAwesomeIcon
-                  icon={orderListPulled ? faCaretDown : faCaretUp}
-                  onClick={() => setOrderListPulled(!orderListPulled)}
-                  size="lg"
-                  color="white"
-                />
+                <label>{orderList.length} item/s selected</label>
+                <button>Send for cooking</button>
               </section>
             </section>
             <br></br>
@@ -559,7 +630,7 @@ const Default = props => {
               </button>
             </section>
           </section>
-        )}
+        )} */}
       </section>
       {confirmOrder && (
         <ConfirmOrder

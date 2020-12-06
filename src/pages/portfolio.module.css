@@ -398,6 +398,7 @@
   box-shadow: 0 6px 13px 0px #e6e6e6;
 }
 .tabs ul li img {
+  margin-top: -10px;
   width: 25px;
 }
 .tabs ul li label {
