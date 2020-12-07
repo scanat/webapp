@@ -6,6 +6,9 @@
   z-index: 3;
   display: none;
 }
+.liveMenuContainer{
+  width: 100%;
+}
 .container {
   float: left;
   width: 100%;

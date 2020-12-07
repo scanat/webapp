@@ -60,8 +60,15 @@ const Default = props => {
   const filterPanelRef = useRef(null)
   const orderListPanel = useRef(null)
   const [openOrderListPanel, setOpenOrderListPanel] = useState(false)
+  const liveMenuRef = useRef(null)
 
   useEffect(() => {
+    liveMenuRef.current.style.display = "block"
+    filterCategoricalList("Non Veg")
+  }, [props.category])
+
+  useEffect(() => {
+    liveMenuRef.current.style.display = "none"
     getData()
   }, [])
   async function getData() {
@@ -266,7 +273,7 @@ const Default = props => {
   }, [openOrderListPanel])
 
   return (
-    <>
+    <section ref={liveMenuRef} className={defaultStyles.liveMenuContainer}>
       <section className={defaultStyles.liveMenuSearchPanel}>
         <h1>{selectedCategory}</h1>
         <label
@@ -668,7 +675,7 @@ const Default = props => {
           style={{ position: "fixed", bottom: 30, right: "5%", zIndex: 7 }}
         />
       )}
-    </>
+    </section>
   )
 }
 

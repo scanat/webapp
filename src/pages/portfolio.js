@@ -57,8 +57,11 @@ const Portfolio = ({ location }) => {
   const [galleryShow, setGalleryShow] = useState(false)
   const [infoShow, setInfoShow] = useState(false)
   const [reviewShow, setReviewShow] = useState(false)
+  const [liveMenuShow, setLiveMenuShow] = useState(false)
   const timingPanelRef = useRef(null)
   const backLayoutPanel = useRef(null)
+  const [category, setCategory] = useState("")
+  const [categoryList, setCategoryList] = useState([])
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -67,7 +70,7 @@ const Portfolio = ({ location }) => {
     else setWidth(5)
     getPageDetails()
     async function getPageDetails() {
-      let foundId = String(location.search).substring(4)
+      let foundId = new URLSearchParams(location.search).get("id")
       try {
         await API.graphql(
           graphqlOperation(portfolioData, {
@@ -76,6 +79,18 @@ const Portfolio = ({ location }) => {
         ).then(res => {
           setPageData(res.data.getSubscriber)
         })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getCategories()
+    async function getCategories() {
+      try {
+        await API.graphql(
+          graphqlOperation(itemsData, {
+            id: new URLSearchParams(location.search).get("id"),
+          })
+        ).then(res => setCategoryList(res.data.getItems.category))
       } catch (error) {
         console.log(error)
       }
@@ -282,9 +297,21 @@ const Portfolio = ({ location }) => {
         </ul>
       </section>
 
+      {category === "" && categoryList.length > 0 && (
+        <section className={portfolioStyles.gridCategory}>
+          {categoryList.map((item, index) => (
+            <section key={index} onClick={() => setCategory(item)}>
+              <img src={require(`../images/icon/${item}.svg`)} />
+              <label>{item}</label>
+            </section>
+          ))}
+        </section>
+      )}
+
       <LiveMenu
         id={new URLSearchParams(location.search).get("id")}
         table={new URLSearchParams(location.search).get("table")}
+        category={category}
       />
 
       <SocialPlatform
@@ -448,7 +475,6 @@ export const portfolioData = /* GraphQL */ `
       city
       state
       postalCode
-      category
       email
       facebook
       instagram
@@ -456,6 +482,13 @@ export const portfolioData = /* GraphQL */ `
       phoneNumber
       pinterest
       twitter
+    }
+  }
+`
+export const itemsData = /* GraphQL */ `
+  query GetItems($id: ID!) {
+    getItems(id: $id) {
+      category
     }
   }
 `

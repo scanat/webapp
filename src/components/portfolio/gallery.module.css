@@ -14,7 +14,7 @@
   width: 98%;
   display: grid;
   padding: 4px 1%;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: 25% 25% 25% 25%;
 }
 .galleryImageContainer {
   margin: 5px;

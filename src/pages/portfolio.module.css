@@ -418,3 +418,35 @@
 .tabs ul li:hover {
   scale: 1.1;
 }
+.gridCategory{
+  width: 90%;
+  display: grid;
+  grid-template-columns: 33.33% 33.33% 33.33%;
+  margin: 20px 5%;
+}
+.gridCategory>section{
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: grey;
+  padding: 10px;
+  margin: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.gridCategory>section>img{
+  width: 70%;
+}
+.gridCategory>section>label{
+  position: absolute;
+  bottom: 5px;
+  color: whitesmoke;
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
