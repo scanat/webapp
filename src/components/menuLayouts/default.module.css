@@ -505,3 +505,9 @@
   line-height: 20px;
   margin-top: 10px;
 }
+@media screen and (min-height: 560px) {
+  .orderListPanelItem > button {
+    position: absolute;
+    bottom: 15px;
+  }
+}

@@ -565,7 +565,7 @@ const Default = props => {
               />
             </label>
             <section>
-              <span>+ Add</span>
+              <span onClick={() => setOpenOrderListPanel(false)} >+ Add</span>
               <span>
                 Your table<span>{props.table}</span>
               </span>
