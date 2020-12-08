@@ -419,15 +419,15 @@
   scale: 1.1;
 }
 .gridCategory{
-  width: 90%;
+  width: 80%;
   display: grid;
   grid-template-columns: 33.33% 33.33% 33.33%;
-  margin: 20px 5%;
+  margin: 20px 10%;
 }
 .gridCategory>section{
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background: grey;
   padding: 10px;
   margin: 8px 10px;

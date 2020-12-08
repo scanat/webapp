@@ -122,9 +122,9 @@ const Portfolio = ({ location }) => {
         ref={backLayoutPanel}
         onClick={closeBackLayout}
       ></section>
-      <Banner id={String(location.search).substring(4)} />
+      <Banner id={new URLSearchParams(location.search).get("id")} />
 
-      <Logo id={String(location.search).substring(4)} />
+      <Logo id={new URLSearchParams(location.search).get("id")} />
 
       {/* <ul className={portfolioStyles.shareListContainer}>
         <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>

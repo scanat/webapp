@@ -16,10 +16,16 @@ import {
   faInfoCircle,
   faSearch,
   faTimesCircle,
+  faAngleDoubleLeft,
+  faAngleRight,
+  faUserAlt,
+  faRupeeSign,
+  faPenFancy,
 } from "@fortawesome/free-solid-svg-icons"
 import {
   faPlusSquare,
   faMinusSquare,
+  faClock,
 } from "@fortawesome/free-regular-svg-icons"
 import FurtherDetails from "./furtherDetails"
 import Conversation from "./conversation"
@@ -257,16 +263,17 @@ const Default = props => {
   useEffect(() => {}, [])
 
   useEffect(() => {
+    var calc = window.screen.height - 44
     openOrderListPanel
       ? Anime({
           targets: orderListPanel.current,
-          bottom: ["-300px", 0],
+          bottom: [`${calc}px`, 0],
           easing: "linear",
           duration: 200,
         })
       : Anime({
           targets: orderListPanel.current,
-          bottom: [0, "-300px"],
+          bottom: [0, `${calc}px`],
           easing: "linear",
           duration: 200,
         })
@@ -539,7 +546,7 @@ const Default = props => {
               selected
             </label>
             <button onClick={() => setOpenOrderListPanel(!openOrderListPanel)}>
-              Next
+              Add to table
             </button>
           </section>
         )}
@@ -548,38 +555,91 @@ const Default = props => {
           ref={orderListPanel}
           className={defaultStyles.orderListPanelContainer}
         >
-          <label onClick={() => setOpenOrderListPanel(false)}>
-            <FontAwesomeIcon icon={faAngleLeft} size="lg" color="grey" />
-          </label>
-          <br />
-          <br />
-          {orderList.map((item, index) => (
-            <section key={index}>
-              <label>{item.itemName}</label>
-              <section>
-                <FontAwesomeIcon
-                  icon={faPlusSquare}
-                  size="lg"
-                  onClick={() => incQty(orderList, index)}
-                />
-                <label>{item.qty}</label>
-                <FontAwesomeIcon
-                  icon={faMinusSquare}
-                  size="lg"
-                  onClick={() => decQty(orderList, index)}
-                />
-              </section>
+          <section className={defaultStyles.orderListPanelTopControls}>
+            <label onClick={() => setOpenOrderListPanel(false)}>
+              <FontAwesomeIcon
+                icon={faAngleDoubleLeft}
+                size="lg"
+                color="white"
+                style={{ marginLeft: "10px" }}
+              />
+            </label>
+            <section>
+              <span>+ Add</span>
+              <span>
+                Your table<span>{props.table}</span>
+              </span>
             </section>
-          ))}
-          <hr />
-          <textarea
-            className={defaultStyles.orderListPanelSuggestion}
-            maxLength={100}
-            placeholder="Suggest your requirements"
-          />
-          <button onClick={() => setOpenOrderListPanel(!openOrderListPanel)}>
-            Send for cooking
-          </button>
+          </section>
+
+          <br />
+          <br />
+          <Carousel
+            itemsToShow={1}
+            pagination={false}
+            renderArrow={({ type, onClick }) => (
+              <FontAwesomeIcon
+                onClick={onClick}
+                icon={type === "PREV" ? faAngleLeft : faAngleRight}
+                size="2x"
+                color="white"
+                style={{ margin: "30vh 10px 0 10px" }}
+              />
+            )}
+          >
+            {orderList.map((item, index) => (
+              <section key={index} className={defaultStyles.orderListPanelItem}>
+                <img src={require("../../images/icon/burger.svg")} />
+                <section>
+                  <span onClick={() => incQty(orderList, index)}>+</span>
+                  <label>{item.qty}</label>
+                  <span onClick={() => decQty(orderList, index)}>-</span>
+                </section>
+                <h4>{item.itemName}</h4>
+                <section>
+                  <span>
+                    <FontAwesomeIcon icon={faClock} size="xs" />
+                    <span>
+                      <b>20</b>min
+                    </span>
+                  </span>
+                  <span>Veg</span>
+                  <span>
+                    <FontAwesomeIcon icon={faUserAlt} size="xs" />
+                    <span>
+                      <b>1</b>serving
+                    </span>
+                  </span>
+                </section>
+                <span>
+                  <FontAwesomeIcon icon={faRupeeSign} size="sm" />
+                  {item.itemPrice}
+                </span>
+                <br />
+                <br />
+                <hr style={{ width: "100%", border: "grey 1px solid" }} />
+                <section>
+                  <p>
+                    {item.description}Tomato, Capsicum, Cheese, Cabbage, Perfect
+                    Salt
+                  </p>
+                  <section>
+                    <FontAwesomeIcon icon={faPenFancy} size="lg" color="grey" />
+                    <input
+                      maxLength={100}
+                      placeholder="Suggest your requirements"
+                    />
+                  </section>
+                </section>
+
+                <button
+                  onClick={() => setOpenOrderListPanel(!openOrderListPanel)}
+                >
+                  Send for cooking
+                </button>
+              </section>
+            ))}
+          </Carousel>
         </section>
 
         {/* {orderList.length > 0 && (
