@@ -565,7 +565,7 @@ const Default = props => {
               />
             </label>
             <section>
-              <span onClick={() => setOpenOrderListPanel(false)} >+ Add</span>
+              <span onClick={() => setOpenOrderListPanel(false)}>+ Add</span>
               <span>
                 Your table<span>{props.table}</span>
               </span>
@@ -589,34 +589,44 @@ const Default = props => {
               <section key={index} className={defaultStyles.orderListPanelItem}>
                 <img src={require("../../images/icon/burger.svg")} />
                 <section>
-                  <span onClick={() => incQty(orderList, index)}>+</span>
-                  <label>{item.qty}</label>
-                  <span onClick={() => decQty(orderList, index)}>-</span>
-                </section>
-                <h4>{item.itemName}</h4>
-                <section>
-                  <span>
-                    <FontAwesomeIcon icon={faClock} size="xs" />
+                  <section>
+                    <span onClick={() => incQty(orderList, index)}>+</span>
+                    <label>{item.qty}</label>
+                    <span onClick={() => decQty(orderList, index)}>-</span>
+                  </section>
+                  <h4>{item.itemName}</h4>
+                  <section>
                     <span>
-                      <b>20</b>min
+                      <FontAwesomeIcon icon={faClock} color="grey" size="lg" />
+                      <span>
+                        <b>20</b>min
+                      </span>
                     </span>
-                  </span>
-                  <span>Veg</span>
-                  <span>
-                    <FontAwesomeIcon icon={faUserAlt} size="xs" />
+                    <span>Veg</span>
                     <span>
-                      <b>1</b>serving
+                      <FontAwesomeIcon
+                        icon={faUserAlt}
+                        color="grey"
+                        size="lg"
+                      />
+                      <span>
+                        <b>1</b>serving
+                      </span>
                     </span>
+                  </section>
+                  <span>
+                    <FontAwesomeIcon icon={faRupeeSign} size="sm" />
+                    {item.itemPrice}
                   </span>
-                </section>
-                <span>
-                  <FontAwesomeIcon icon={faRupeeSign} size="sm" />
-                  {item.itemPrice}
-                </span>
-                <br />
-                <br />
-                <hr style={{ width: "100%", border: "grey 1px solid" }} />
-                <section>
+                  <hr
+                    style={{
+                      width: "100%",
+                      height: 0,
+                      border: "none",
+                      borderBottom: "grey 2px solid",
+                      borderRadius: 0,
+                    }}
+                  />
                   <p>
                     {item.description}Tomato, Capsicum, Cheese, Cabbage, Perfect
                     Salt
@@ -625,7 +635,7 @@ const Default = props => {
                     <FontAwesomeIcon icon={faPenFancy} size="lg" color="grey" />
                     <input
                       maxLength={100}
-                      placeholder="Suggest your requirements"
+                      placeholder="Add your special requirements"
                     />
                   </section>
                 </section>

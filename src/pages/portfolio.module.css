@@ -424,7 +424,7 @@
   grid-template-columns: 25% 25% 25% 25%;
   margin: 20px 0;
 }
-@media screen and (max-width: 420px){
+@media screen and (max-width: 400px){
   .gridCategory{
     grid-template-columns: 33.33% 33.33% 33.33%;
     margin: 20px 0;
@@ -436,7 +436,7 @@
   height: 70px;
   background: grey;
   padding: 10px;
-  margin: 8px 10px;
+  margin: 8px;
   display: flex;
   flex-direction: column;
   -ms-flex-direction: column;
