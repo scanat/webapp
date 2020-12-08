@@ -572,8 +572,6 @@ const Default = props => {
             </section>
           </section>
 
-          <br />
-          <br />
           <Carousel
             itemsToShow={1}
             pagination={false}
@@ -583,7 +581,7 @@ const Default = props => {
                 icon={type === "PREV" ? faAngleLeft : faAngleRight}
                 size="2x"
                 color="white"
-                style={{ margin: "30vh 10px 0 10px" }}
+                style={{ margin: "30vh 5px 0 5px" }}
               />
             )}
           >

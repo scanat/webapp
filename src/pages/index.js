@@ -42,7 +42,8 @@ const Explore = () => {
   const searchContainerRef = useRef(null)
 
   useEffect(() => {
-    if (document.body.offsetWidth < 481) setWidth(3)
+    if (document.body.offsetWidth < 400) setWidth(2)
+    else if (document.body.offsetWidth < 481) setWidth(3)
     else if (document.body.offsetWidth < 600) setWidth(4)
     else if (document.body.offsetWidth < 1024) setWidth(6)
     else setWidth(8)

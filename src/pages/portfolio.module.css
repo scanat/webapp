@@ -419,15 +419,21 @@
   scale: 1.1;
 }
 .gridCategory{
-  width: 80%;
+  width: 100%;
   display: grid;
-  grid-template-columns: 33.33% 33.33% 33.33%;
-  margin: 20px 10%;
+  grid-template-columns: 25% 25% 25% 25%;
+  margin: 20px 0;
+}
+@media screen and (max-width: 420px){
+  .gridCategory{
+    grid-template-columns: 33.33% 33.33% 33.33%;
+    margin: 20px 0;
+  }
 }
 .gridCategory>section{
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background: grey;
   padding: 10px;
   margin: 8px 10px;
