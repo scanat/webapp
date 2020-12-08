@@ -49,7 +49,7 @@ const Logo = props => {
     <section className={logoStyles.logoContainer}>
       {logoData === null ? (
         <label className={logoStyles.logoText}>
-          {props.id.substring(0, 2)}
+          {props.id && props.id.substring(0, 2)}
         </label>
       ) : (
         <img src={logoData} alt="Logo" />
