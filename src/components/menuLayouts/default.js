@@ -158,8 +158,10 @@ const Default = props => {
 
   const decQty = (givenList, id) => {
     var tempList = [...givenList]
-    tempList[id].qty -= 1
-    givenList === list ? setList(tempList) : setFilteredList(tempList)
+    if (tempList[id].qty > 1) {
+      tempList[id].qty -= 1
+      givenList === list ? setList(tempList) : setFilteredList(tempList)
+    }
   }
 
   const updateItem = () => {
@@ -616,7 +618,7 @@ const Default = props => {
                   </section>
                   <span>
                     <FontAwesomeIcon icon={faRupeeSign} size="sm" />
-                    {item.itemPrice}
+                    {item.itemPrice * item.qty}
                   </span>
                   <hr
                     style={{
