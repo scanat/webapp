@@ -67,6 +67,9 @@ const Default = props => {
   const orderListPanel = useRef(null)
   const [openOrderListPanel, setOpenOrderListPanel] = useState(false)
   const liveMenuRef = useRef(null)
+  const suggestionRef = useRef(null)
+  const [finalList, setFinalList] = useState([])
+  const requestRef = useRef(null)
 
   useEffect(() => {
     liveMenuRef.current.style.display = "block"
@@ -103,26 +106,6 @@ const Default = props => {
     }
   }
 
-  // useEffect(() => {
-  //   API.graphql(graphqlOperation(onUpdateItems)).subscribe({
-  //     next: data => {
-  //       if (
-  //         new URLSearchParams(props.location.search).get("id") ===
-  //         data.value.data.onUpdateItems.id
-  //       ) {
-  //         list.splice(0, list.length)
-  //         let temp = [...list]
-  //         setList(temp)
-  //         getData()
-  //         console.log(data)
-  //       }
-  //     },
-  //     error: err => {
-  //       console.log(err)
-  //     },
-  //   })
-  // }, [])
-
   useEffect(() => {
     Anime({
       targets: orderListContainer.current,
@@ -136,6 +119,7 @@ const Default = props => {
 
   const addItemToList = item => {
     item.ordered = true
+    item.request = ""
     setOrderList(orderList.concat(item))
   }
 
@@ -280,6 +264,47 @@ const Default = props => {
           duration: 200,
         })
   }, [openOrderListPanel])
+
+  const placeOrder = async (itemName, itemPrice, qty, request) => {
+    let tempList = [...finalList]
+    tempList.push({
+      name: itemName,
+      price: itemPrice,
+      qty: qty,
+      request: request,
+    })
+    setFinalList(tempList)
+    let totalPrice = 0
+    tempList.forEach(element => {
+      totalPrice = totalPrice + element.price
+    })
+    const input = {
+      key: props.table,
+      orgId: props.id,
+      order: tempList,
+      totalItems: finalList.length,
+      totalPrice: totalPrice,
+      states: [{ state: 1 }],
+    }
+
+    try {
+      await API.graphql(graphqlOperation(createOrders, { input: input })).then(
+        res => {
+          let temp = [...orderList]
+          temp.forEach(item => {
+            if (itemName === item.itemName) {
+              item.state = 1
+            }
+          })
+          setOrderList(temp)
+        }
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const cancelOrder = () => {}
 
   return (
     <section ref={liveMenuRef} className={defaultStyles.liveMenuContainer}>
@@ -636,16 +661,30 @@ const Default = props => {
                   <section>
                     <FontAwesomeIcon icon={faPenFancy} size="lg" color="grey" />
                     <input
+                      ref={requestRef}
                       maxLength={100}
-                      placeholder="Add your special requirements"
+                      placeholder={
+                        item.request ? item.request : "Add your suggestions"
+                      }
+                      disabled={item.state === 1 ? true : false}
                     />
                   </section>
                 </section>
 
                 <button
-                  onClick={() => setOpenOrderListPanel(!openOrderListPanel)}
+                  style={{ background: item.state === 1 && "crimson" }}
+                  onClick={() => {
+                    item.state === 1
+                      ? cancelOrder()
+                      : placeOrder(
+                          item.itemName,
+                          item.itemPrice * item.qty,
+                          item.qty,
+                          requestRef.current.value
+                        )
+                  }}
                 >
-                  Send for cooking
+                  {item.state === 1 ? "Cancel Order" : "Send for cooking"}
                 </button>
               </section>
             ))}
@@ -769,9 +808,17 @@ export const itemsData = /* GraphQL */ `
   }
 `
 
-export const onUpdateItems = /* GraphQL */ `
-  subscription OnUpdateItems {
-    onUpdateItems {
+export const createOrders = /* GraphQL */ `
+  mutation CreateOrders($input: CreateOrdersInput!) {
+    createOrders(input: $input) {
+      id
+    }
+  }
+`
+
+export const updateOrders = /* GraphQL */ `
+  mutation UpdateOrders($input: UpdateOrdersInput!) {
+    updateOrders(input: $input) {
       id
     }
   }
