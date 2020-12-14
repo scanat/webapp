@@ -70,6 +70,7 @@ const Default = props => {
   const suggestionRef = useRef(null)
   const [finalList, setFinalList] = useState([])
   const requestRef = useRef(null)
+  const [ordered, setOrdered] = useState({orderId: "", placed: false})
 
   useEffect(() => {
     liveMenuRef.current.style.display = "block"
@@ -265,14 +266,14 @@ const Default = props => {
         })
   }, [openOrderListPanel])
 
-  const placeOrder = async (itemName, itemPrice, qty, request) => {
+  const placeOrder = async (id, itemName, itemPrice, qty, request) => {
     let tempList = [...finalList]
     tempList.push({
       name: itemName,
       price: itemPrice,
       qty: qty,
       request: request,
-      status: "SC"
+      status: "SC",
     })
     setFinalList(tempList)
     let totalPrice = 0
@@ -285,26 +286,45 @@ const Default = props => {
       order: tempList,
       totalItems: finalList.length,
       totalPrice: totalPrice,
-      status: ""
+      status: "SC",
+    }
+    const updateinput = {
+      id: ordered.orderId,
+      order: tempList,
+      totalItems: finalList.length,
+      totalPrice: totalPrice,
     }
 
     try {
-      await API.graphql(graphqlOperation(createOrders, { input: input })).then(
-        res => {
-          let temp = [...orderList]
-          temp.forEach(item => {
-            if (itemName === item.itemName) {
-              item.state = 1
-            }
+      ordered.placed
+        ? await API.graphql(
+            graphqlOperation(updateOrders, { input: updateinput })
+          ).then(res => {
+            let temp = [...orderList]
+            temp.forEach(item => {
+              if (id === item.id) {
+                item.status = "SC"
+              }
+            })
+            setOrderList(temp)
           })
-          setOrderList(temp)
-        }
-      )
+        : await API.graphql(
+            graphqlOperation(createOrders, { input: input })
+          ).then(res => {
+            let temp = [...orderList]
+            temp.forEach(item => {
+              if (id === item.id) {
+                item.status = "SC"
+              }
+            })
+            setOrderList(temp)
+            setOrdered({orderId: res.data.createOrders.id, placed: true})
+          })
     } catch (error) {
       console.log(error)
     }
   }
-
+  console.log(orderList)
   const cancelOrder = () => {}
 
   return (
@@ -673,11 +693,12 @@ const Default = props => {
                 </section>
 
                 <button
-                  style={{ background: item.state === 1 && "crimson" }}
+                  style={{ background: item.status === "SC" && "crimson" }}
                   onClick={() => {
-                    item.state === 1
+                    item.status === "SC"
                       ? cancelOrder()
                       : placeOrder(
+                          item.id,
                           item.itemName,
                           item.itemPrice * item.qty,
                           item.qty,
@@ -685,7 +706,7 @@ const Default = props => {
                         )
                   }}
                 >
-                  {item.state === 1 ? "Cancel Order" : "Send for cooking"}
+                  {item.status === "SC" ? "Cancel Order" : "Send for cooking"}
                 </button>
               </section>
             ))}
