@@ -17,7 +17,7 @@ import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"
 import Amplify, { API, graphqlOperation } from "aws-amplify"
-import Anime from 'animejs'
+import Anime from "animejs"
 
 Amplify.configure({
   API: {
@@ -42,6 +42,7 @@ const Explore = () => {
   const searchContainerRef = useRef(null)
 
   useEffect(() => {
+    let c = carouselRef.current
     if (document.body.offsetWidth < 400) setWidth(2)
     else if (document.body.offsetWidth < 481) setWidth(3)
     else if (document.body.offsetWidth < 600) setWidth(4)
@@ -50,17 +51,17 @@ const Explore = () => {
   }, [])
 
   const searchItems = async () => {
-    const params = {
-      id: searchRef.current.value,
+    const filter = {
+      filter: { orgName: { contains: searchRef.current.value } },
     }
 
     try {
-      await API.graphql(graphqlOperation(queryOrg, params)).then(res => {
+      await API.graphql(graphqlOperation(listSubscribers, filter)).then(res => {
         let list = res.data.listSubscribers.items
         Anime({
           targets: searchContainerRef.current,
-          bottom: ['100%', 0],
-          duration: 600
+          bottom: ["100%", 0],
+          duration: 600,
         })
         list.map(item => {
           getImage()
@@ -71,10 +72,12 @@ const Explore = () => {
                 Key: "public/" + item.logo,
               }
               await subscriberItemS3.getObject(paramsImg, (err, res) => {
-                item.imageData = Buffer.from(res.Body, "base64").toString(
-                  "ascii"
-                )
-                setSearchObjectList(list)
+                if (res) {
+                  item.imageData = Buffer.from(res.Body, "base64").toString(
+                    "ascii"
+                  )
+                  setSearchObjectList(list)
+                }
               })
             } catch (error) {
               console.log(error)
@@ -102,9 +105,9 @@ const Explore = () => {
             placeholder="What are you looking for?"
             className={exploreStyles.searchBar}
           />
-          <label className={exploreStyles.gosearch} onClick={searchItems}>
+          <button className={exploreStyles.gosearch} onClick={searchItems}>
             GO
-          </label>
+          </button>
         </section>
       </section>
 
@@ -174,7 +177,10 @@ const Explore = () => {
         </section>
       </section>
 
-      <section className={exploreStyles.searchListContainer} ref={searchContainerRef}>
+      <section
+        className={exploreStyles.searchListContainer}
+        ref={searchContainerRef}
+      >
         <section
           style={{
             clear: "both",
@@ -183,8 +189,8 @@ const Explore = () => {
           }}
         >
           <section className={exploreStyles.searchResultContainer}>
-            {searchObjectList.map(item => (
-              <Link to={`/portfolio/?id=${item.id}`}>
+            {searchObjectList.map((item, index) => (
+              <Link key={index} to={`/portfolio/?id=${item.id}`}>
                 <section
                   className={exploreStyles.searchItemHolder}
                   key={item.id}
@@ -206,16 +212,15 @@ const Explore = () => {
 
 export default Explore
 
-export const queryOrg = /*GraphQL*/ `
-  query subscriber($id: String!) {
-    listSubscribers(
-      filter: { orgName: { contains: $id } }
-    ) {
+export const listSubscribers = /* GraphQL */ `
+  query ListSubscribers($filter: ModelSubscriberFilterInput) {
+    listSubscribers(filter: $filter) {
       items {
-        logo
-        orgName
         id
+        orgName
+        logo
       }
+      nextToken
     }
   }
 `

@@ -272,6 +272,7 @@ const Default = props => {
       price: itemPrice,
       qty: qty,
       request: request,
+      status: "SC"
     })
     setFinalList(tempList)
     let totalPrice = 0
@@ -284,7 +285,7 @@ const Default = props => {
       order: tempList,
       totalItems: finalList.length,
       totalPrice: totalPrice,
-      states: [{ state: 1 }],
+      status: ""
     }
 
     try {

@@ -238,61 +238,77 @@ const Portfolio = ({ location }) => {
       <section className={portfolioStyles.tabs}>
         <ul>
           <li>
-            <img src={livemenu} color="white" />
-            <label>Live</label>
+            <button>
+              <img src={livemenu} color="white" />
+              <label>Live</label>
+            </button>
           </li>
 
           <li>
-            <img src={delivery} />
-            <label>Delivery</label>
+            <button>
+              <img src={delivery} />
+              <label>Deliver</label>
+            </button>
           </li>
 
-          <li
-            onClick={() => {
-              setReviewShow(!reviewShow)
-              setInfoShow(false)
-              setGalleryShow(false)
-              setShareShow(false)
-            }}
-          >
-            <img src={review} />
-            <label>Review</label>
+          <li>
+            <button
+              className={reviewShow && portfolioStyles.active}
+              onClick={() => {
+                setReviewShow(!reviewShow)
+                setInfoShow(false)
+                setGalleryShow(false)
+                setShareShow(false)
+              }}
+            >
+              <img src={review} />
+              <label>Review</label>
+            </button>
           </li>
 
-          <li
-            onClick={() => {
-              setGalleryShow(!galleryShow)
-              setInfoShow(false)
-              setReviewShow(false)
-              setShareShow(false)
-            }}
-          >
-            <img src={gallery} />
-            <label>Photos</label>
+          <li>
+            <button
+              className={galleryShow && portfolioStyles.active}
+              onClick={() => {
+                setGalleryShow(!galleryShow)
+                setInfoShow(false)
+                setReviewShow(false)
+                setShareShow(false)
+              }}
+            >
+              <img src={gallery} />
+              <label>Photos</label>
+            </button>
           </li>
 
-          <li
-            onClick={() => {
-              setShareShow(!shareShow)
-              setInfoShow(false)
-              setReviewShow(false)
-              setGalleryShow(false)
-            }}
-          >
-            <img src={share} />
-            <label>Share</label>
+          <li>
+            <button
+              className={shareShow && portfolioStyles.active}
+              onClick={() => {
+                setShareShow(!shareShow)
+                setInfoShow(false)
+                setReviewShow(false)
+                setGalleryShow(false)
+              }}
+            >
+              <img src={share} />
+              <label>Share</label>
+            </button>
           </li>
 
-          <li
-            onClick={() => {
-              setInfoShow(!infoShow)
-              setReviewShow(false)
-              setGalleryShow(false)
-              setShareShow(false)
-            }}
-          >
-            <img src={info} />
-            <label>Info</label>
+          <li>
+            <button
+              className={infoShow && portfolioStyles.active}
+              onClick={() => {
+                setInfoShow(!infoShow)
+                setReviewShow(false)
+                setGalleryShow(false)
+                setShareShow(false)
+              }}
+            >
+              <img src={info} />
+              <label>Info</label>
+            </button>
           </li>
         </ul>
       </section>
