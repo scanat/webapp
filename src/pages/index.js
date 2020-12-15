@@ -125,7 +125,7 @@ const Explore = () => {
             clearTimeout(2000)
             if (index + 1 === 3) {
               setTimeout(() => {
-                carouselRef.current.goTo(0)
+                carouselRef.current && carouselRef.current.goTo(0)
               }, 2000)
             }
           }}

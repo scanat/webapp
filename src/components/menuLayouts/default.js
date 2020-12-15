@@ -340,19 +340,8 @@ const Default = props => {
           setOrderList(res.data.getOrders.order)
         })
       }
-      // else{
-      //   let params = {
-      //     orgId: props.id,
-      //     key: props.table,
-      //     status: "SC",
-      //   }
-      //   console.log(params)
-      //   await API.graphql(graphqlOperation(getOrdersPending, params)).then(res => {
-      //     setOrderList(res.data.getOrders.order)
-      //   })
-      // }
     }
-  }, [])
+  }, [ordered])
   
   const cancelOrder = () => {}
 
@@ -893,22 +882,6 @@ export const updateOrders = /* GraphQL */ `
 export const getOrders = /* GraphQL */ `
   query GetOrders($id: ID!) {
     getOrders(id: $id) {
-      order {
-        name
-        qty
-        price
-        rating
-        request
-        status
-      }
-      status
-    }
-  }
-`
-
-export const getOrdersPending = /* GraphQL */ `
-  query GetOrders($orgId: String!, $key: String!, $status: String!) {
-    getOrders(orgId: $orgId, key: $key, status: $status) {
       order {
         name
         qty
