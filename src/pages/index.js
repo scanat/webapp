@@ -12,7 +12,7 @@ import {
 import Carousel from "react-elastic-carousel"
 import AWS from "aws-sdk"
 import Img from "gatsby-image"
-import { graphql, Link, navigate, navigateTo, useStaticQuery } from "gatsby"
+import { Link } from "gatsby"
 import Select1 from "../images/selects1.jpg"
 import Select2 from "../images/selects2.jpg"
 import Select3 from "../images/selects3.jpg"

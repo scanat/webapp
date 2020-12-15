@@ -253,7 +253,7 @@ const Portfolio = ({ location }) => {
 
           <li>
             <button
-              className={reviewShow && portfolioStyles.active}
+              className={reviewShow ? portfolioStyles.active : ""}
               onClick={() => {
                 setReviewShow(!reviewShow)
                 setInfoShow(false)
@@ -268,7 +268,7 @@ const Portfolio = ({ location }) => {
 
           <li>
             <button
-              className={galleryShow && portfolioStyles.active}
+              className={galleryShow ? portfolioStyles.active : ""}
               onClick={() => {
                 setGalleryShow(!galleryShow)
                 setInfoShow(false)
@@ -283,7 +283,7 @@ const Portfolio = ({ location }) => {
 
           <li>
             <button
-              className={shareShow && portfolioStyles.active}
+              className={shareShow ? portfolioStyles.active : ""}
               onClick={() => {
                 setShareShow(!shareShow)
                 setInfoShow(false)
@@ -298,7 +298,7 @@ const Portfolio = ({ location }) => {
 
           <li>
             <button
-              className={infoShow && portfolioStyles.active}
+              className={infoShow ? portfolioStyles.active : ""}
               onClick={() => {
                 setInfoShow(!infoShow)
                 setReviewShow(false)

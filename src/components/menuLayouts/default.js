@@ -70,7 +70,7 @@ const Default = props => {
   const suggestionRef = useRef(null)
   const [finalList, setFinalList] = useState([])
   const requestRef = useRef(null)
-  const [ordered, setOrdered] = useState({orderId: "", placed: false})
+  const [ordered, setOrdered] = useState({ orderId: "", placed: false })
 
   useEffect(() => {
     liveMenuRef.current.style.display = "block"
@@ -81,6 +81,7 @@ const Default = props => {
     liveMenuRef.current.style.display = "none"
     getData()
   }, [])
+
   async function getData() {
     try {
       let params = {
@@ -318,13 +319,30 @@ const Default = props => {
               }
             })
             setOrderList(temp)
-            setOrdered({orderId: res.data.createOrders.id, placed: true})
+            setOrdered({ orderId: res.data.createOrders.id, placed: true })
+            setInterval(() => getOrderUpdates(res.data.createOrders.id), 60000)
           })
     } catch (error) {
       console.log(error)
     }
   }
-  console.log(orderList)
+
+  async function getOrderUpdates(id) {
+    console.log(id)
+    let params = {
+      id: id,
+    }
+    await API.graphql(graphqlOperation(getOrders, params)).then(res => {
+      // console.log(res.data.getOrders.order)
+      // setOrderList(res.data.getOrders.order)
+      let temp = orderList
+      temp.forEach((element, i) => {
+        element.status = res.data.getOrders.order[i].status
+        setOrderList(temp)
+      })
+    })
+  }
+
   const cancelOrder = () => {}
 
   return (
@@ -437,7 +455,7 @@ const Default = props => {
                 </section>
               ))
             : filteredList.map((item, index) => (
-                <section className={defaultStyles.item}>
+                <section className={defaultStyles.item} key={index}>
                   <img
                     src={require(`../../images/icon/${imagesArray[index]}.svg`)}
                     title={index}
@@ -690,24 +708,31 @@ const Default = props => {
                       disabled={item.state === 1 ? true : false}
                     />
                   </section>
+                  {item.status === "CO" && (
+                    <label style={{ lineHeight: "35px", color: "green" }}>
+                      Your ordered item is confirmed
+                    </label>
+                  )}
                 </section>
 
-                <button
-                  style={{ background: item.status === "SC" && "crimson" }}
-                  onClick={() => {
-                    item.status === "SC"
-                      ? cancelOrder()
-                      : placeOrder(
-                          item.id,
-                          item.itemName,
-                          item.itemPrice * item.qty,
-                          item.qty,
-                          requestRef.current.value
-                        )
-                  }}
-                >
-                  {item.status === "SC" ? "Cancel Order" : "Send for cooking"}
-                </button>
+                {item.status !== "CO" && (
+                  <button
+                    style={{ background: item.status === "SC" && "crimson" }}
+                    onClick={() => {
+                      item.status === "SC"
+                        ? cancelOrder()
+                        : placeOrder(
+                            item.id,
+                            item.itemName,
+                            item.itemPrice * item.qty,
+                            item.qty,
+                            requestRef.current.value
+                          )
+                    }}
+                  >
+                    {item.status === "SC" ? "Cancel Order" : "Send for cooking"}
+                  </button>
+                )}
               </section>
             ))}
           </Carousel>
@@ -842,6 +867,22 @@ export const updateOrders = /* GraphQL */ `
   mutation UpdateOrders($input: UpdateOrdersInput!) {
     updateOrders(input: $input) {
       id
+    }
+  }
+`
+
+export const getOrders = /* GraphQL */ `
+  query GetOrders($id: ID!) {
+    getOrders(id: $id) {
+      order {
+        name
+        qty
+        price
+        rating
+        request
+        status
+      }
+      status
     }
   }
 `
