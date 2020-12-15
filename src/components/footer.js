@@ -7,10 +7,10 @@ const Footer = () => {
         <section className={footerStyles.container}>
             <section className={footerStyles.footer2}>
                 <ul>
-                    <li><Link to="/">Explore</Link></li>
+                    {/* <li><Link to="/">Explore</Link></li> */}
                     <li><Link to="/about">About Us</Link></li>
                     <li><a href="https://www.scanat.in/">Users</a></li>
-                    <li><a href="https://subscriber.scanat.in/">Partners</a></li>
+                    <li><a href="https://subscriber.scanat.in/">Subscribers</a></li>
                 </ul>
             </section>
             <hr />

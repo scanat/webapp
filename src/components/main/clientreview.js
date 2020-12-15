@@ -28,7 +28,7 @@ const ClientReview = () => {
   return (
     <section className={clientReviewStyles.container}>
       <section className={clientReviewStyles.bannerIntro}>
-        <h1>Clients Review</h1>
+        <h1>Subscriber Reviews</h1>
         <h3>Explore Scan At through our network of mates</h3>
       </section>
       <section className={clientReviewStyles.reviewsContainer}>
