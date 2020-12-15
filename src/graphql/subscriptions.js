@@ -36,7 +36,6 @@ export const onCreateSubscriber = /* GraphQL */ `
           name
         }
       }
-      orders
       createdAt
       updatedAt
     }
@@ -77,7 +76,6 @@ export const onUpdateSubscriber = /* GraphQL */ `
           name
         }
       }
-      orders
       createdAt
       updatedAt
     }
@@ -118,7 +116,6 @@ export const onDeleteSubscriber = /* GraphQL */ `
           name
         }
       }
-      orders
       createdAt
       updatedAt
     }
@@ -136,6 +133,7 @@ export const onCreateItems = /* GraphQL */ `
         image
         status
       }
+      category
       createdAt
       updatedAt
     }
@@ -153,6 +151,7 @@ export const onUpdateItems = /* GraphQL */ `
         image
         status
       }
+      category
       createdAt
       updatedAt
     }
@@ -170,36 +169,7 @@ export const onDeleteItems = /* GraphQL */ `
         image
         status
       }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onCreateSubscriberPage = /* GraphQL */ `
-  subscription OnCreateSubscriberPage {
-    onCreateSubscriberPage {
-      id
-      liveSpace
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateSubscriberPage = /* GraphQL */ `
-  subscription OnUpdateSubscriberPage {
-    onUpdateSubscriberPage {
-      id
-      liveSpace
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteSubscriberPage = /* GraphQL */ `
-  subscription OnDeleteSubscriberPage {
-    onDeleteSubscriberPage {
-      id
-      liveSpace
+      category
       createdAt
       updatedAt
     }
@@ -273,15 +243,12 @@ export const onCreateOrders = /* GraphQL */ `
         qty
         price
         rating
+        request
+        status
       }
       totalItems
       totalPrice
-      states {
-        state
-        time
-      }
       rating
-      request
       status
       createdAt
       updatedAt
@@ -299,15 +266,12 @@ export const onUpdateOrders = /* GraphQL */ `
         qty
         price
         rating
+        request
+        status
       }
       totalItems
       totalPrice
-      states {
-        state
-        time
-      }
       rating
-      request
       status
       createdAt
       updatedAt
@@ -325,15 +289,12 @@ export const onDeleteOrders = /* GraphQL */ `
         qty
         price
         rating
+        request
+        status
       }
       totalItems
       totalPrice
-      states {
-        state
-        time
-      }
       rating
-      request
       status
       createdAt
       updatedAt

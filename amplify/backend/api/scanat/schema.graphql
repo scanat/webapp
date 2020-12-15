@@ -22,12 +22,12 @@ type Subscriber @model {
   customQr: [String!]
   ambience: [Ambiences!]
   employees: [Employees!]
-  orders: [String!]
 }
 
 type Items @model {
   id: String!
   itemList: [Item!]
+  category: [String!]
 }
 
 type Item {
@@ -54,11 +54,6 @@ type Access {
   name: String
 }
 
-type SubscriberPage @model {
-  id: String!
-  liveSpace: String
-}
-
 type GlobalTable @model {
   id: String!
   categories: [Category!]
@@ -78,15 +73,13 @@ type Category {
 }
 
 type Orders @model {
-  id: String!
+  id: ID!
   key: String
   orgId: String
   order: [Order!]
   totalItems: String
   totalPrice: String
-  states: [State!]
   rating: String
-  request: String
   status: String
 }
 
@@ -95,9 +88,6 @@ type Order {
   qty: String
   price: String
   rating: String
-}
-
-type State {
-  state: String
-  time: AWSDateTime
+  request: String
+  status: String
 }

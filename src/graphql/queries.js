@@ -36,7 +36,6 @@ export const getSubscriber = /* GraphQL */ `
           name
         }
       }
-      orders
       createdAt
       updatedAt
     }
@@ -78,7 +77,6 @@ export const listSubscribers = /* GraphQL */ `
           id
           name
         }
-        orders
         createdAt
         updatedAt
       }
@@ -98,6 +96,7 @@ export const getItems = /* GraphQL */ `
         image
         status
       }
+      category
       createdAt
       updatedAt
     }
@@ -120,33 +119,7 @@ export const listItemss = /* GraphQL */ `
           image
           status
         }
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getSubscriberPage = /* GraphQL */ `
-  query GetSubscriberPage($id: ID!) {
-    getSubscriberPage(id: $id) {
-      id
-      liveSpace
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listSubscriberPages = /* GraphQL */ `
-  query ListSubscriberPages(
-    $filter: ModelSubscriberPageFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listSubscriberPages(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        liveSpace
+        category
         createdAt
         updatedAt
       }
@@ -210,15 +183,12 @@ export const getOrders = /* GraphQL */ `
         qty
         price
         rating
+        request
+        status
       }
       totalItems
       totalPrice
-      states {
-        state
-        time
-      }
       rating
-      request
       status
       createdAt
       updatedAt
@@ -241,15 +211,12 @@ export const listOrderss = /* GraphQL */ `
           qty
           price
           rating
+          request
+          status
         }
         totalItems
         totalPrice
-        states {
-          state
-          time
-        }
         rating
-        request
         status
         createdAt
         updatedAt

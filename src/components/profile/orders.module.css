@@ -38,3 +38,82 @@
   -moz-box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.75);
 }
+.ordersContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.orderItemHolder {
+  width: 50%;
+  border: 4px green solid;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px 0;
+}
+.orderItemHolder > h1 {
+  text-transform: uppercase;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 0.9em;
+}
+.orderItemHolder > ul > li {
+  border-bottom: 1px grey dashed;
+  padding: 5px;
+  text-align: left;
+}
+.orderItemHolder > ul > li > section {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.orderItemHolder > ul > li > section > label {
+  font-size: 0.8em;
+  width: 70%;
+}
+.orderItemHolder > ul > li > section > span {
+  width: 30%;
+  font-size: 0.9em;
+  color: crimson;
+}
+.orderItemHolder > ul > li > p {
+  font-size: 0.9em;
+  color: grey;
+}
+.orderItemHolder > ul > li > ul {
+  width: 100%;
+}
+.orderItemHolder > ul > li > ul > li {
+  width: 100%;
+  text-align: center;
+  color: blue;
+  line-height: 25px;
+  text-decoration: #169188 underline;
+  font-size: 0.9em;
+}
+.orderItemHolder > ul > li > ul > li > ul {
+  width: 100%;
+}
+.orderItemHolder > ul > li > ul > li > ul > li {
+  text-align: right;
+  color: #169188;
+  text-decoration: crimson underline;
+}
+.orderItemHolder > button {
+  width: 80%;
+  margin: 5px 10%;
+  border: none;
+  border-radius: 3px;
+  background: #169188;
+  color: whitesmoke;
+  font-size: 0.8em;
+  line-height: 1.5em;
+  text-transform: uppercase;
+}
+.orderItemHolder > label {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+  color: crimson;
+  font-size: 0.9em;
+}
