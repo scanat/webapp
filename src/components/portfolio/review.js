@@ -67,12 +67,13 @@ const Review = props => {
             <h3>{props.orgName}</h3>
             <label>"{item.recommendation}"</label>
             <section>
-              {[...Array(item.rating)].map(() => (
+              {[...Array(item.rating)].map((item, index) => (
                 <FontAwesomeIcon
                   icon={faStar}
                   color="#ffc400"
                   size="xs"
                   style={{ margin: "0 2px" }}
+                  key={index}
                 />
               ))}
             </section>

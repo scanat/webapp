@@ -70,7 +70,7 @@ const Default = props => {
   const suggestionRef = useRef(null)
   const [finalList, setFinalList] = useState([])
   const requestRef = useRef(null)
-  const [ordered, setOrdered] = useState({ orderId: "", placed: false })
+  const [ordered, setOrdered] = useState({ orderId: null, placed: false })
 
   useEffect(() => {
     liveMenuRef.current.style.display = "block"
@@ -122,7 +122,9 @@ const Default = props => {
   const addItemToList = item => {
     item.ordered = true
     item.request = ""
-    setOrderList(orderList.concat(item))
+    let temp = [...orderList]
+    temp.push(item)
+    setOrderList(temp)
   }
 
   const removeItemFromList = sentitem => {
@@ -320,29 +322,38 @@ const Default = props => {
             })
             setOrderList(temp)
             setOrdered({ orderId: res.data.createOrders.id, placed: true })
-            setInterval(() => getOrderUpdates(res.data.createOrders.id), 60000)
           })
     } catch (error) {
       console.log(error)
     }
   }
 
-  async function getOrderUpdates(id) {
-    console.log(id)
-    let params = {
-      id: id,
+  useEffect(() => {
+    setInterval(() => getOrderUpdates(), 30000)
+    async function getOrderUpdates() {
+      if (ordered.orderId) {
+        let params = {
+          id: ordered.orderId,
+        }
+        console.log(params)
+        await API.graphql(graphqlOperation(getOrders, params)).then(res => {
+          setOrderList(res.data.getOrders.order)
+        })
+      }
+      // else{
+      //   let params = {
+      //     orgId: props.id,
+      //     key: props.table,
+      //     status: "SC",
+      //   }
+      //   console.log(params)
+      //   await API.graphql(graphqlOperation(getOrdersPending, params)).then(res => {
+      //     setOrderList(res.data.getOrders.order)
+      //   })
+      // }
     }
-    await API.graphql(graphqlOperation(getOrders, params)).then(res => {
-      // console.log(res.data.getOrders.order)
-      // setOrderList(res.data.getOrders.order)
-      let temp = orderList
-      temp.forEach((element, i) => {
-        element.status = res.data.getOrders.order[i].status
-        setOrderList(temp)
-      })
-    })
-  }
-
+  }, [])
+  
   const cancelOrder = () => {}
 
   return (
@@ -392,7 +403,7 @@ const Default = props => {
         <section className={defaultStyles.itemsContainer}>
           {searchList.length !== 0 &&
             searchList.map((item, index) => (
-              <section className={defaultStyles.item}>
+              <section className={defaultStyles.item} key={index}>
                 <img
                   src={require(`../../images/icon/${imagesArray[index]}.svg`)}
                   title={index}
@@ -424,7 +435,7 @@ const Default = props => {
             ))}
           {searchList.length === 0 && selectedCategory === "All"
             ? list.map((item, index) => (
-                <section className={defaultStyles.item}>
+                <section className={defaultStyles.item} key={index}>
                   <img
                     src={require(`../../images/icon/${imagesArray[index]}.svg`)}
                     title={index}
@@ -660,6 +671,17 @@ const Default = props => {
                     <label>{item.qty}</label>
                     <span onClick={() => decQty(orderList, index)}>-</span>
                   </section>
+                  {item.status === "CO" && (
+                    <label
+                      style={{
+                        lineHeight: "30px",
+                        color: "green",
+                        fontSize: "0.8em",
+                      }}
+                    >
+                      Your ordered item is confirmed
+                    </label>
+                  )}
                   <h4>{item.itemName}</h4>
                   <section>
                     <span>
@@ -682,7 +704,9 @@ const Default = props => {
                   </section>
                   <span>
                     <FontAwesomeIcon icon={faRupeeSign} size="sm" />
-                    {item.itemPrice * item.qty}
+                    {item.itemPrice
+                      ? item.itemPrice * item.qty
+                      : item.price * item.qty}
                   </span>
                   <hr
                     style={{
@@ -708,11 +732,6 @@ const Default = props => {
                       disabled={item.state === 1 ? true : false}
                     />
                   </section>
-                  {item.status === "CO" && (
-                    <label style={{ lineHeight: "35px", color: "green" }}>
-                      Your ordered item is confirmed
-                    </label>
-                  )}
                 </section>
 
                 {item.status !== "CO" && (
@@ -874,6 +893,22 @@ export const updateOrders = /* GraphQL */ `
 export const getOrders = /* GraphQL */ `
   query GetOrders($id: ID!) {
     getOrders(id: $id) {
+      order {
+        name
+        qty
+        price
+        rating
+        request
+        status
+      }
+      status
+    }
+  }
+`
+
+export const getOrdersPending = /* GraphQL */ `
+  query GetOrders($orgId: String!, $key: String!, $status: String!) {
+    getOrders(orgId: $orgId, key: $key, status: $status) {
       order {
         name
         qty
