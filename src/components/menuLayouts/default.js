@@ -273,86 +273,133 @@ const Default = props => {
   }, [openOrderListPanel])
 
   const placeOrder = async (item, request) => {
-    console.log(item)
     let temp = [...orderList]
-    temp.map(element => {
-      if (element.id === item.id) {
-        element.status = "SC"
-      }
+    let tempList = [...finalList]
+
+    tempList.push({
+      id: item.id,
+      name: item.itemName,
+      price: item.itemPrice,
+      qty: item.qty,
+      request: request,
+      status: "SC",
     })
-    let tempList = []
-    temp.map(element => {
-      if (element.status === "SC") {
-        tempList.push({
-          id: item.id,
-          name: item.itemName,
-          price: item.itemPrice,
-          qty: item.qty,
-          request: request,
-          status: "SC",
-        })
-      }
-    })
-    // let tempList = [...finalList]
-    // tempList.push({
-    //   name: itemName,
-    //   price: itemPrice,
-    //   qty: qty,
-    //   request: request,
-    //   status: "SC",
-    // })
-    // setFinalList(tempList)
+
     let totalPrice = 0
     tempList.forEach(element => {
       totalPrice = totalPrice + element.price
     })
-    const input = {
-      key: props.table,
-      orgId: props.id,
-      order: tempList,
-      totalItems: tempList.length,
-      totalPrice: totalPrice,
-      status: "SC",
-    }
-    const updateinput = {
-      id: ordered.orderId,
-      order: tempList,
-      totalItems: tempList.length,
-      totalPrice: totalPrice,
-    }
 
     try {
-      ordered.placed
+      const input = {
+        key: props.table,
+        orgId: props.id,
+        order: tempList,
+        totalItems: tempList.length,
+        totalPrice: totalPrice,
+        status: "SC",
+      }
+      const updateinput = {
+        id: ordered.orderId,
+        order: tempList,
+        totalItems: tempList.length,
+        totalPrice: totalPrice,
+      }
+
+      !ordered.placed
         ? await API.graphql(
-            graphqlOperation(updateOrders, { input: updateinput })
-          ).then(res => {
-            res && setOrderList(temp)
-            // let temp = [...orderList]
-            // temp.map(item => {
-            //   if (id === item.id) {
-            //     if (item.status !== "CO") item.status = "SC"
-            //   }
-            // })
-            // setOrderList(temp)
-            // console.log("first ", temp)
-          })
-        : await API.graphql(
             graphqlOperation(createOrders, { input: input })
           ).then(res => {
-            res && setOrderList(temp)
-            // let temp = [...orderList]
-            // temp.map(item => {
-            //   if (id === item.id) {
-            //     if (item.status !== "CO") item.status = "SC"
-            //   }
-            // })
-            // setOrderList(temp)
-            // console.log("second ", temp)
             setOrdered({ orderId: res.data.createOrders.id, placed: true })
+            setFinalList(tempList)
+            temp.map(element => {
+              element.id === item.id && (element.status = "SC")
+            })
+            setOrderList(temp)
+          })
+        : await API.graphql(
+            graphqlOperation(updateOrders, { input: updateinput })
+          ).then(res => {
+            setOrdered({ orderId: res.data.createOrders.id, placed: true })
+            setFinalList(tempList)
+            temp.map(element => {
+              element.id === item.id && (element.status = "SC")
+            })
+            setOrderList(temp)
           })
     } catch (error) {
       console.log(error)
     }
+
+    // let temp = [...orderList]
+    // temp.map(element => {
+    //   if (element.id === item.id) {
+    //     element.status = "SC"
+    //   }
+    // })
+    // let tempList = [...finalList]
+    // temp.map(element => {
+    //   if (element.id === item.id) {
+    //     tempList.push({
+    //       id: item.id,
+    //       name: item.itemName,
+    //       price: item.itemPrice,
+    //       qty: item.qty,
+    //       request: request,
+    //       status: element.status,
+    //     })
+    //   } else if (
+    //     element.status.includes("CO") ||
+    //     element.status === "RC" ||
+    //     element.status === "GB"
+    //   ) {
+    //     tempList.push({
+    //       id: item.id,
+    //       name: item.itemName,
+    //       price: item.itemPrice,
+    //       qty: item.qty,
+    //       request: request,
+    //       status: item.status,
+    //     })
+    //   }
+    // })
+    // setFinalList(tempList)
+    // console.log(tempList)
+    // let totalPrice = 0
+    // tempList.forEach(element => {
+    //   totalPrice = totalPrice + element.price
+    // })
+    // const input = {
+    //   key: props.table,
+    //   orgId: props.id,
+    //   order: tempList,
+    //   totalItems: tempList.length,
+    //   totalPrice: totalPrice,
+    //   status: "SC",
+    // }
+    // const updateinput = {
+    //   id: ordered.orderId,
+    //   order: tempList,
+    //   totalItems: tempList.length,
+    //   totalPrice: totalPrice,
+    // }
+
+    // try {
+    //   ordered.placed
+    //     ? await API.graphql(
+    //         graphqlOperation(updateOrders, { input: updateinput })
+    //       ).then(res => {
+    //         res && setOrderList(temp)
+    //       })
+    //     : await API.graphql(
+    //         graphqlOperation(createOrders, { input: input })
+    //       ).then(res => {
+    //         res && setOrderList(temp)
+    //         setOrdered({ orderId: res.data.createOrders.id, placed: true })
+    //       })
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
   useEffect(() => {
@@ -364,20 +411,30 @@ const Default = props => {
         }
         await API.graphql(graphqlOperation(getOrders, params)).then(res => {
           if (res.data.getOrders) {
-            let temp = [...orderList]
-            temp.map(element => {
-              let item = res.data.getOrders.order.find(
-                itemp => element["id"] === itemp["id"]
-              )
-              element.status = item.status
-              setOrderList(temp)
-            })
+            setFinalList(res.data.getOrders.order)
+
+            // let temp = [...orderList]
+            // res.data.getOrders.order.map((element, i) => {
+            //   temp[i].status = element.status
+            //   console.log(temp[i].status)
+            // })
+            // // temp.map(element => {
+            // //   res.data.getOrders.order.map(subelement => {
+            // //     if (element.id === subelement.id) {
+            // //       element["status"] = subelement["status"]
+            // //     }else{
+            // //       element["status"] = "O"
+            // //     }
+            // //   })
+            // // })
+            // setOrderList(temp)
           }
         })
       }
     }
   }, [ordered])
   console.log(orderList)
+  console.log(finalList)
   const cancelOrder = () => {}
 
   return (
@@ -695,7 +752,7 @@ const Default = props => {
                     <label>{item.qty}</label>
                     <span onClick={() => decQty(orderList, index)}>-</span>
                   </section>
-                  {item.status === "CO" && (
+                  {finalList.length > 0 && finalList[index] && finalList[index].status === "CO" && (
                     <label
                       style={{
                         lineHeight: "30px",
@@ -758,11 +815,11 @@ const Default = props => {
                   </section>
                 </section>
 
-                {item.status !== "CO" && (
+                {/* {finalList.length > 0 && finalList[index].status !== "CO" && ( */}
                   <button
-                    style={{ background: item.status === "SC" && "crimson" }}
+                    style={{ background: finalList.length > 0 && finalList[index] && finalList[index].status === "SC" && "crimson" }}
                     onClick={() => {
-                      item.status === "SC"
+                      finalList.length > 0 && finalList[index] && finalList[index].status === "SC"
                         ? cancelOrder()
                         : placeOrder(
                             // item.id,
@@ -774,9 +831,9 @@ const Default = props => {
                           )
                     }}
                   >
-                    {item.status === "SC" ? "Cancel Order" : "Send for cooking"}
+                    {finalList.length > 0 && finalList[index] && finalList[index].status === "SC" ? "Cancel Order" : "Send for cooking"}
                   </button>
-                )}
+                {/* )} */}
               </section>
             ))}
           </Carousel>
