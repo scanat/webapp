@@ -1,6 +1,0 @@
-type Notifications @model {
-  id: ID!
-  topic: String
-  description: String
-  status: Boolean
-}
