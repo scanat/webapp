@@ -817,21 +817,23 @@ const Default = props => {
 
                 {/* {finalList.length > 0 && finalList[index].status !== "CO" && ( */}
                   <button
-                    style={{ background: finalList.length > 0 && finalList[index] && finalList[index].status === "SC" && "crimson" }}
-                    onClick={() => {
-                      finalList.length > 0 && finalList[index] && finalList[index].status === "SC"
-                        ? cancelOrder()
-                        : placeOrder(
-                            // item.id,
-                            // item.itemName,
-                            // item.itemPrice * item.qty,
-                            // item.qty,
-                            item,
-                            requestRef.current.value
-                          )
-                    }}
+                    // style={{ background: finalList.length > 0 && finalList[index] && finalList[index].status === "SC" && "crimson" }}
+                    // onClick={() => {
+                    //   finalList.length > 0 && finalList[index] && finalList[index].status === "SC"
+                    //     ? cancelOrder()
+                    //     : placeOrder(
+                    //         // item.id,
+                    //         // item.itemName,
+                    //         // item.itemPrice * item.qty,
+                    //         // item.qty,
+                    //         item,
+                    //         requestRef.current.value
+                    //       )
+                    // }}
+                    onClick={() => placeOrder(item, requestRef.current.value)}
                   >
-                    {finalList.length > 0 && finalList[index] && finalList[index].status === "SC" ? "Cancel Order" : "Send for cooking"}
+                    Send for cooking
+                    {/* {finalList.length > 0 && finalList[index] && finalList[index].status === "SC" ? "Cancel Order" : "Send for cooking"} */}
                   </button>
                 {/* )} */}
               </section>
