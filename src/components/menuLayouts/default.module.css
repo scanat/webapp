@@ -325,9 +325,9 @@
   font-size: 0.9em;
 }
 .orderListBottomPanel button {
-  background: rgb(88, 88, 88);
+  background: #585858;
   border-radius: none;
-  border: none;
+  border: #646464 2px solid;
   height: 100%;
   text-transform: uppercase;
   color: whitesmoke;

@@ -92,7 +92,8 @@ const Default = props => {
         res.data.getItems.itemList.map(dataItem => {
           if (dataItem.status) {
             dataItem.qty = 1
-            dataItem.ordered = false
+            // dataItem.ordered = false
+            dataItem.status = ""
             list.push(dataItem)
             let temp = [...list]
             setList(temp)
@@ -120,7 +121,8 @@ const Default = props => {
   }, [orderListPulled])
 
   const addItemToList = item => {
-    item.ordered = true
+    // item.ordered = true
+    item.status = "O"
     item.request = ""
     let temp = [...orderList]
     temp.push(item)
@@ -132,7 +134,8 @@ const Default = props => {
     tempList.map((item, index) => {
       if (item.id === sentitem.id) {
         tempList.splice(index, 1)
-        item.ordered = false
+        // item.ordered = false
+        item.status = ""
         setOrderList(tempList)
       }
     })
@@ -152,16 +155,16 @@ const Default = props => {
     }
   }
 
-  const updateItem = () => {
-    let temp = [...list]
-    setList(temp)
-  }
+  // const updateItem = () => {
+  //   let temp = [...list]
+  //   setList(temp)
+  // }
 
-  const updateItemOrder = sentitem => {
-    sentitem.ordered === false
-      ? removeItemFromList(sentitem)
-      : addItemToList(sentitem)
-  }
+  // const updateItemOrder = sentitem => {
+  //   sentitem.ordered === false
+  //     ? removeItemFromList(sentitem)
+  //     : addItemToList(sentitem)
+  // }
 
   const filterCategoricalList = item => {
     if (item === "Category") {
@@ -178,41 +181,41 @@ const Default = props => {
     }
   }
 
-  const toggleConfirmOrder = () => {
-    setConfirmOrder(!confirmOrder)
-  }
+  // const toggleConfirmOrder = () => {
+  //   setConfirmOrder(!confirmOrder)
+  // }
 
-  const openItemInfo = async item => {
-    if (item.image) {
-      try {
-        const params = {
-          Bucket: process.env.GATSBY_S3_BUCKET,
-          Key: `public/${item.image}`,
-        }
-        await subscriberItemsS3.getObject(params, (err, res) => {
-          let temp = [...list]
-          temp.map(itemData => {
-            if (itemData.id === item.id) {
-              itemData.imageData = res.Body
-              setList(temp)
-              setOpenInfo(itemData)
-            }
-          })
-        })
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    setOpenInfo(item)
-  }
+  // const openItemInfo = async item => {
+  //   if (item.image) {
+  //     try {
+  //       const params = {
+  //         Bucket: process.env.GATSBY_S3_BUCKET,
+  //         Key: `public/${item.image}`,
+  //       }
+  //       await subscriberItemsS3.getObject(params, (err, res) => {
+  //         let temp = [...list]
+  //         temp.map(itemData => {
+  //           if (itemData.id === item.id) {
+  //             itemData.imageData = res.Body
+  //             setList(temp)
+  //             setOpenInfo(itemData)
+  //           }
+  //         })
+  //       })
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  //   setOpenInfo(item)
+  // }
 
-  const getConfData = data => {
-    conversation.push(data)
-    let temp = [...conversation]
-    setConversation(temp)
-    setConfirmOrder(false)
-    setOpenConversation(true)
-  }
+  // const getConfData = data => {
+  //   conversation.push(data)
+  //   let temp = [...conversation]
+  //   setConversation(temp)
+  //   setConfirmOrder(false)
+  //   setOpenConversation(true)
+  // }
 
   useEffect(() => {
     filterOpen
@@ -269,16 +272,36 @@ const Default = props => {
         })
   }, [openOrderListPanel])
 
-  const placeOrder = async (id, itemName, itemPrice, qty, request) => {
-    let tempList = [...finalList]
-    tempList.push({
-      name: itemName,
-      price: itemPrice,
-      qty: qty,
-      request: request,
-      status: "SC",
+  const placeOrder = async (item, request) => {
+    console.log(item)
+    let temp = [...orderList]
+    temp.map(element => {
+      if (element.id === item.id) {
+        element.status = "SC"
+      }
     })
-    setFinalList(tempList)
+    let tempList = []
+    temp.map(element => {
+      if (element.status === "SC") {
+        tempList.push({
+          id: item.id,
+          name: item.itemName,
+          price: item.itemPrice,
+          qty: item.qty,
+          request: request,
+          status: "SC",
+        })
+      }
+    })
+    // let tempList = [...finalList]
+    // tempList.push({
+    //   name: itemName,
+    //   price: itemPrice,
+    //   qty: qty,
+    //   request: request,
+    //   status: "SC",
+    // })
+    // setFinalList(tempList)
     let totalPrice = 0
     tempList.forEach(element => {
       totalPrice = totalPrice + element.price
@@ -287,14 +310,14 @@ const Default = props => {
       key: props.table,
       orgId: props.id,
       order: tempList,
-      totalItems: finalList.length,
+      totalItems: tempList.length,
       totalPrice: totalPrice,
       status: "SC",
     }
     const updateinput = {
       id: ordered.orderId,
       order: tempList,
-      totalItems: finalList.length,
+      totalItems: tempList.length,
       totalPrice: totalPrice,
     }
 
@@ -303,24 +326,28 @@ const Default = props => {
         ? await API.graphql(
             graphqlOperation(updateOrders, { input: updateinput })
           ).then(res => {
-            let temp = [...orderList]
-            temp.forEach(item => {
-              if (id === item.id) {
-                item.status = "SC"
-              }
-            })
-            setOrderList(temp)
+            res && setOrderList(temp)
+            // let temp = [...orderList]
+            // temp.map(item => {
+            //   if (id === item.id) {
+            //     if (item.status !== "CO") item.status = "SC"
+            //   }
+            // })
+            // setOrderList(temp)
+            // console.log("first ", temp)
           })
         : await API.graphql(
             graphqlOperation(createOrders, { input: input })
           ).then(res => {
-            let temp = [...orderList]
-            temp.forEach(item => {
-              if (id === item.id) {
-                item.status = "SC"
-              }
-            })
-            setOrderList(temp)
+            res && setOrderList(temp)
+            // let temp = [...orderList]
+            // temp.map(item => {
+            //   if (id === item.id) {
+            //     if (item.status !== "CO") item.status = "SC"
+            //   }
+            // })
+            // setOrderList(temp)
+            // console.log("second ", temp)
             setOrdered({ orderId: res.data.createOrders.id, placed: true })
           })
     } catch (error) {
@@ -335,14 +362,22 @@ const Default = props => {
         let params = {
           id: ordered.orderId,
         }
-        console.log(params)
         await API.graphql(graphqlOperation(getOrders, params)).then(res => {
-          setOrderList(res.data.getOrders.order)
+          if (res.data.getOrders) {
+            let temp = [...orderList]
+            temp.map(element => {
+              let item = res.data.getOrders.order.find(
+                itemp => element["id"] === itemp["id"]
+              )
+              element.status = item.status
+              setOrderList(temp)
+            })
+          }
         })
       }
     }
   }, [ordered])
-  
+  console.log(orderList)
   const cancelOrder = () => {}
 
   return (
@@ -409,16 +444,16 @@ const Default = props => {
                 <section
                   className={defaultStyles.itemOrderToggle}
                   style={{
-                    justifyContent: !item.ordered ? "right" : "left",
-                    background: !item.ordered ? "grey" : "green",
+                    justifyContent: item.status === "" ? "right" : "left",
+                    background: item.status === "" ? "grey" : "green",
                   }}
                   onClick={() =>
-                    !item.ordered
+                    item.status === ""
                       ? addItemToList(item)
                       : removeItemFromList(item)
                   }
                 >
-                  {!item.ordered ? "+" : "-"}
+                  {item.status === "" ? "+" : "-"}
                 </section>
               </section>
             ))}
@@ -441,16 +476,16 @@ const Default = props => {
                   <section
                     className={defaultStyles.itemOrderToggle}
                     style={{
-                      justifyContent: !item.ordered ? "right" : "left",
-                      background: !item.ordered ? "grey" : "green",
+                      justifyContent: item.status === "" ? "right" : "left",
+                      background: item.status === "" ? "grey" : "green",
                     }}
                     onClick={() =>
-                      !item.ordered
+                      item.status === ""
                         ? addItemToList(item)
                         : removeItemFromList(item)
                     }
                   >
-                    {!item.ordered ? "+" : "-"}
+                    {item.status === "" ? "+" : "-"}
                   </section>
                 </section>
               ))
@@ -472,16 +507,16 @@ const Default = props => {
                   <section
                     className={defaultStyles.itemOrderToggle}
                     style={{
-                      justifyContent: !item.ordered ? "right" : "left",
-                      background: !item.ordered ? "grey" : "green",
+                      justifyContent: item.status === "" ? "right" : "left",
+                      background: item.status === "" ? "grey" : "green",
                     }}
                     onClick={() =>
-                      !item.ordered
+                      item.status === ""
                         ? addItemToList(item)
                         : removeItemFromList(item)
                     }
                   >
-                    {!item.ordered ? "+" : "-"}
+                    {item.status === "" ? "+" : "-"}
                   </section>
                 </section>
               ))}
@@ -730,10 +765,11 @@ const Default = props => {
                       item.status === "SC"
                         ? cancelOrder()
                         : placeOrder(
-                            item.id,
-                            item.itemName,
-                            item.itemPrice * item.qty,
-                            item.qty,
+                            // item.id,
+                            // item.itemName,
+                            // item.itemPrice * item.qty,
+                            // item.qty,
+                            item,
                             requestRef.current.value
                           )
                     }}
@@ -803,7 +839,7 @@ const Default = props => {
           </section>
         )} */}
       </section>
-      {confirmOrder && (
+      {/* {confirmOrder && (
         <ConfirmOrder
           orderList={orderList}
           id={props.id}
@@ -838,7 +874,7 @@ const Default = props => {
           color="#169188"
           style={{ position: "fixed", bottom: 30, right: "5%", zIndex: 7 }}
         />
-      )}
+      )} */}
     </section>
   )
 }
@@ -883,6 +919,7 @@ export const getOrders = /* GraphQL */ `
   query GetOrders($id: ID!) {
     getOrders(id: $id) {
       order {
+        id
         name
         qty
         price
