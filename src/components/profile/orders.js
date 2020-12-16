@@ -310,6 +310,7 @@ export const listOrderss = /* GraphQL */ `
         key
         orgId
         order {
+          id
           name
           qty
           price

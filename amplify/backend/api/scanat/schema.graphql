@@ -84,6 +84,7 @@ type Orders @model {
 }
 
 type Order {
+  id: String
   name: String
   qty: String
   price: String
