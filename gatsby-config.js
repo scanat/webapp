@@ -42,17 +42,6 @@ module.exports = {
         },
       },
     },
-    {
-      resolve: "gatsby-source-graphql",
-      options: {
-        typeName: "Subscriber",
-        fieldName: "subscriber",
-        url: "https://hyfppjcmhnekdbhugty7cdcsjm.appsync-api.ap-south-1.amazonaws.com/graphql",
-        headers: {
-          "x-api-key": "da2-ikygy37qvjhhphetapy6jfsrr4"
-        }
-      }
-    },
     // `gatsby-plugin-offline`,
   ],
 }
