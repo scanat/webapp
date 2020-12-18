@@ -3,17 +3,17 @@ import defaultStyles from "./default.module.css"
 import AWS from "aws-sdk"
 import Amplify, { API, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
-import ConfirmOrder from "./confirmOrder"
+// import ConfirmOrder from "./confirmOrder"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faAngleLeft,
-  faCaretDown,
-  faCaretUp,
-  faCartPlus,
-  faCommentDots,
-  faEllipsisH,
-  faFilter,
-  faInfoCircle,
+  // faCaretDown,
+  // faCaretUp,
+  // faCartPlus,
+  // faCommentDots,
+  // faEllipsisH,
+  // faFilter,
+  // faInfoCircle,
   faSearch,
   faTimesCircle,
   faAngleDoubleLeft,
@@ -23,14 +23,14 @@ import {
   faPenFancy,
 } from "@fortawesome/free-solid-svg-icons"
 import {
-  faPlusSquare,
-  faMinusSquare,
+  // faPlusSquare,
+  // faMinusSquare,
   faClock,
 } from "@fortawesome/free-regular-svg-icons"
-import FurtherDetails from "./furtherDetails"
-import Conversation from "./conversation"
+// import FurtherDetails from "./furtherDetails"
+// import Conversation from "./conversation"
 import Carousel from "react-elastic-carousel"
-import burger from "../../images/icon/burger.png"
+// import burger from "../../images/icon/burger.png"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
