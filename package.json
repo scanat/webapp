@@ -2,7 +2,7 @@
   "name": "scan-at",
   "private": true,
   "description": "A dynamic contactless automation system for organizations or businesses.",
-  "version": "0.1.0",
+  "version": "2.1.0",
   "author": "Omkar Deshmukh <iamomkar666@gmail.com>",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
