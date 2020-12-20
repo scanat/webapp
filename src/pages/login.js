@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react"
 import loginStyles from "./login.module.css"
 import Layout from "../components/layout"
 import { isLoggedIn, setUser } from "../utils/auth"
-import { graphql, navigate, useStaticQuery } from "gatsby"
+import { graphql, navigate } from "gatsby"
 import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
 import awsmobile from "../aws-exports"
@@ -404,14 +404,14 @@ const ResetSection = props => {
   )
 }
 
-export const query = graphql`
-  query GetSubscribers {
-    subscriber {
-      listSubscribers {
-        items {
-          id
-        }
-      }
-    }
-  }
-`
+// export const query = graphql`
+//   query GetSubscribers {
+//     subscriber {
+//       listSubscribers {
+//         items {
+//           id
+//         }
+//       }
+//     }
+//   }
+// `
