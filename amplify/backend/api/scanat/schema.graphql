@@ -37,6 +37,7 @@ type Item {
   itemPrice: String
   image: String
   status: Boolean
+  delivery: String
 }
 
 type Ambiences {
@@ -74,6 +75,7 @@ type Category {
 
 type Orders @model {
   id: ID!
+  pin: String
   key: String
   orgId: String
   order: [Order!]

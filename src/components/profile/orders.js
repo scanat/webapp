@@ -37,32 +37,6 @@ const Orders = () => {
         setPortfolioOrders(empty)
         setPortfolioOrders(res.data.listOrderss.items)
         console.log(res.data.listOrderss.items)
-        // res.data.listOrderss.items.forEach((item, id) => {
-        //   if (!String(item.key).length > 0) {
-        //     let temp = []
-        //     temp.push(item)
-        //     setPortfolioOrders(temp)
-        //     console.log(temp)
-        //   }
-        // })
-        // let tempSeq = seqQrs
-        // tempSeq.forEach((item, id) => {
-        //   res.data.listOrderss.items.forEach(checkItem => {
-        //     if (item.key == checkItem.key) {
-        //       tempSeq[id] = checkItem
-        //     }
-        //   })
-        // })
-        // setSeqQrs(tempSeq)
-        // let tempCustom = customQrs
-        // tempCustom.forEach((item, id) => {
-        //   res.data.listOrderss.items.forEach(checkItem => {
-        //     if (item.key == checkItem.key) {
-        //       tempCustom[id] = checkItem
-        //     }
-        //   })
-        // })
-        // setCustomQrs(tempCustom)
       })
     } catch (error) {
       console.log(error)
@@ -118,9 +92,9 @@ const Orders = () => {
   const orderQueing = (id, subid, queueState) => {
     let temp = [...portfolioOrders]
     temp.forEach((item, index) => {
-      if(index === id){
+      if (index === id) {
         Array(item.order).forEach((subitem, subindex) => {
-          if(subindex === subid){
+          if (subindex === subid) {
             subitem.status = queueState
             setPortfolioOrders(temp)
             console.log(temp[id].order[subid])
@@ -146,6 +120,7 @@ const Orders = () => {
       input: {
         id: item.id,
         order: item.order,
+        status: item.status
       },
     }
 
@@ -164,7 +139,13 @@ const Orders = () => {
       <section className={orderStyles.ordersContainer}>
         {portfolioOrders.map((item, index) => (
           <section className={orderStyles.orderItemHolder} key={index}>
-            <h1>Table {item.key}</h1>
+            <h1>
+              Table {item.key}{" "}
+              <label>
+                <b>PIN:</b> {String(item.pin).substr(item.pin.length - 4)}
+              </label>
+            </h1>
+            {item.status === "AB" && <label style={{fontSize: '0.8em', color: 'green'}} >Customer has asked for the bill</label>}
             <hr />
             <ul>
               {item.order.map((subitem, id) => (
@@ -216,77 +197,6 @@ const Orders = () => {
           </section>
         ))}
       </section>
-      {/* <section className={orderStyles.portfolioOrders}>
-        <h1 style={{ position: "relative" }}>
-          Portfolio Orders
-          {portfolioOrders.length > 0 && (
-            <FontAwesomeIcon
-              icon={faCircle}
-              color="crimson"
-              size="xs"
-              style={{ position: "absolute", top: -10, right: -10, width: 8 }}
-            />
-          )}
-        </h1>
-      </section>
-      <section className={orderStyles.gridContainer}>
-        {seqQrs.map((item, id) => (
-          <section
-            className={orderStyles.orderGrid}
-            key={id}
-            style={{
-              background: item.status === "Requested Confirmation" && "#169188",
-            }}
-          >
-            <h1
-              style={{
-                color: item.status === "Requested Confirmation" && "whitesmoke",
-              }}
-            >
-              {id + 1}
-            </h1>
-            <label
-              style={{
-                fontSize: "0.7em",
-                color:
-                  item.status === "Requested Confirmation"
-                    ? "whitesmoke"
-                    : "#169188",
-              }}
-            >
-              Restaurant
-            </label>
-          </section>
-        ))}
-        {customQrs.map((item, id) => (
-          <section
-            className={orderStyles.orderGrid}
-            key={id}
-            style={{
-              background: item.status === "Requested Confirmation" && "#169188",
-            }}
-          >
-            <h1
-              style={{
-                color: item.status === "Requested Confirmation" && "whitesmoke",
-              }}
-            >
-              {item.key ? item.key : item}
-            </h1>
-            <label
-              style={{
-                fontSize: "0.7em",
-                color:
-                  item.status === "Requested Confirmation"
-                    ? "whitesmoke"
-                    : "#169188",
-              }}
-            >
-              Hotel
-            </label>
-          </section>
-        ))}
-      </section> */}
     </Layout>
   )
 }
@@ -307,6 +217,7 @@ export const listOrderss = /* GraphQL */ `
     listOrderss(filter: $filter) {
       items {
         id
+        pin
         key
         orgId
         order {

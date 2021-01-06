@@ -54,8 +54,17 @@
 .orderItemHolder > h1 {
   text-transform: uppercase;
   padding: 5px 0;
-  text-align: center;
-  font-size: 0.9em;
+  font-size: 0.8em;
+  letter-spacing: 1px;
+}
+.orderItemHolder > h1 > label {
+  font-size: 0.8em;
+  font-weight: normal;
+  float: right;
+}
+.orderItemHolder > label:first-of-type {
+  color: green;
+  font-size: 0.8em;
 }
 .orderItemHolder > ul > li {
   border-bottom: 1px grey dashed;

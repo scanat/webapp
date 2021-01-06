@@ -266,9 +266,11 @@ export const createOrders = /* GraphQL */ `
   ) {
     createOrders(input: $input, condition: $condition) {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price
@@ -292,9 +294,11 @@ export const updateOrders = /* GraphQL */ `
   ) {
     updateOrders(input: $input, condition: $condition) {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price
@@ -318,9 +322,11 @@ export const deleteOrders = /* GraphQL */ `
   ) {
     deleteOrders(input: $input, condition: $condition) {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price

@@ -236,9 +236,11 @@ export const onCreateOrders = /* GraphQL */ `
   subscription OnCreateOrders {
     onCreateOrders {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price
@@ -259,9 +261,11 @@ export const onUpdateOrders = /* GraphQL */ `
   subscription OnUpdateOrders {
     onUpdateOrders {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price
@@ -282,9 +286,11 @@ export const onDeleteOrders = /* GraphQL */ `
   subscription OnDeleteOrders {
     onDeleteOrders {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price

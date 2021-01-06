@@ -176,9 +176,11 @@ export const getOrders = /* GraphQL */ `
   query GetOrders($id: ID!) {
     getOrders(id: $id) {
       id
+      pin
       key
       orgId
       order {
+        id
         name
         qty
         price
@@ -204,9 +206,11 @@ export const listOrderss = /* GraphQL */ `
     listOrderss(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        pin
         key
         orgId
         order {
+          id
           name
           qty
           price

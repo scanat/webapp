@@ -28,8 +28,15 @@ const UserDetails = () => {
   const [addressLine2, setAddressLine2] = useState(
     getCurrentUser().address_line_1
   )
+  const [city, setCity] = useState(null)
+  const [state, setState] = useState(null)
   const [postalCode, setPostalCode] = useState(getCurrentUser().postal_code)
-  const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState({
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+  })
 
   useEffect(() => {
     getData()
@@ -41,8 +48,7 @@ const UserDetails = () => {
         id: getCurrentUser()["custom:page_id"],
       }
       await API.graphql(graphqlOperation(getSubscriber, params)).then(res =>
-        // setUserData(res.data.getSubscriber)
-        console.log(res.data.getSubscriber)
+        setUserData(res.data.getSubscriber)
       )
     } catch (error) {
       console.log(error)
@@ -98,6 +104,12 @@ const UserDetails = () => {
     <Layout>
       <section id="cardContainer" className={detailStyles.cardContainer}>
         <section className={detailStyles.detailsContainer}>
+          <label className={detailStyles.detailsLabels}>Business Hours</label>
+          <input
+            className={detailStyles.input}
+            placeholder={getCurrentUser().name}
+            onChange={event => setNickName(event.target.value)}
+          />
           <label className={detailStyles.detailsLabels}>Name</label>
           <input
             className={detailStyles.input}
@@ -114,13 +126,28 @@ const UserDetails = () => {
           <label className={detailStyles.detailsLabels}>Postal Address</label>
           <input
             className={detailStyles.input}
-            placeholder={getCurrentUser()["custom:address_line_1"]}
+            placeholder={userData.address1}
             onChange={event => setAddressLine1(event.target.value)}
           />
           <input
             className={detailStyles.input}
-            placeholder={getCurrentUser()["custom:address_line_2"]}
+            placeholder={userData.address2}
             onChange={event => setAddressLine2(event.target.value)}
+          />
+          <input
+            className={detailStyles.input}
+            placeholder={userData.city}
+            onChange={event => setCity(event.target.value)}
+          />
+          <input
+            className={detailStyles.input}
+            placeholder={userData.state}
+            onChange={event => setState(event.target.value)}
+          />
+          <input
+            className={detailStyles.input}
+            placeholder={userData.postalCode}
+            onChange={event => setPostalCode(event.target.value)}
           />
           <label className={detailStyles.detailsLabels}>
             Postal Code/Zip Code
@@ -128,7 +155,7 @@ const UserDetails = () => {
           <input
             className={detailStyles.input}
             inputMode="tel"
-            placeholder={getCurrentUser()["custom:postal_code"]}
+            placeholder={userData.postalCode}
             onChange={event => setPostalCode(event.target.value)}
           />
           <button
