@@ -23,6 +23,56 @@
   box-shadow: -5px -5px 20px #d9d9d9, 7px 7px 20px #ffffff;
   text-align: center;
 }
+.categoryDropdown {
+  border-radius: 4px 4px 0 0;
+  width: 94%;
+  margin-left: 5%;
+  background: whitesmoke;
+}
+.categoryDropdown li {
+  line-height: 25px;
+  font-size: 12px;
+}
+.categoryDropdown > li {
+  position: relative;
+}
+.categoryDropdown > li > label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.categoryDropdown > li > label > img {
+  height: 20px;
+  margin-right: 10px;
+}
+.categoryDropdown > li > ul {
+  z-index: 5;
+  width: 100%;
+  position: absolute;
+  background: rgb(149, 134, 134);
+  color: white;
+  left: 0;
+}
+.categoryDropdown > li > ul > li {
+  padding: 5px 5px 2px 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.categoryDropdown > li > ul > li > img {
+  height: 20px;
+  float: left;
+}
+select > option {
+  position: relative;
+}
+select > option > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+}
 .itemControls {
   width: 100%;
   display: flex;
@@ -30,6 +80,15 @@
   padding: 10px 0;
   align-items: center;
   justify-content: space-evenly;
+}
+.itemControls > textarea {
+  border: none;
+  border-radius: 5px;
+  width: 90%;
+  padding: 5px;
+  font-family: Roboto;
+  font-size: 12px;
+  resize: none;
 }
 .listContainer {
   width: 100%;
@@ -48,11 +107,23 @@
 .greenCard {
   position: relative;
   width: 90%;
-  height: 120px;
+  height: 100px;
   margin: 10px 5%;
   border-radius: 5px;
   background: white;
   list-style-type: none;
+}
+.greenCard > label {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 11px;
+  text-align: center;
+  display: inherit;
+  background: #4bd5ca;
+  line-height: 20px;
+  border-radius: 0 0 4px 4px;
+  color: #373737;
 }
 .itemName {
   float: left;
@@ -62,11 +133,15 @@
 .itemPrice {
   padding: 10px;
   float: right;
+  color: #237291;
 }
 .categoryName {
   padding: 2px 10px;
   color: grey;
   font-size: 14px;
+}
+.categoryName > u {
+  color: grey;
 }
 .parentDataContainer {
   width: 100%;
@@ -100,6 +175,13 @@
   flex-direction: column;
   -ms-flex-direction: column;
   flex: 1;
+}
+.textContainers > section {
+  display: flex;
+}
+.textContainers > section > img {
+  width: 50px;
+  padding: 5px;
 }
 .textContainers {
   display: flex;
@@ -141,7 +223,7 @@
   -moz-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 }
-.buttonButtomContainer{
+.buttonButtomContainer {
   width: 100%;
   height: auto;
   display: flex;

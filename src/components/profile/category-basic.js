@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faPlusSquare,
-  faCheckCircle
+  faCheckCircle,
 } from "@fortawesome/free-regular-svg-icons"
 import {
   faSyncAlt,
@@ -24,6 +24,12 @@ import Loader from "../loader"
 import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
 import ReactCrop from "react-image-crop"
 import awsmobile from "../../aws-exports"
+import alcohol from "../../images/icons/categories/alcoholicdrinks.svg"
+import burger from "../../images/icons/categories/burger.svg"
+import meal from "../../images/icons/categories/meal.svg"
+import meat from "../../images/icons/categories/meat.svg"
+import pizza from "../../images/icons/categories/pizza.svg"
+import rice from "../../images/icons/categories/rice.svg"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
@@ -57,7 +63,6 @@ const CategoryBasic = props => {
 
   const itemNameRef = useRef("")
   const itemPriceRef = useRef("")
-  const itemCategoryRef = useRef("")
   const itemImageRef = useRef("")
   const [imageUrl, setImageUrl] = useState("")
 
@@ -72,6 +77,8 @@ const CategoryBasic = props => {
     type: "",
     image: "",
   })
+  const [displayCategory, setDisplayCategory] = useState(false)
+  const [choiceCategory, setChoiceCategory] = useState(null)
 
   useEffect(() => {
     setTimeout(() => {
@@ -160,12 +167,12 @@ const CategoryBasic = props => {
   }
 
   // Delete Category
-  const deleteCategory = () => {
-    const tempList = [...categoryList]
-    const index = tempList.indexOf(category)
-    tempList.splice(index, 1)
-    setCategoryList(tempList)
-  }
+  // const deleteCategory = () => {
+  //   const tempList = [...categoryList]
+  //   const index = tempList.indexOf(category)
+  //   tempList.splice(index, 1)
+  //   setCategoryList(tempList)
+  // }
 
   // Fetch inital data if available
   const fetchData = async () => {
@@ -202,12 +209,12 @@ const CategoryBasic = props => {
     }
   }
 
-  const setSelectedCategory = () => {
-    let newCategoryName = prompt("Add a category to the list!")
-    if (newCategoryName !== null && newCategoryName !== "") {
-      setCategoryList(categoryList.concat(newCategoryName.toString()))
-    }
-  }
+  // const setSelectedCategory = () => {
+  //   let newCategoryName = prompt("Add a category to the list!")
+  //   if (newCategoryName !== null && newCategoryName !== "") {
+  //     setCategoryList(categoryList.concat(newCategoryName.toString()))
+  //   }
+  // }
 
   // Adding the items to the list
   const addItemHandler = () => {
@@ -215,7 +222,7 @@ const CategoryBasic = props => {
     if (
       itemNameRef.current.value !== "" &&
       itemPriceRef.current.value !== "" &&
-      itemCategoryRef.current.value !== ""
+      !choiceCategory
     ) {
       let tempList = [...list]
       tempList.push({
@@ -223,7 +230,7 @@ const CategoryBasic = props => {
         itemName: itemNameRef.current.value,
         itemPrice: itemPriceRef.current.value,
         status: true,
-        category: itemCategoryRef.current.value,
+        category: choiceCategory,
         image: imageUrl,
       })
       setList(tempList)
@@ -297,7 +304,7 @@ const CategoryBasic = props => {
       if (item.id === chosenItem.id) {
         item.itemName = itemNameRef.current.value
         item.itemPrice = itemPriceRef.current.value
-        item.category = itemCategoryRef.current.value
+        item.category = choiceCategory
         item.image = imageUrl
       }
     })
@@ -369,7 +376,7 @@ const CategoryBasic = props => {
         {
           level: "public",
           contentType: imageDetails.type,
-          contentEncoding: 'base64'
+          contentEncoding: "base64",
         }
       )
       if (storeImg) {
@@ -388,6 +395,10 @@ const CategoryBasic = props => {
     setSnackContent(content)
     setSnackError(err)
   }
+
+  useEffect(() => {
+    setDisplayCategory(false)
+  }, [choiceCategory])
 
   return (
     <Layout>
@@ -436,7 +447,8 @@ const CategoryBasic = props => {
       <section className={categoryBasicStyles.container}>
         <Card>
           <section>
-            <h3>{changing ? "Update Item" : "Add Item"}</h3>
+            {/* <h3>Product Handler</h3> */}
+            {/* <h3>{changing ? "Update Item" : "Add Item"}</h3> */}
             <input
               className={categoryBasicStyles.input}
               type="text"
@@ -449,13 +461,39 @@ const CategoryBasic = props => {
               placeholder="Item price"
               ref={itemPriceRef}
             />
-            <select style={{ width: "90%" }} ref={itemCategoryRef}>
-              {categoryList.map((item, id) => (
-                <option key={id} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+            <ul className={categoryBasicStyles.categoryDropdown}>
+              <li>
+                <label onClick={() => setDisplayCategory(!displayCategory)}>
+                  {choiceCategory ? choiceCategory : "Select Category"}
+                </label>
+                <ul style={{ display: displayCategory ? "block" : "none" }}>
+                  <li onClick={() => setChoiceCategory("Alcohol")}>
+                    <img src={alcohol} />
+                    Alcoholic Drinks
+                  </li>
+                  <li onClick={() => setChoiceCategory("Burger")}>
+                    <img src={burger} />
+                    Burger
+                  </li>
+                  <li onClick={() => setChoiceCategory("Meal")}>
+                    <img src={meal} />
+                    Meal
+                  </li>
+                  <li onClick={() => setChoiceCategory("Meat")}>
+                    <img src={meat} />
+                    Meat
+                  </li>
+                  <li onClick={() => setChoiceCategory("Pizza")}>
+                    <img src={pizza} />
+                    Pizza
+                  </li>
+                  <li onClick={() => setChoiceCategory("Rice")}>
+                    <img src={rice} />
+                    Rice
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </section>
 
           <section className={categoryBasicStyles.itemControls}>
@@ -481,7 +519,7 @@ const CategoryBasic = props => {
                 Add Item
               </label>
             </section>
-            <section className={categoryBasicStyles.controlItem}>
+            {/* <section className={categoryBasicStyles.controlItem}>
               <FontAwesomeIcon
                 icon={faNetworkWired}
                 onClick={setSelectedCategory}
@@ -491,7 +529,7 @@ const CategoryBasic = props => {
               <label className={categoryBasicStyles.controlItemLabel}>
                 Add Category
               </label>
-            </section>
+            </section> */}
             <section className={categoryBasicStyles.controlItem}>
               <FontAwesomeIcon
                 icon={faCloudUploadAlt}
@@ -503,7 +541,7 @@ const CategoryBasic = props => {
                 Upload
               </label>
             </section>
-            <section className={categoryBasicStyles.controlItem}>
+            {/* <section className={categoryBasicStyles.controlItem}>
               <FontAwesomeIcon
                 icon={faCut}
                 onClick={deleteCategory}
@@ -513,11 +551,12 @@ const CategoryBasic = props => {
               <label className={categoryBasicStyles.controlItemLabel}>
                 Delete Category
               </label>
-            </section>
+            </section> */}
           </section>
 
           <section className={categoryBasicStyles.itemControls}>
-            <section className={categoryBasicStyles.itemImageContainer}>
+            <textarea placeholder="Enter product description..." maxLength={100} />
+            {/* <section className={categoryBasicStyles.itemImageContainer}>
               {imageDetails.image !== "" ? (
                 <img
                   src={imageDetails.image}
@@ -547,26 +586,33 @@ const CategoryBasic = props => {
                   </form>
                 </section>
               )}
-            </section>
+            </section> */}
           </section>
         </Card>
 
         <section className={categoryBasicStyles.listContainer}>
           {list.map((item, id) => (
-            <section className={categoryBasicStyles.greenCard} key={item.id}>
+            <section className={categoryBasicStyles.greenCard} key={item.id} on >
               <section className={categoryBasicStyles.parentDataContainer}>
                 <section className={categoryBasicStyles.basicDataContainer}>
                   <section className={categoryBasicStyles.textContainers}>
-                    <p className={categoryBasicStyles.itemName}>
-                      {item.itemName}
-                    </p>
+                    <section>
+                      <img
+                        srcSet={require("../../images/icons/categories/" +
+                          item.category.toLowerCase() +
+                          ".svg")}
+                      />
+                      <p className={categoryBasicStyles.itemName}>
+                        {item.itemName}
+                      </p>
+                    </section>
                     <p className={categoryBasicStyles.itemPrice}>
                       Rs {item.itemPrice} /-
                     </p>
                   </section>
-                  <label className={categoryBasicStyles.categoryName}>
+                  {/* <label className={categoryBasicStyles.categoryName}>
                     <u>Category</u> : {item.category}
-                  </label>
+                  </label> */}
                 </section>
               </section>
               <section className={categoryBasicStyles.itemControls}>
@@ -589,6 +635,9 @@ const CategoryBasic = props => {
                   color={item.status ? "green" : "#db2626"}
                 />
               </section>
+              {!item.status && (
+                <label>This item has been marked deactivated!</label>
+              )}
             </section>
           ))}
         </section>

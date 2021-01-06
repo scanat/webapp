@@ -38,6 +38,7 @@ type Item {
   image: String
   status: Boolean
   delivery: String
+  desc: String
 }
 
 type Ambiences {
