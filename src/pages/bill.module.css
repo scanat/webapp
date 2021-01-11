@@ -1,0 +1,44 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  border-bottom: #8080801c 1px dashed;
+  border-top: grey 20px solid;
+}
+.itemsHolder{
+  width: 90%;
+  margin: 10px 5%;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: #8080801c 2px solid;
+}
+.itemsHolder > h4 {
+  color: crimson;
+  font-weight: normal;
+}
+.itemsHolder > label {
+  color: green;
+}
+.totalContainer {
+  width: 90%;
+  margin: 10px 5%;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: grey 1px dashed;
+}
+.totalContainer > label:last-of-type {
+  color: green;
+}
+.paymentContainer {
+  width: 100%;
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-around;
+}
+.paymentContainer > button {
+  background: none;
+  border: none;
+}
+.paymentContainer > button > img {
+  width: 40px;
+}

@@ -21,6 +21,7 @@ import {
   faUserAlt,
   faRupeeSign,
   faPenFancy,
+  faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons"
 import {
   // faPlusSquare,
@@ -30,12 +31,19 @@ import {
 // import FurtherDetails from "./furtherDetails"
 // import Conversation from "./conversation"
 import Carousel from "react-elastic-carousel"
+import { element } from "prop-types"
+import { navigate } from "gatsby"
 // import burger from "../../images/icon/burger.png"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
+})
+const messageItem = new AWS.SNS({
+  region: "ap-south-1",
+  // accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  // secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
 Amplify.configure({
@@ -69,12 +77,12 @@ const Default = props => {
   const liveMenuRef = useRef(null)
   const suggestionRef = useRef(null)
   const [finalList, setFinalList] = useState([])
-  const requestRef = useRef(null)
   const [ordered, setOrdered] = useState({ orderId: null, placed: false })
+  const [openPinPanel, setOpenPinPanel] = useState(false)
 
   useEffect(() => {
     liveMenuRef.current.style.display = "block"
-    filterCategoricalList("Non Veg")
+    filterCategoricalList(props.category)
   }, [props.category])
 
   useEffect(() => {
@@ -155,17 +163,6 @@ const Default = props => {
     }
   }
 
-  // const updateItem = () => {
-  //   let temp = [...list]
-  //   setList(temp)
-  // }
-
-  // const updateItemOrder = sentitem => {
-  //   sentitem.ordered === false
-  //     ? removeItemFromList(sentitem)
-  //     : addItemToList(sentitem)
-  // }
-
   const filterCategoricalList = item => {
     if (item === "Category") {
       setSelectedCategory("All")
@@ -180,42 +177,6 @@ const Default = props => {
       setFilteredList(tempList)
     }
   }
-
-  // const toggleConfirmOrder = () => {
-  //   setConfirmOrder(!confirmOrder)
-  // }
-
-  // const openItemInfo = async item => {
-  //   if (item.image) {
-  //     try {
-  //       const params = {
-  //         Bucket: process.env.GATSBY_S3_BUCKET,
-  //         Key: `public/${item.image}`,
-  //       }
-  //       await subscriberItemsS3.getObject(params, (err, res) => {
-  //         let temp = [...list]
-  //         temp.map(itemData => {
-  //           if (itemData.id === item.id) {
-  //             itemData.imageData = res.Body
-  //             setList(temp)
-  //             setOpenInfo(itemData)
-  //           }
-  //         })
-  //       })
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  //   setOpenInfo(item)
-  // }
-
-  // const getConfData = data => {
-  //   conversation.push(data)
-  //   let temp = [...conversation]
-  //   setConversation(temp)
-  //   setConfirmOrder(false)
-  //   setOpenConversation(true)
-  // }
 
   useEffect(() => {
     filterOpen
@@ -272,26 +233,30 @@ const Default = props => {
         })
   }, [openOrderListPanel])
 
-  const placeOrder = async (item, request) => {
+  const placeOrder = async pin => {
+    setOpenPinPanel(true)
     let temp = [...orderList]
     let tempList = [...finalList]
 
-    tempList.push({
-      id: item.id,
-      name: item.itemName,
-      price: item.itemPrice,
-      qty: item.qty,
-      request: request,
-      status: "SC",
+    temp.map(item => {
+      tempList.push({
+        id: item.id,
+        name: item.itemName,
+        price: item.itemPrice,
+        qty: item.qty,
+        request: item.request,
+        status: "SC",
+      })
     })
 
     let totalPrice = 0
     tempList.forEach(element => {
-      totalPrice = totalPrice + element.price
+      totalPrice = totalPrice + parseFloat(element.price)
     })
 
     try {
       const input = {
+        pin: props.id+pin,
         key: props.table,
         orgId: props.id,
         order: tempList,
@@ -299,107 +264,33 @@ const Default = props => {
         totalPrice: totalPrice,
         status: "SC",
       }
-      const updateinput = {
-        id: ordered.orderId,
-        order: tempList,
-        totalItems: tempList.length,
-        totalPrice: totalPrice,
-      }
 
-      !ordered.placed
-        ? await API.graphql(
-            graphqlOperation(createOrders, { input: input })
-          ).then(res => {
-            setOrdered({ orderId: res.data.createOrders.id, placed: true })
-            setFinalList(tempList)
-            temp.map(element => {
-              element.id === item.id && (element.status = "SC")
-            })
-            setOrderList(temp)
-          })
-        : await API.graphql(
-            graphqlOperation(updateOrders, { input: updateinput })
-          ).then(res => {
-            setOrdered({ orderId: res.data.createOrders.id, placed: true })
-            setFinalList(tempList)
-            temp.map(element => {
-              element.id === item.id && (element.status = "SC")
-            })
-            setOrderList(temp)
-          })
+      await API.graphql(graphqlOperation(createOrders, { input: input })).then(
+        res => {
+          setOrdered({ orderId: res.data.createOrders.id, placed: true })
+          setOpenPinPanel(false)
+          setFinalList(tempList)
+        }
+      )
     } catch (error) {
       console.log(error)
     }
+  }
 
-    // let temp = [...orderList]
-    // temp.map(element => {
-    //   if (element.id === item.id) {
-    //     element.status = "SC"
-    //   }
-    // })
-    // let tempList = [...finalList]
-    // temp.map(element => {
-    //   if (element.id === item.id) {
-    //     tempList.push({
-    //       id: item.id,
-    //       name: item.itemName,
-    //       price: item.itemPrice,
-    //       qty: item.qty,
-    //       request: request,
-    //       status: element.status,
-    //     })
-    //   } else if (
-    //     element.status.includes("CO") ||
-    //     element.status === "RC" ||
-    //     element.status === "GB"
-    //   ) {
-    //     tempList.push({
-    //       id: item.id,
-    //       name: item.itemName,
-    //       price: item.itemPrice,
-    //       qty: item.qty,
-    //       request: request,
-    //       status: item.status,
-    //     })
-    //   }
-    // })
-    // setFinalList(tempList)
-    // console.log(tempList)
-    // let totalPrice = 0
-    // tempList.forEach(element => {
-    //   totalPrice = totalPrice + element.price
-    // })
-    // const input = {
-    //   key: props.table,
-    //   orgId: props.id,
-    //   order: tempList,
-    //   totalItems: tempList.length,
-    //   totalPrice: totalPrice,
-    //   status: "SC",
-    // }
-    // const updateinput = {
-    //   id: ordered.orderId,
-    //   order: tempList,
-    //   totalItems: tempList.length,
-    //   totalPrice: totalPrice,
-    // }
-
-    // try {
-    //   ordered.placed
-    //     ? await API.graphql(
-    //         graphqlOperation(updateOrders, { input: updateinput })
-    //       ).then(res => {
-    //         res && setOrderList(temp)
-    //       })
-    //     : await API.graphql(
-    //         graphqlOperation(createOrders, { input: input })
-    //       ).then(res => {
-    //         res && setOrderList(temp)
-    //         setOrdered({ orderId: res.data.createOrders.id, placed: true })
-    //       })
-    // } catch (error) {
-    //   console.log(error)
-    // }
+  const askForBill = async () => {
+    const input = {
+      id: ordered.orderId,
+      status: "AB",
+    }
+    try {
+      await API.graphql(graphqlOperation(updateOrders, { input: input })).then(
+        res => {
+          console.log(res.data)
+        }
+      )
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -411,23 +302,8 @@ const Default = props => {
         }
         await API.graphql(graphqlOperation(getOrders, params)).then(res => {
           if (res.data.getOrders) {
+            res.data.getOrders.status === "GB" && navigate(`/bill/?id=${ordered.orderId}`)
             setFinalList(res.data.getOrders.order)
-
-            // let temp = [...orderList]
-            // res.data.getOrders.order.map((element, i) => {
-            //   temp[i].status = element.status
-            //   console.log(temp[i].status)
-            // })
-            // // temp.map(element => {
-            // //   res.data.getOrders.order.map(subelement => {
-            // //     if (element.id === subelement.id) {
-            // //       element["status"] = subelement["status"]
-            // //     }else{
-            // //       element["status"] = "O"
-            // //     }
-            // //   })
-            // // })
-            // setOrderList(temp)
           }
         })
       }
@@ -486,14 +362,14 @@ const Default = props => {
             searchList.map((item, index) => (
               <section className={defaultStyles.item} key={index}>
                 <img
-                  src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                  src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
                   title={index}
                 />
                 <label className={defaultStyles.itemName}>
                   {item.itemName}
                 </label>
                 <p className={defaultStyles.itemDescription}>
-                  {item.description}iuvlivliuvluyvl
+                  {item.desc}
                 </p>
                 <label className={defaultStyles.itemPrice}>
                   {item.itemPrice}
@@ -518,14 +394,14 @@ const Default = props => {
             ? list.map((item, index) => (
                 <section className={defaultStyles.item} key={index}>
                   <img
-                    src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                    src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
                     title={index}
                   />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
                   <p className={defaultStyles.itemDescription}>
-                    {item.description}iuvlivliuvluyvl
+                    {item.desc}
                   </p>
                   <label className={defaultStyles.itemPrice}>
                     {item.itemPrice}
@@ -549,14 +425,14 @@ const Default = props => {
             : filteredList.map((item, index) => (
                 <section className={defaultStyles.item} key={index}>
                   <img
-                    src={require(`../../images/icon/${imagesArray[index]}.svg`)}
+                    src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
                     title={index}
                   />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
                   <p className={defaultStyles.itemDescription}>
-                    {item.description}iuvlivliuvluyvl
+                    {item.desc}
                   </p>
                   <label className={defaultStyles.itemPrice}>
                     {item.itemPrice}
@@ -578,122 +454,6 @@ const Default = props => {
                 </section>
               ))}
         </section>
-        {/* <h1 className={defaultStyles.orgName}>{orgName}</h1>
-
-        <section className={defaultStyles.menuNav}>
-          <ul>
-            {categoryList.map(item => (
-              <li onClick={() => filterCategoricalList(item)}>
-                {item === "Category" ? "All" : item}
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className={defaultStyles.listContainer}>
-          <h1 className={defaultStyles.categoryTopic}>{selectedCategory}</h1>
-          {selectedCategory !== "All" &&
-            filteredList.map((item, index) => (
-              <section className={defaultStyles.greenCard} key={item.id}>
-                <section className={defaultStyles.textContainers}>
-                  <p className={defaultStyles.itemName}>{item.itemName}</p>
-                  <p className={defaultStyles.itemPrice}>
-                    Rs {item.itemPrice} /-
-                  </p>
-                </section>
-                <section className={defaultStyles.itemControls}>
-                  <FontAwesomeIcon
-                    icon={faCartPlus}
-                    onClick={() =>
-                      !item.ordered
-                        ? addItemToList(item)
-                        : removeItemFromList(item)
-                    }
-                    size="lg"
-                    color={!item.ordered ? "green" : "#db2626"}
-                  />
-                  <section>
-                    <FontAwesomeIcon
-                      icon={faMinusSquare}
-                      onClick={() =>
-                        item.qty > 1 && decQty(filteredList, index)
-                      }
-                      size="lg"
-                      color="#db2626"
-                    />
-                    <label className={defaultStyles.quantityText}>
-                      {item.qty}
-                    </label>
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      onClick={() => incQty(filteredList, index)}
-                      size="lg"
-                      color="green"
-                    />
-                  </section>
-                  <FontAwesomeIcon
-                    onClick={
-                      item.imageData
-                        ? () => setOpenInfo(item)
-                        : () => openItemInfo(item)
-                    }
-                    icon={faInfoCircle}
-                    size="lg"
-                    color="grey"
-                  />
-                </section>
-              </section>
-            ))}
-          {selectedCategory === "All" &&
-            list.map((item, index) => (
-              <section className={defaultStyles.greenCard} key={item.id}>
-                <section className={defaultStyles.textContainers}>
-                  <p className={defaultStyles.itemName}>{item.itemName}</p>
-                  <p className={defaultStyles.itemPrice}>
-                    Rs {item.itemPrice} /-
-                  </p>
-                </section>
-                <section className={defaultStyles.itemControls}>
-                  <FontAwesomeIcon
-                    icon={faCartPlus}
-                    onClick={() =>
-                      !item.ordered
-                        ? addItemToList(item)
-                        : removeItemFromList(item)
-                    }
-                    size="lg"
-                    color={!item.ordered ? "green" : "#db2626"}
-                  />
-                  <section>
-                    <FontAwesomeIcon
-                      icon={faMinusSquare}
-                      onClick={() => item.qty > 1 && decQty(list, index)}
-                      size="lg"
-                      color="#db2626"
-                    />
-                    <label className={defaultStyles.quantityText}>
-                      {item.qty}
-                    </label>
-                    <FontAwesomeIcon
-                      icon={faPlusSquare}
-                      onClick={() => incQty(list, index)}
-                      size="lg"
-                      color="green"
-                    />
-                  </section>
-                  <FontAwesomeIcon
-                    onClick={
-                      item.imageData
-                        ? () => setOpenInfo(item)
-                        : () => openItemInfo(item)
-                    }
-                    icon={faInfoCircle}
-                    size="lg"
-                    color="grey"
-                  />
-                </section>
-              </section>
-            ))}
-        </section> */}
         {orderList.length > 0 && (
           <section
             className={defaultStyles.orderListBottomPanel}
@@ -723,7 +483,20 @@ const Default = props => {
               />
             </label>
             <section>
-              <span onClick={() => setOpenOrderListPanel(false)}>+ Add</span>
+              {ordered.placed && (
+                <span
+                  className={defaultStyles.roundedButton}
+                  onClick={askForBill}
+                >
+                  Ask for bill
+                </span>
+              )}
+              <span
+                className={defaultStyles.roundedButton}
+                onClick={() => setOpenOrderListPanel(false)}
+              >
+                + Add
+              </span>
               <span>
                 Your table<span>{props.table}</span>
               </span>
@@ -745,24 +518,26 @@ const Default = props => {
           >
             {orderList.map((item, index) => (
               <section key={index} className={defaultStyles.orderListPanelItem}>
-                <img src={require("../../images/icon/burger.svg")} />
+                <img src={require("../../images/icon/"+item.category.toLowerCase()+".svg")} />
                 <section>
                   <section>
                     <span onClick={() => incQty(orderList, index)}>+</span>
                     <label>{item.qty}</label>
                     <span onClick={() => decQty(orderList, index)}>-</span>
                   </section>
-                  {finalList.length > 0 && finalList[index] && finalList[index].status === "CO" && (
-                    <label
-                      style={{
-                        lineHeight: "30px",
-                        color: "green",
-                        fontSize: "0.8em",
-                      }}
-                    >
-                      Your ordered item is confirmed
-                    </label>
-                  )}
+                  {finalList.length > 0 &&
+                    finalList[index] &&
+                    finalList[index].status === "CO" && (
+                      <label
+                        style={{
+                          lineHeight: "30px",
+                          color: "green",
+                          fontSize: "0.8em",
+                        }}
+                      >
+                        Your ordered item is confirmed
+                      </label>
+                    )}
                   <h4>{item.itemName}</h4>
                   <section>
                     <span>
@@ -805,135 +580,44 @@ const Default = props => {
                   <section>
                     <FontAwesomeIcon icon={faPenFancy} size="lg" color="grey" />
                     <input
-                      ref={requestRef}
                       maxLength={100}
                       placeholder={
                         item.request ? item.request : "Add your suggestions"
                       }
-                      disabled={item.state === 1 ? true : false}
+                      onChange={e => {
+                        item.request = e.target.value
+                      }}
                     />
                   </section>
                 </section>
-
-                {/* {finalList.length > 0 && finalList[index].status !== "CO" && ( */}
-                  <button
-                    // style={{ background: finalList.length > 0 && finalList[index] && finalList[index].status === "SC" && "crimson" }}
-                    // onClick={() => {
-                    //   finalList.length > 0 && finalList[index] && finalList[index].status === "SC"
-                    //     ? cancelOrder()
-                    //     : placeOrder(
-                    //         // item.id,
-                    //         // item.itemName,
-                    //         // item.itemPrice * item.qty,
-                    //         // item.qty,
-                    //         item,
-                    //         requestRef.current.value
-                    //       )
-                    // }}
-                    onClick={() => placeOrder(item, requestRef.current.value)}
-                  >
-                    Send for cooking
-                    {/* {finalList.length > 0 && finalList[index] && finalList[index].status === "SC" ? "Cancel Order" : "Send for cooking"} */}
-                  </button>
-                {/* )} */}
               </section>
             ))}
           </Carousel>
+          <button onClick={() => setOpenPinPanel(true)}>
+            Send for cooking
+          </button>
         </section>
-
-        {/* {orderList.length > 0 && (
-          <section
-            ref={orderListContainer}
-            className={defaultStyles.orderListContainer}
-          >
-            <section className={defaultStyles.orderListTopShow}>
-              <section
-                className={defaultStyles.orderListPuller}
-                onClick={() => setOrderListPulled(!orderListPulled)}
-              >
-                <label>{orderList.length} item/s selected</label>
-                <button>Send for cooking</button>
+        {openPinPanel && (
+          <section className={defaultStyles.pinPanelContainer}>
+            <section>
+              <label>Order pin</label>
+              <input
+                type="tel"
+                maxLength={4}
+                autoFocus
+                onChange={e =>
+                  e.target.value.length === 4 && placeOrder(e.target.value)
+                }
+              />
+              <section>
+                <input type="checkbox" name="pinExists" value="Pin Exists" />
+                <label for="pinExists">Already have a pin!</label>
               </section>
-            </section>
-            <br></br>
-            <h1 className={defaultStyles.orgName}>Your Orders</h1>
-            {orderList.map((item, index) => {
-              if (item.ordered) {
-                return (
-                  <section className={defaultStyles.greenCard} key={item._id}>
-                    <section className={defaultStyles.textContainers}>
-                      <p className={defaultStyles.itemName}>{item.itemName}</p>
-                      <p className={defaultStyles.itemPrice}>
-                        Rs {item.itemPrice * item.qty} /-
-                      </p>
-                    </section>
-                    <section className={defaultStyles.OrderItemControls}>
-                      <label className={defaultStyles.orderedQuantity}>
-                        Quantity : {item.qty}
-                      </label>
-                      <FontAwesomeIcon
-                        icon={faCartPlus}
-                        onClick={() =>
-                          !item.ordered
-                            ? addItemToList(item)
-                            : removeItemFromList(item)
-                        }
-                        size="lg"
-                        color={!item.ordered ? "green" : "#db2626"}
-                      />
-                    </section>
-                  </section>
-                )
-              }
-            })}
-            <section className={defaultStyles.confirmSection}>
-              <button
-                type="button"
-                className={defaultStyles.confirmButton}
-                onClick={toggleConfirmOrder}
-              >
-                Confirm Order
-              </button>
+              <p>Use order pin to track and update your order</p>
             </section>
           </section>
-        )} */}
+        )}
       </section>
-      {/* {confirmOrder && (
-        <ConfirmOrder
-          orderList={orderList}
-          id={props.id}
-          key={props.table}
-          getConfData={data => getConfData(data)}
-          switchConfirmOrder={toggleConfirmOrder}
-        />
-      )}
-      {openInfo !== null && (
-        <section className={defaultStyles.furtherDetailsContainer}>
-          <FurtherDetails
-            details={openInfo}
-            updateItem={updateItem}
-            updateItemOrder={item => updateItemOrder(item)}
-          />
-          <section
-            onClick={() => setOpenInfo(null)}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-            }}
-          ></section>
-        </section>
-      )}
-      {openConversation && <Conversation content={conversation} />}
-      {conversation.length > 0 && (
-        <FontAwesomeIcon
-          icon={faCommentDots}
-          onClick={() => setOpenConversation(!openConversation)}
-          size="2x"
-          color="#169188"
-          style={{ position: "fixed", bottom: 30, right: "5%", zIndex: 7 }}
-        />
-      )} */}
     </section>
   )
 }
@@ -950,6 +634,7 @@ export const itemsData = /* GraphQL */ `
         itemName
         itemPrice
         status
+        desc
       }
     }
     getSubscriber(id: $id) {
@@ -990,5 +675,3 @@ export const getOrders = /* GraphQL */ `
     }
   }
 `
-
-const imagesArray = ["pizza", "burger", "meal"]

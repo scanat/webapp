@@ -50,6 +50,20 @@ const Explore = () => {
     else setWidth(8)
   }, [])
 
+  const searchListManipulation = dt => {
+    dt
+      ? Anime({
+          targets: searchContainerRef.current,
+          bottom: ["-100%", 0],
+          duration: 600,
+        })
+      : Anime({
+          targets: searchContainerRef.current,
+          bottom: [0, "-100%"],
+          duration: 400,
+        })
+  }
+
   const searchItems = async () => {
     const filter = {
       filter: { orgName: { contains: searchRef.current.value } },
@@ -58,11 +72,7 @@ const Explore = () => {
     try {
       await API.graphql(graphqlOperation(listSubscribers, filter)).then(res => {
         let list = res.data.listSubscribers.items
-        Anime({
-          targets: searchContainerRef.current,
-          bottom: ["100%", 0],
-          duration: 600,
-        })
+        searchListManipulation(true)
         list.map(item => {
           getImage()
           async function getImage() {
@@ -104,6 +114,7 @@ const Explore = () => {
             ref={searchRef}
             placeholder="What are you looking for?"
             className={exploreStyles.searchBar}
+            onFocus={() => searchListManipulation(false)}
           />
           <button className={exploreStyles.gosearch} onClick={searchItems}>
             GO

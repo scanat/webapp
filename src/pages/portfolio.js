@@ -62,6 +62,8 @@ const Portfolio = ({ location }) => {
   const backLayoutPanel = useRef(null)
   const [category, setCategory] = useState("")
   const [categoryList, setCategoryList] = useState([])
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const [businessHourStatus, setBusinessHourStatus] = useState("")
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -78,6 +80,28 @@ const Portfolio = ({ location }) => {
           })
         ).then(res => {
           setPageData(res.data.getSubscriber)
+          if (res.data.getSubscriber.businessHours) {
+            let bh = res.data.getSubscriber.businessHours
+            console.log(bh)
+            if (
+              new Date().getDay() > days.indexOf(bh[0].day1) &&
+              new Date().getDay() < days.indexOf(bh[0].day2)
+            ) {
+              if (
+                new Date().getHours() > bh[0].time1 &&
+                new Date().getHours() < bh[0].time2
+              ) {
+                let txt = `Open Now - ${bh[0].time1} - ${bh[0].time2} (today)`
+                setBusinessHourStatus(txt)
+              } else {
+                let txt = `Closed Now - ${bh[0].time1} - ${bh[0].time2} (today)`
+                setBusinessHourStatus(txt)
+              }
+            } else {
+              let txt = `Closed Now - ${bh[0].time1} - ${bh[0].time2} (today)`
+              setBusinessHourStatus(txt)
+            }
+          }
         })
       } catch (error) {
         console.log(error)
@@ -219,20 +243,47 @@ const Portfolio = ({ location }) => {
           />
         </section>
         <h1>{pageData.orgName}</h1>
-        <label className={portfolioStyles.openTimes} onClick={openTiming}>
-          <label>Open now</label> - 10am - 11pm (today)
-          <FontAwesomeIcon
-            icon={faAngleDown}
-            style={{ margin: "0 0 -3px 5px" }}
-          />
-        </label>
-        <section ref={timingPanelRef} className={portfolioStyles.timingPanel}>
-          <label>(Mon - Sun) : 10am - 11pm</label>
-          <br />
-          <hr />
-          <h5>Happy hours</h5>
-          <label>(Mon and Fri) : 4pm - 7pm</label>
-        </section>
+        {pageData.businessHours && (
+          <>
+            <label className={portfolioStyles.openTimes} onClick={openTiming}>
+              <label>{businessHourStatus}</label>
+              <FontAwesomeIcon
+                icon={faAngleDown}
+                style={{ margin: "0 0 -3px 5px" }}
+              />
+            </label>
+            <section
+              ref={timingPanelRef}
+              className={portfolioStyles.timingPanel}
+            >
+              <h5>Business hours</h5>
+              <label>
+                ({pageData.businessHours[0].day1} -{" "}
+                {pageData.businessHours[0].day2}) :{" "}
+                {pageData.businessHours[0].time1} -{" "}
+                {pageData.businessHours[0].time2}
+              </label>
+              <br />
+              <hr />
+              <h5>Happy hours</h5>
+              {pageData.businessHours[1].day1 ===
+              pageData.businessHours[1].day2 ? (
+                <label>
+                  ({pageData.businessHours[1].day1} :{" "}
+                  {pageData.businessHours[1].time1} -{" "}
+                  {pageData.businessHours[1].time2}
+                </label>
+              ) : (
+                <label>
+                  ({pageData.businessHours[1].day1} -{" "}
+                  {pageData.businessHours[1].day2}) :{" "}
+                  {pageData.businessHours[1].time1} -{" "}
+                  {pageData.businessHours[1].time2}
+                </label>
+              )}
+            </section>
+          </>
+        )}
       </section>
 
       <section className={portfolioStyles.tabs}>
@@ -317,7 +368,7 @@ const Portfolio = ({ location }) => {
         <section className={portfolioStyles.gridCategory}>
           {categoryList.map((item, index) => (
             <section key={index} onClick={() => setCategory(item)}>
-              <img src={require(`../images/icon/${item}.svg`)} />
+              <img src={require(`../images/icon/${item.toLowerCase()}.svg`)} />
               <label>{item}</label>
             </section>
           ))}
@@ -486,6 +537,12 @@ export const portfolioData = /* GraphQL */ `
   query GetSubscriber($id: ID!) {
     getSubscriber(id: $id) {
       about
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       address1
       address2
       city
