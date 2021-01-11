@@ -1,5 +1,6 @@
 type Subscriber @model {
   id: String!
+  businessHours: [Time!]
   about: String
   group: String
   name: String
@@ -22,6 +23,13 @@ type Subscriber @model {
   customQr: [String!]
   ambience: [Ambiences!]
   employees: [Employees!]
+}
+
+type Time {
+  day1: String
+  day2: String
+  time1: String
+  time2: String
 }
 
 type Items @model {

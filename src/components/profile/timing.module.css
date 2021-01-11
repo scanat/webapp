@@ -1,0 +1,60 @@
+.container {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  align-items: center;
+}
+.addTiming {
+  width: 40px;
+  height: 40px;
+  margin: 10px 0;
+  border-radius: 50%;
+  background: #fd9941;
+  line-height: 40px;
+  font-size: 30px;
+  text-align: center;
+  color: whitesmoke;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+}
+.container > button {
+  margin: 5px 0;
+  border-radius: 30px;
+  line-height: 30px;
+  border-color: #23d7ca;
+  background: #fbfbfb;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  padding: 0 35px;
+}
+.subContainer {
+  width: 280px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  align-items: center;
+  padding: 8px 5px;
+  background: whitesmoke;
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  -moz-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+}
+.subContainer > label {
+  width: 100%;
+  text-align: left;
+  margin: 5px 0;
+  font-size: 0.8em;
+  color: #534141;
+}
+.subContainer > section {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 0 10px 0;
+}

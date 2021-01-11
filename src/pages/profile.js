@@ -90,6 +90,7 @@ const Profile = () => {
     card === "QR Codes" && navigate(`/pro/portal?id=qrcodes`)
     card === "Employee Management" &&
       navigate(`/pro/portal?id=employeemanagement`)
+    card === "Business Hours" && navigate(`/pro/portal?id=timing`)
   }
 
   return (

@@ -95,6 +95,8 @@ export const getItems = /* GraphQL */ `
         itemPrice
         image
         status
+        delivery
+        desc
       }
       category
       createdAt
@@ -118,6 +120,8 @@ export const listItemss = /* GraphQL */ `
           itemPrice
           image
           status
+          delivery
+          desc
         }
         category
         createdAt

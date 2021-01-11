@@ -8,9 +8,9 @@ import QrCodes from "../../components/profile/qrCodes"
 import Orders from "../../components/profile/orders"
 import IndexPage from ".."
 import CategoryBasic from "../../components/profile/category-basic"
+import Timing from "../../components/profile/timing"
 
 const Portal = ({ location }) => {
-
   switch (new URLSearchParams(location.search).get("id")) {
     case "businessdetails":
       return <UserDetails />
@@ -32,6 +32,9 @@ const Portal = ({ location }) => {
 
     case "employeemanagement":
       return <EmployeeManagement />
+
+    case "timing":
+      return <Timing />
 
     default:
       return <IndexPage />

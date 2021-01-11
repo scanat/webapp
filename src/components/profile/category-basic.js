@@ -63,6 +63,7 @@ const CategoryBasic = props => {
 
   const itemNameRef = useRef("")
   const itemPriceRef = useRef("")
+  const itemDescRef = useRef("")
   const itemImageRef = useRef("")
   const [imageUrl, setImageUrl] = useState("")
 
@@ -232,11 +233,13 @@ const CategoryBasic = props => {
         status: true,
         category: choiceCategory,
         image: imageUrl,
+        desc: itemDescRef.current.value,
       })
       setList(tempList)
       uploadImage()
       itemNameRef.current.value = ""
       itemPriceRef.current.value = ""
+      itemDescRef.current.value = ""
       setImageDetails({ name: "", type: "", image: "" })
       setLoading(false)
     }
@@ -247,6 +250,7 @@ const CategoryBasic = props => {
   const resetInputHandler = () => {
     itemNameRef.current.value = ""
     itemPriceRef.current.value = ""
+    itemDescRef.current.value = ""
 
     setImageDetails({ name: "", type: "", image: "" })
     setChanging(false)
@@ -291,6 +295,7 @@ const CategoryBasic = props => {
     console.log(item)
     itemNameRef.current.value = item.itemName
     itemPriceRef.current.value = item.itemPrice
+    itemDescRef.current.value = item.desc
     item.image !== ""
       ? getIndividualImage(item.image)
       : setImageDetails({ name: "", type: "", image: "" })
@@ -304,6 +309,7 @@ const CategoryBasic = props => {
       if (item.id === chosenItem.id) {
         item.itemName = itemNameRef.current.value
         item.itemPrice = itemPriceRef.current.value
+        item.desc = itemDescRef.current.value
         item.category = choiceCategory
         item.image = imageUrl
       }
@@ -325,7 +331,7 @@ const CategoryBasic = props => {
       }
       await API.graphql(graphqlOperation(updateItemsList, inputs)).then(data =>
         // navigate("/profile")
-        console.log(data)
+        updateCategoriesList()
       )
       setLoading(false)
     } catch (error) {
@@ -399,6 +405,28 @@ const CategoryBasic = props => {
   useEffect(() => {
     setDisplayCategory(false)
   }, [choiceCategory])
+
+  async function updateCategoriesList() {
+    let temp = []
+    list.map(item => {
+      temp.push(item.category)
+    })
+    let uniqueCategory = [...new Set(temp)]
+    console.log(uniqueCategory)
+    try {
+      let input = {
+        input: {
+          id: getCurrentUser()["custom:page_id"],
+          category: uniqueCategory,
+        },
+      }
+      await API.graphql(graphqlOperation(updateItemsList, input)).then(res =>
+        console.log(res)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Layout>
@@ -555,7 +583,11 @@ const CategoryBasic = props => {
           </section>
 
           <section className={categoryBasicStyles.itemControls}>
-            <textarea placeholder="Enter product description..." maxLength={100} />
+            <textarea
+              ref={itemDescRef}
+              placeholder="Enter product description..."
+              maxLength={100}
+            />
             {/* <section className={categoryBasicStyles.itemImageContainer}>
               {imageDetails.image !== "" ? (
                 <img
@@ -592,16 +624,18 @@ const CategoryBasic = props => {
 
         <section className={categoryBasicStyles.listContainer}>
           {list.map((item, id) => (
-            <section className={categoryBasicStyles.greenCard} key={item.id} on >
+            <section className={categoryBasicStyles.greenCard} key={item.id} on>
               <section className={categoryBasicStyles.parentDataContainer}>
                 <section className={categoryBasicStyles.basicDataContainer}>
                   <section className={categoryBasicStyles.textContainers}>
                     <section>
-                      <img
-                        srcSet={require("../../images/icons/categories/" +
-                          item.category.toLowerCase() +
-                          ".svg")}
-                      />
+                      {item.category && (
+                        <img
+                          srcSet={require("../../images/icons/categories/" +
+                            item.category.toLowerCase() +
+                            ".svg")}
+                        />
+                      )}
                       <p className={categoryBasicStyles.itemName}>
                         {item.itemName}
                       </p>
@@ -680,6 +714,7 @@ export const getItems = /* GraphQL */ `
         itemPrice
         image
         status
+        desc
       }
     }
   }

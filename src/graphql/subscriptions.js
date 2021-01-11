@@ -132,6 +132,8 @@ export const onCreateItems = /* GraphQL */ `
         itemPrice
         image
         status
+        delivery
+        desc
       }
       category
       createdAt
@@ -150,6 +152,8 @@ export const onUpdateItems = /* GraphQL */ `
         itemPrice
         image
         status
+        delivery
+        desc
       }
       category
       createdAt
@@ -168,6 +172,8 @@ export const onDeleteItems = /* GraphQL */ `
         itemPrice
         image
         status
+        delivery
+        desc
       }
       category
       createdAt

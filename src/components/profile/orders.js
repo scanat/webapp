@@ -91,19 +91,23 @@ const Orders = () => {
 
   const orderQueing = (id, subid, queueState) => {
     let temp = [...portfolioOrders]
-    temp.forEach((item, index) => {
-      if (index === id) {
-        Array(item.order).forEach((subitem, subindex) => {
-          if (subindex === subid) {
-            subitem.status = queueState
-            setPortfolioOrders(temp)
-            console.log(temp[id].order[subid])
-          }
-        })
-      }
-    })
-  }
+    let o1 = temp.find(obj => obj.id === id)
+    let o2 = o1.order.findIndex(obj => obj.id === subid)
+    setPortfolioOrders(o1.order[o2].status = queueState)
+    // temp.forEach((item, index) => {
+    //   if (index === id) {
+    //     item.order.forEach((subitem, subindex) => {
+    //       if (subindex === subid) {
+    //         subitem.status = queueState
+    //         console.log(temp[id].order[subid])
+    //       }
+    //     })
+    //   }
+    // })
 
+    // setPortfolioOrders(temp)
+  }
+  console.log(portfolioOrders)
   const generateBill = item => {
     let temp = [...portfolioOrders]
     temp.forEach(itemElement => {
@@ -120,7 +124,7 @@ const Orders = () => {
       input: {
         id: item.id,
         order: item.order,
-        status: item.status
+        status: item.status,
       },
     }
 
@@ -145,7 +149,11 @@ const Orders = () => {
                 <b>PIN:</b> {String(item.pin).substr(item.pin.length - 4)}
               </label>
             </h1>
-            {item.status === "AB" && <label style={{fontSize: '0.8em', color: 'green'}} >Customer has asked for the bill</label>}
+            {item.status === "AB" && (
+              <label style={{ fontSize: "0.8em", color: "green" }}>
+                Customer has asked for the bill
+              </label>
+            )}
             <hr />
             <ul>
               {item.order.map((subitem, id) => (
@@ -169,14 +177,14 @@ const Orders = () => {
                                   ? "crimson"
                                   : "#169188",
                             }}
-                            onClick={() => orderQueing(index, id, "CO-OQ")}
+                            onClick={() => orderQueing(item.id, subitem.id, "CO-OQ")}
                           >
                             Order at queue
                           </li>
-                          <li onClick={() => orderQueing(index, id, "CO-OK")}>
+                          <li onClick={() => orderQueing(item.id, subitem.id, "CO-OK")}>
                             Order at kitchen
                           </li>
-                          <li onClick={() => orderQueing(index, id, "CO-OS")}>
+                          <li onClick={() => orderQueing(item.id, subitem.id, "CO-OS")}>
                             Order served
                           </li>
                         </ul>
