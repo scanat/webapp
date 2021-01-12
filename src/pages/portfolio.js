@@ -150,65 +150,6 @@ const Portfolio = ({ location }) => {
 
       <Logo id={new URLSearchParams(location.search).get("id")} />
 
-      {/* <ul className={portfolioStyles.shareListContainer}>
-        <li onClick={() => setShareIconsVisible(!shareIconsVisible)}>
-          <FontAwesomeIcon
-            icon={faShareAlt}
-            color={shareIconsVisible ? "#169188" : "grey"}
-            size="lg"
-          />
-          <ul
-            className={portfolioStyles.shareSubListContainer}
-            style={{ display: shareIconsVisible ? "block" : "none" }}
-          >
-            <li>
-              <a
-                alt="Whatsapp"
-                href={`https://wa.me/?text=Here is my portfolio, please visit and help me share more! https://scanat.in/portfolio${
-                  getCurrentUser().website
-                }`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faWhatsapp} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Twitter"
-                href={`https://twitter.com/share?text=Here is my portfolio, please visit and help me share more!&url=https://scanat.in/portfolio${
-                  getCurrentUser().website
-                }`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faTwitter} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Facebook"
-                href={`https://facebook.com/sharer.php?u=https%3A%2F%2Fscanat.in/portfolio${
-                  getCurrentUser().website
-                }[title]=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faFacebookF} size="lg" />
-              </a>
-            </li>
-            <li>
-              <a
-                alt="Pinterest"
-                href={`http://pinterest.com/pin/create/button/?url=${
-                  getCurrentUser().website
-                }&description=Here+is+my+portfolio,+please+visit+and+help+me+share+more!`}
-                className={portfolioStyles.shareLink}
-              >
-                <FontAwesomeIcon icon={faPinterestP} size="lg" />
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul> */}
-
       <section className={portfolioStyles.orgTitle}>
         <section className={portfolioStyles.orgRate}>
           <FontAwesomeIcon
