@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-scanat-dev-211647-authRole",
+      "UnauthRoleArn": "arn:aws:iam::592761919790:role/amplify-scanat-dev-211647-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::592761919790:role/amplify-scanat-dev-211647-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-scanat-dev-211647-deployment",
+      "UnauthRoleName": "amplify-scanat-dev-211647-unauthRole",
+      "StackName": "amplify-scanat-dev-211647",
+      "StackId": "arn:aws:cloudformation:ap-south-1:592761919790:stack/amplify-scanat-dev-211647/a58120b0-0efd-11eb-81c9-0a445c80cb04",
+      "AmplifyAppId": "dn03x2qlxc44c"
+    },
+    "categories": {
+      "auth": {
+        "scanat9847905f": {}
+      }
+    }
+  }
+}
