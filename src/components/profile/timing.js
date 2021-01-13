@@ -19,7 +19,6 @@ const Timing = () => {
     time1: "10:00",
     time2: "22:00",
   })
-  const [timeArray, setTimeArray] = useState([time, happyTime])
 
   const uploadTiming = async () => {
     try {
