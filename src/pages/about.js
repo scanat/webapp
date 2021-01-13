@@ -2,7 +2,6 @@ import React, { useEffect } from "react"
 import Container from "../components/layout"
 import Banner from "../components/main/banner"
 import ScanAtWorks from "../components/main/scanatworks"
-import ClientReview from "../components/main/clientreview"
 import { navigate } from "gatsby"
 
 const AboutPage = () => {
@@ -20,7 +19,6 @@ const AboutPage = () => {
     <Container>
       <Banner />
       <ScanAtWorks />
-      <ClientReview />
     </Container>
   )
 }
