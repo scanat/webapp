@@ -36,8 +36,7 @@
         "react-elastic-carousel": "^0.7.5",
         "react-helmet": "^6.1.0",
         "react-qrcode-logo": "^2.2.1",
-        "react-swipeable-views": "^0.13.9",
-        "styled-components": "^5.1.1"
+        "react-swipeable-views": "^0.13.9"
     },
     "devDependencies": {
         "prettier": "2.0.5"
