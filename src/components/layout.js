@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import Amplify from "aws-amplify"
+import config from "../config.json"
+import Footer from "./footer"
 import Header from "../components/header"
 import layoutStyles from "./layout.module.css"
 import LoginModal from "./main/loginModal"
-import Footer from "./footer"
-import Amplify from "aws-amplify"
-import config from "../config.json"
+import React, { useState } from "react"
 
 Amplify.configure({
   Auth: {

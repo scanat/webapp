@@ -1,3 +1,4 @@
+import headerStyles from "./header.module.css"
 import React, { useState, useEffect } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
@@ -6,7 +7,6 @@ import {
   faUserCircle,
 } from "@fortawesome/free-regular-svg-icons"
 import { navigate, Link } from "gatsby"
-import headerStyles from "./header.module.css"
 import scanatlogo from "../images/scan_at_logo_textless.png"
 import { getCurrentUser, logout, isLoggedIn } from "../utils/auth"
 import { Auth } from "aws-amplify"

@@ -13,6 +13,7 @@
         "animejs": "^3.2.0",
         "aws-amplify": "^3.0.20",
         "aws-sdk": "^2.749.0",
+        "babel-plugin-styled-components": "^1.12.0",
         "bcrypt": "^5.0.0",
         "dotenv": "^8.2.0",
         "gatsby": "^2.24.47",
@@ -23,6 +24,7 @@
         "gatsby-plugin-react-helmet": "^3.3.10",
         "gatsby-plugin-s3": "^0.2.4",
         "gatsby-plugin-sharp": "^2.12.1",
+        "gatsby-plugin-styled-components": "^3.8.0",
         "gatsby-plugin-web-font-loader": "^1.0.4",
         "gatsby-plugin-your-fonts": "0.0.1",
         "gatsby-source-custom-api": "^2.1.4",
@@ -36,7 +38,8 @@
         "react-elastic-carousel": "^0.7.5",
         "react-helmet": "^6.1.0",
         "react-qrcode-logo": "^2.2.1",
-        "react-swipeable-views": "^0.13.9"
+        "react-swipeable-views": "^0.13.9",
+        "styled-components": "^5.2.1"
     },
     "devDependencies": {
         "prettier": "2.0.5"
@@ -46,8 +49,8 @@
     ],
     "license": "0BSD",
     "scripts": {
-        "build": "gatsby build",
-        "develop": "gatsby develop",
+        "build": "GATSBY_ENV=production gatsby build",
+        "develop": "GATSBY_ENV=development gatsby develop",
         "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,htm,html}\"",
         "start": "npm run develop",
         "serve": "gatsby serve",

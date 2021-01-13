@@ -1,19 +1,13 @@
-import React, { useState, useEffect, useRef } from "react"
 import defaultStyles from "./default.module.css"
-import AWS from "aws-sdk"
-import Amplify, { API, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
+import Amplify, { API, graphqlOperation } from "aws-amplify"
+import AWS from "aws-sdk"
+import Carousel from "react-elastic-carousel"
+import React, { useState, useEffect, useRef } from "react"
 // import ConfirmOrder from "./confirmOrder"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faAngleLeft,
-  // faCaretDown,
-  // faCaretUp,
-  // faCartPlus,
-  // faCommentDots,
-  // faEllipsisH,
-  // faFilter,
-  // faInfoCircle,
   faSearch,
   faTimesCircle,
   faAngleDoubleLeft,
@@ -24,16 +18,9 @@ import {
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons"
 import {
-  // faPlusSquare,
-  // faMinusSquare,
   faClock,
 } from "@fortawesome/free-regular-svg-icons"
-// import FurtherDetails from "./furtherDetails"
-// import Conversation from "./conversation"
-import Carousel from "react-elastic-carousel"
-import { element } from "prop-types"
 import { navigate } from "gatsby"
-// import burger from "../../images/icon/burger.png"
 
 const subscriberItemsS3 = new AWS.S3({
   region: "ap-south-1",
