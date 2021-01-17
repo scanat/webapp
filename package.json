@@ -13,6 +13,7 @@
         "animejs": "^3.2.0",
         "aws-amplify": "^3.0.20",
         "aws-sdk": "^2.749.0",
+        "babel-plugin-styled-components": "^1.12.0",
         "dotenv": "^8.2.0",
         "gatsby": "^2.30.2",
         "gatsby-image": "^2.9.0",
@@ -35,7 +36,8 @@
         "react-elastic-carousel": "^0.7.5",
         "react-helmet": "^6.1.0",
         "react-qrcode-logo": "^2.2.1",
-        "react-swipeable-views": "^0.13.9"
+        "react-swipeable-views": "^0.13.9",
+        "styled-components": "^5.2.1"
     },
     "devDependencies": {
         "prettier": "2.0.5"
