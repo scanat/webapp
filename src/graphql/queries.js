@@ -5,6 +5,12 @@ export const getSubscriber = /* GraphQL */ `
   query GetSubscriber($id: ID!) {
     getSubscriber(id: $id) {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
@@ -50,6 +56,12 @@ export const listSubscribers = /* GraphQL */ `
     listSubscribers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        businessHours {
+          day1
+          day2
+          time1
+          time2
+        }
         about
         group
         name

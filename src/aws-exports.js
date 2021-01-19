@@ -3,17 +3,17 @@
 
 const awsmobile = {
     "aws_project_region": "ap-south-1",
-    "aws_cognito_identity_pool_id": process.env.GATSBY_SUBSCRIBER_AUTH_POOL_ID,
-    "aws_cognito_region": "ap-south-1",
-    "aws_user_pools_id": "ap-south-1_O0WYUBp27",
-    "aws_user_pools_web_client_id": process.env.GATSBY_SUBSCRIBER_AUTH_WEBCLIENT_ID,
-    "oauth": {},
-    "aws_appsync_graphqlEndpoint": process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
+    "aws_appsync_graphqlEndpoint": "https://zstemfathbdrdc6qnif2nthbjm.appsync-api.ap-south-1.amazonaws.com/graphql",
     "aws_appsync_region": "ap-south-1",
     "aws_appsync_authenticationType": "API_KEY",
-    "aws_appsync_apiKey": process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
-    "aws_user_files_s3_bucket": process.env.GATSBY_S3_BUCKET,
+    "aws_appsync_apiKey": "da2-qacbvcnj4fgzlfbi643w544l6m",
+    "aws_cognito_identity_pool_id": "ap-south-1:e1668019-2239-4751-bb59-a9c8cfe0ea5a",
+    "aws_cognito_region": "ap-south-1",
+    "aws_user_pools_id": "ap-south-1_O0WYUBp27",
+    "aws_user_pools_web_client_id": "5ctg71s50rrnqje75jf2o889f5",
+    "oauth": {},
     "aws_user_files_s3_bucket_region": "ap-south-1"
 };
+
 
 export default awsmobile;

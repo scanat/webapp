@@ -8,6 +8,12 @@ export const createSubscriber = /* GraphQL */ `
   ) {
     createSubscriber(input: $input, condition: $condition) {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
@@ -51,6 +57,12 @@ export const updateSubscriber = /* GraphQL */ `
   ) {
     updateSubscriber(input: $input, condition: $condition) {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
@@ -94,6 +106,12 @@ export const deleteSubscriber = /* GraphQL */ `
   ) {
     deleteSubscriber(input: $input, condition: $condition) {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name

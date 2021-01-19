@@ -5,6 +5,12 @@ export const onCreateSubscriber = /* GraphQL */ `
   subscription OnCreateSubscriber {
     onCreateSubscriber {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
@@ -45,6 +51,12 @@ export const onUpdateSubscriber = /* GraphQL */ `
   subscription OnUpdateSubscriber {
     onUpdateSubscriber {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
@@ -85,6 +97,12 @@ export const onDeleteSubscriber = /* GraphQL */ `
   subscription OnDeleteSubscriber {
     onDeleteSubscriber {
       id
+      businessHours {
+        day1
+        day2
+        time1
+        time2
+      }
       about
       group
       name
