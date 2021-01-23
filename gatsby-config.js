@@ -49,8 +49,5 @@ module.exports = {
       },
     },
     `gatsby-plugin-offline`,
-  ],
-  flags: {
-    THE_FLAG: false
-  }
+  ]
 }
