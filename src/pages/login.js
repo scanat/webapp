@@ -412,6 +412,7 @@ const ResetSection = props => {
 
 const OtpSection = props => {
   const [otp, setOtp] = useState("")
+  const [errmsg, setErrmsg] = useState(null)
 
   useEffect(() => {
     if (otp.length === 6) {
@@ -450,6 +451,7 @@ const OtpSection = props => {
     try {
       await Auth.resendSignUp(localStorage.getItem("username")).then(res => {
         setOtp("")
+        setErrmsg("Otp Sent to "+ localStorage.getItem("username"))
       })
     } catch (error) {
       console.log(error)
@@ -498,6 +500,7 @@ const OtpSection = props => {
       >
         RESEND OTP
       </label>
+      <label>{errmsg}</label>
     </section>
   )
 }

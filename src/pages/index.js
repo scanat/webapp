@@ -48,6 +48,8 @@ const Explore = () => {
   const [result, setResult] = useState("No result")
   const [filtershow, setFiltershow] = useState(false)
   const [location, setLocation] = useState(null)
+  const [category, setCategory] = useState("Restaurant")
+  const [filter, setFilter] = useState(false)
 
   useEffect(() => {
     let c = carouselRef.current
@@ -97,13 +99,28 @@ const Explore = () => {
 
   async function searchItems() {
     let searchString = String(searchRef.current.value).toLowerCase()
-    const filter = {
-      filter: { orgName: { contains: searchString } },
-    }
-
-    try {
-      await API.graphql(graphqlOperation(listSubscribers, filter), amp).then(
-        res => {
+    if (filter) {
+      const filtered = {
+        filter: {
+          latitude: {
+            between: [
+              String(location.coords.latitude - 0.008),
+              String(location.coords.latitude + 0.008),
+            ],
+          },
+          longitude: {
+            between: [
+              String(location.coords.longitude - 0.008),
+              String(location.coords.longitude + 0.008),
+            ],
+          },
+        },
+      }
+      try {
+        await API.graphql(
+          graphqlOperation(listSubscribers, filtered),
+          amp
+        ).then(res => {
           let list = res.data.listSubscribers.items
           searchListManipulation(true)
           setSearchObjectList(list)
@@ -128,10 +145,47 @@ const Explore = () => {
               }
             }
           })
-        }
-      )
-    } catch (error) {
-      console.log(error)
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      const filtered = {
+        filter: { orgName: { contains: searchString } },
+      }
+      try {
+        await API.graphql(
+          graphqlOperation(listSubscribers, filtered),
+          amp
+        ).then(res => {
+          let list = res.data.listSubscribers.items
+          searchListManipulation(true)
+          setSearchObjectList(list)
+          list.map(item => {
+            getImage()
+            async function getImage() {
+              try {
+                const paramsImg = {
+                  Bucket: process.env.GATSBY_S3_BUCKET,
+                  Key: "public/" + item.logo,
+                }
+                await subscriberItemS3.getObject(paramsImg, (err, res) => {
+                  if (res) {
+                    item.imageData = Buffer.from(res.Body, "base64").toString(
+                      "ascii"
+                    )
+                    setSearchObjectList(list)
+                  }
+                })
+              } catch (error) {
+                console.log(error)
+              }
+            }
+          })
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -168,7 +222,7 @@ const Explore = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              margin: "10px 0",
+              margin: "15px 0",
             }}
           >
             <label style={{ fontSize: "0.8em", color: "grey", margin: "5px" }}>
@@ -194,7 +248,7 @@ const Explore = () => {
               justifyContent: "space-between",
               fontSize: "0.6em",
               color: "grey",
-              marginBottom: "10px",
+              marginBottom: "15px",
             }}
           >
             <li>1km</li>
@@ -202,13 +256,26 @@ const Explore = () => {
             <li>10km</li>
             <li>15km</li>
           </ul>
-          <select className={exploreStyles.locationselect}>
+          <select
+            onChange={e => setCategory(e.target.value)}
+            className={exploreStyles.locationselect}
+          >
             <option>Restaurants</option>
             <option>Hotels</option>
           </select>
           <section className={exploreStyles.buttonContainers}>
-            <button>Reset</button>
-            <button>Apply</button>
+            <button onClick={() => {
+              setFilter(false)
+              setFiltershow(false)
+            }}>Reset</button>
+            <button
+              onClick={() => {
+                setFilter(true)
+                setFiltershow(false)
+              }}
+            >
+              Apply
+            </button>
           </section>
         </section>
         <img
