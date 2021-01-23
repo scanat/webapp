@@ -1,7 +1,7 @@
 {
     "name": "scan-at",
     "private": true,
-    "description": "A dynamic contactless automation system for organizations or businesses.",
+    "description": "A contactless automation system for organizations and business entities.",
     "version": "2.1.0",
     "author": "Omkar Deshmukh <iamomkar666@gmail.com>",
     "dependencies": {
@@ -31,11 +31,13 @@
         "gatsby-transformer-sharp": "^2.10.1",
         "graphql": "^14.1.1",
         "react": "^16.14.0",
+        "react-awesome-slider": "^4.1.0",
         "react-copy-to-clipboard": "^5.0.2",
         "react-dom": "^16.12.0",
         "react-elastic-carousel": "^0.7.5",
         "react-helmet": "^6.1.0",
         "react-is": "^17.0.1",
+        "react-otp-input": "^2.3.0",
         "react-qrcode-logo": "^2.2.1",
         "react-swipeable-views": "^0.13.9",
         "styled-components": "^5.2.1"

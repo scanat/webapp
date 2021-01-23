@@ -21,8 +21,13 @@ module.exports = {
         path: `${__dirname}/src/images/backgrounds`,
       },
     },
-    `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-transformer-sharp`,
+      options: {
+        checkSupportedExtensions: true,
+      },
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -45,4 +50,7 @@ module.exports = {
     },
     `gatsby-plugin-offline`,
   ],
+  flags: {
+    THE_FLAG: false
+  }
 }

@@ -1,67 +1,54 @@
 import React, { useEffect, useState, useRef } from "react"
 import loginStyles from "./login.module.css"
 import Layout from "../components/layout"
-import { isLoggedIn, setUser } from "../utils/auth"
-import { graphql, navigate } from "gatsby"
+import { getCurrentUser, isLoggedIn, setUser } from "../utils/auth"
+import { navigate } from "gatsby"
+import { createSubscriber, createSubscriberPage } from "../graphql/mutations"
 import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
+import OtpInput from "react-otp-input"
+import AwesomeSlider from "react-awesome-slider"
+import "react-awesome-slider/dist/styles.css"
+import { faDharmachakra } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
 
-const LoginPage = ({ data }) => {
-  const [panel, setPanel] = useState("login")
-  const layoutRef = useRef(null)
-  const resetRef = useRef(null)
+const LoginPage = () => {
+  const [panel, setPanel] = useState(1)
+  const [category, setCategory] = useState("")
 
   useEffect(() => {
     isLoggedIn() && navigate("/")
-    console.log(data.subscriber)
   }, [])
 
   const switchPanel = panelId => {
-    let prevPanel = panel
     setPanel(panelId)
-    const animeLogin = Anime({
-      targets: layoutRef.current,
-      duration: 800,
-      easing: "easeInOutCubic",
-      marginLeft: [0, "-100%"],
-      autoplay: false,
-      direction:
-        panelId === "login" && prevPanel === "reg" ? "reverse" : "forwards",
-    })
-    const animeReset = Anime({
-      targets: resetRef.current,
-      duration: 800,
-      easing: "easeInOutCubic",
-      top: ["100vh", 0],
-      autoplay: false,
-      direction:
-        panelId === "login" && prevPanel === "reset" ? "reverse" : "forwards",
-    })
-    if (prevPanel === "login" && panelId === "reg") {
-      animeLogin.play()
-    } else if (prevPanel === "reg" && panelId === "login") {
-      animeLogin.play()
-    } else if (prevPanel === "login" && panelId === "reset") {
-      animeReset.play()
-    } else if (prevPanel === "reset" && panelId === "login") {
-      animeReset.play()
-    }
   }
 
   return (
     <Layout>
-      <section className={loginStyles.loginContainer}>
-        <section ref={layoutRef} className={loginStyles.loginLayout}>
-          <LoginSection switchPanel={panelId => switchPanel(panelId)} />
-          <RegistrationSection switchPanel={panelId => switchPanel(panelId)} />
-        </section>
-        <section ref={resetRef} className={loginStyles.resetLayout}>
+      <AwesomeSlider
+        style={{ width: "100%", height: "100vh" }}
+        bullets={false}
+        selected={panel}
+        organicArrows={false}
+        mobileTouch={false}
+      >
+        <div>
           <ResetSection switchPanel={panelId => switchPanel(panelId)} />
-        </section>
-      </section>
+        </div>
+        <div>
+          <LoginSection switchPanel={panelId => switchPanel(panelId)} />
+        </div>
+        <div>
+          <RegistrationSection switchPanel={panelId => switchPanel(panelId)} />
+        </div>
+        <div>
+          <OtpSection switchPanel={panelId => switchPanel(panelId)} />
+        </div>
+      </AwesomeSlider>
     </Layout>
   )
 }
@@ -73,16 +60,16 @@ const LoginSection = props => {
   const [password, setPassword] = useState(null)
   const [resultContent, setResultContent] = useState({ msg: "", status: true })
   const loginRef = useRef(null)
+  const noticeRef = useRef("")
 
-  const userLogin = async () => {
-    if (username !== null && password !== null) {
+  async function userLogin(){
+    if (username !== "" && password !== "") {
       try {
         const user = await Auth.signIn(username, password)
         setUser(user)
-        setResultContent({ msg: "Success", status: true })
-        navigate("/")
+        navigate("/profile")
       } catch (error) {
-        setResultContent({ msg: error.message, status: false })
+        noticeRef.current.innerHTML = error.message
       }
     } else {
       setResultContent({ msg: "Credentials are required!", status: false })
@@ -91,7 +78,14 @@ const LoginSection = props => {
 
   return (
     <section ref={loginRef} className={loginStyles.inputArea}>
-      <h3 style={{ margin: "20px", color: "white", fontSize: "14px" }}>
+      <h3
+        style={{
+          margin: "20px",
+          color: "white",
+          fontSize: "14px",
+          letterSpacing: 2,
+        }}
+      >
         LOGIN
       </h3>
       <input
@@ -99,7 +93,7 @@ const LoginSection = props => {
         className={loginStyles.input}
         required
         type="text"
-        placeholder="Username / Email"
+        placeholder="Phone Number / Email"
         onChange={event => setUsername(event.target.value)}
       />
       <input
@@ -132,17 +126,18 @@ const LoginSection = props => {
           fontSize: "13px",
         }}
       >
-        {resultContent.msg}
+        {resultContent.message}
       </label>
+      <p ref={noticeRef} style={{ fontSize: "0.8em", color: "crimson" }}></p>
       <p
         className={loginStyles.resetLabel}
-        onClick={() => props.switchPanel("reg")}
+        onClick={() => props.switchPanel(2)}
       >
         <u>Register New User?</u>
       </p>
       <p
         className={loginStyles.resetLabel}
-        onClick={() => props.switchPanel("reset")}
+        onClick={() => props.switchPanel(0)}
       >
         Forgot Password?
       </p>
@@ -173,12 +168,13 @@ const RegistrationSection = props => {
               password,
               attributes: {
                 email: username,
-                address: "",
                 name: name,
                 phone_number: `+91${phoneNumber}`,
               },
             })
-            props.switchPanel("login")
+            user && props.switchPanel(3)
+            localStorage.setItem("username", username)
+            localStorage.setItem("password", password)
             setResultContent({ msg: "User Created", status: true })
           } catch (error) {
             setResultContent(error.message)
@@ -201,7 +197,12 @@ const RegistrationSection = props => {
   return (
     <section className={loginStyles.inputArea}>
       <h3
-        style={{ marginBottom: "20px", color: "whitesmoke", fontSize: "14px" }}
+        style={{
+          marginBottom: "20px",
+          color: "whitesmoke",
+          fontSize: "14px",
+          letterSpacing: 2,
+        }}
       >
         REGISTER NEW USER
       </h3>
@@ -276,7 +277,7 @@ const RegistrationSection = props => {
       </label>
       <p
         className={loginStyles.resetLabel}
-        onClick={() => props.switchPanel("login")}
+        onClick={() => props.switchPanel(1)}
       >
         Retry Login?
       </p>
@@ -309,7 +310,7 @@ const ResetSection = props => {
   const resetPassword = async () => {
     try {
       await Auth.forgotPasswordSubmit(username, code, newPass)
-      props.switchPanel("login")
+      props.switchPanel(4)
       setResultContent({ msg: "Password has been reset", status: true })
     } catch (error) {
       setResultContent({ msg: error.message, status: false })
@@ -319,7 +320,12 @@ const ResetSection = props => {
   return (
     <section className={loginStyles.inputArea}>
       <h3
-        style={{ marginBottom: "20px", color: "whitesmoke", fontSize: "14px" }}
+        style={{
+          marginBottom: "20px",
+          color: "whitesmoke",
+          fontSize: "14px",
+          letterSpacing: 2,
+        }}
       >
         RESET
       </h3>
@@ -395,7 +401,7 @@ const ResetSection = props => {
         className={loginStyles.resetLabel}
         onClick={() => {
           setVerify(false)
-          props.switchPanel("login")
+          props.switchPanel(1)
         }}
       >
         Retry Login!
@@ -404,14 +410,94 @@ const ResetSection = props => {
   )
 }
 
-// export const query = graphql`
-//   query GetSubscribers {
-//     subscriber {
-//       listSubscribers {
-//         items {
-//           id
-//         }
-//       }
-//     }
-//   }
-// `
+const OtpSection = props => {
+  const [otp, setOtp] = useState("")
+
+  useEffect(() => {
+    if (otp.length === 6) {
+      confirmOtp()
+    }
+  }, [otp])
+
+  async function signIn() {
+    try {
+      let username = localStorage.getItem("username")
+      let password = localStorage.getItem("password")
+      await Auth.signIn(username, password).then(result => {
+        console.log(result)
+        if (result) {
+          setUser(result)
+          props.switchPanel(1)
+        }
+      })
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  async function confirmOtp() {
+    try {
+      console.log(otp)
+      await Auth.confirmSignUp(localStorage.getItem("username"), otp).then(
+        res => res && signIn()
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function resendOtp() {
+    try {
+      await Auth.resendSignUp(localStorage.getItem("username")).then(res => {
+        setOtp("")
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return (
+    <section className={loginStyles.inputArea}>
+      <h3
+        style={{
+          marginBottom: "20px",
+          color: "whitesmoke",
+          fontSize: "14px",
+          letterSpacing: 2,
+          textAlign: "center",
+        }}
+      >
+        VERIFY OTP <br />
+        <label
+          style={{ margin: "10px 0", fontWeight: "lighter", fontSize: "0.8em" }}
+        >
+          {localStorage.getItem("username")}
+        </label>
+      </h3>
+      <OtpInput
+        value={otp}
+        onChange={e => setOtp(e)}
+        numInputs={6}
+        inputStyle={{ width: 20, height: 30, margin: "0 5px" }}
+        containerStyle={{
+          background: "rgba(244, 244, 244, 0.8)",
+          padding: 10,
+          borderRadius: 5,
+        }}
+        shouldAutoFocus
+      />
+      <label
+        onClick={resendOtp}
+        style={{
+          fontSize: "0.8em",
+          letterSpacing: "1px",
+          fontWeight: "bold",
+          color: "whitesmoke",
+          marginTop: "10px",
+        }}
+      >
+        RESEND OTP
+      </label>
+    </section>
+  )
+}

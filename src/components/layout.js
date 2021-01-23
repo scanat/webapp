@@ -5,15 +5,9 @@ import Header from "../components/header"
 import layoutStyles from "./layout.module.css"
 import LoginModal from "./main/loginModal"
 import React, { useState } from "react"
+import awsmobile from "../aws-exports"
 
-Amplify.configure({
-  Auth: {
-    mandatorySignIn: true,
-    region: config.cognito.REGION,
-    userPoolId: config.cognito.USER_POOL_ID,
-    userPoolWebClientId: config.cognito.APP_CLIENT_ID,
-  },
-})
+Amplify.configure(awsmobile)
 
 const Layout = ({ children }) => {
   const [login, setLogin] = useState(false)

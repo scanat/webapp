@@ -27,24 +27,6 @@ const Bill = ({ location }) => {
   }, [])
 
   const phonePay = () => {
-    fetch("http://mercury-uat.phonepe.com", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        // Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      // body: {
-      //   merchantId: "UATMERCHANT",
-      //   key: "8289e078-be0b-484d-ae60-052f117f8deb",
-      // }
-    })
-      .then(response => {
-        console.log(response)
-      })
-      .catch(err => {
-        console.error(err)
-      })
   }
 
   return (
