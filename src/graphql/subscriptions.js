@@ -8,6 +8,7 @@ export const onCreateNotifications = /* GraphQL */ `
       topic
       description
       status
+      subscriberId
       createdAt
       updatedAt
     }
@@ -20,6 +21,7 @@ export const onUpdateNotifications = /* GraphQL */ `
       topic
       description
       status
+      subscriberId
       createdAt
       updatedAt
     }
@@ -32,6 +34,7 @@ export const onDeleteNotifications = /* GraphQL */ `
       topic
       description
       status
+      subscriberId
       createdAt
       updatedAt
     }

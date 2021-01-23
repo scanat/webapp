@@ -8,12 +8,13 @@ export const getNotifications = /* GraphQL */ `
       topic
       description
       status
+      subscriberId
       createdAt
       updatedAt
     }
   }
 `;
-export const listNotifications = /* GraphQL */ `
+export const listNotificationss = /* GraphQL */ `
   query ListNotificationss(
     $filter: ModelNotificationsFilterInput
     $limit: Int
@@ -25,6 +26,7 @@ export const listNotifications = /* GraphQL */ `
         topic
         description
         status
+        subscriberId
         createdAt
         updatedAt
       }
