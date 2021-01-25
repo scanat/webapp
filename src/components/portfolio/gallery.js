@@ -8,7 +8,7 @@ import {
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons"
 import AWS from "aws-sdk"
-import Anime from 'animejs'
+import Anime from "animejs"
 
 const subscriberAmbienceS3 = new AWS.S3({
   region: "ap-south-1",
@@ -53,9 +53,11 @@ const Gallery = props => {
         Key: `public/${props.id}/ambience.json`,
       }
       await subscriberAmbienceS3.getObject(params, (err, resp) => {
-        let resJson = new TextDecoder("utf-8").decode(resp.Body)
-        resJson = JSON.parse(resJson)
-        setImagesJson({ images: imagesJson.images.concat(resJson.images) })
+        if (resp) {
+          let resJson = new TextDecoder("utf-8").decode(resp.Body)
+          resJson = JSON.parse(resJson)
+          setImagesJson({ images: imagesJson.images.concat(resJson.images) })
+        }
       })
     } catch (error) {
       console.log(error)

@@ -9,6 +9,11 @@ export const onCreateNotifications = /* GraphQL */ `
       description
       status
       subscriberId
+      expiry
+      image
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -22,6 +27,11 @@ export const onUpdateNotifications = /* GraphQL */ `
       description
       status
       subscriberId
+      expiry
+      image
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -35,6 +45,53 @@ export const onDeleteNotifications = /* GraphQL */ `
       description
       status
       subscriberId
+      expiry
+      image
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateUserTable = /* GraphQL */ `
+  subscription OnCreateUserTable {
+    onCreateUserTable {
+      id
+      saved
+      orders
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUserTable = /* GraphQL */ `
+  subscription OnUpdateUserTable {
+    onUpdateUserTable {
+      id
+      saved
+      orders
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUserTable = /* GraphQL */ `
+  subscription OnDeleteUserTable {
+    onDeleteUserTable {
+      id
+      saved
+      orders
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }

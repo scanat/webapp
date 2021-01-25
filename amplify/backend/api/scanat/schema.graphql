@@ -4,4 +4,12 @@ type Notifications @model {
   description: String
   status: Boolean
   subscriberId: String
+  expiry: String
+  image: String
+}
+
+type UserTable @model {
+  id: ID!
+  saved: [String!]
+  orders: [String!]
 }

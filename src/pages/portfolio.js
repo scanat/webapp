@@ -37,9 +37,9 @@ import {
   faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons"
 import { Link, navigate } from "gatsby"
+import awsmobile from "../aws-exports"
 
-
-Amplify.configure({
+const amplifySubscriber = Amplify.configure({
   API: {
     aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
     aws_appsync_region: "ap-south-1",
@@ -47,6 +47,8 @@ Amplify.configure({
     aws_appsync_apiKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
   },
 })
+
+const amplifyUser = Amplify.configure(awsmobile)
 
 const Portfolio = ({ location }) => {
   const [shareIconsVisible, setShareIconsVisible] = useState(false)
@@ -77,29 +79,32 @@ const Portfolio = ({ location }) => {
         await API.graphql(
           graphqlOperation(portfolioData, {
             id: foundId,
-          })
+          }),
+          amplifySubscriber
         ).then(res => {
-          setPageData(res.data.getSubscriber)
-          if (res.data.getSubscriber.businessHours) {
-            let bh = res.data.getSubscriber.businessHours
-            console.log(bh)
-            if (
-              new Date().getDay() > days.indexOf(bh[0].day1) &&
-              new Date().getDay() < days.indexOf(bh[0].day2)
-            ) {
+          if (res) {
+            setPageData(res.data.getSubscriber)
+            if (res.data.getSubscriber.businessHours) {
+              let bh = res.data.getSubscriber.businessHours
+              console.log(bh)
               if (
-                new Date().getHours() > bh[0].time1 &&
-                new Date().getHours() < bh[0].time2
+                new Date().getDay() > days.indexOf(bh[0].day1) &&
+                new Date().getDay() < days.indexOf(bh[0].day2)
               ) {
-                let txt = `Open Now - ${bh[0].time1} - ${bh[0].time2} (today)`
-                setBusinessHourStatus(txt)
+                if (
+                  new Date().getHours() > bh[0].time1 &&
+                  new Date().getHours() < bh[0].time2
+                ) {
+                  let txt = `Open Now - ${bh[0].time1} - ${bh[0].time2} (today)`
+                  setBusinessHourStatus(txt)
+                } else {
+                  let txt = `Closed Now - ${bh[0].time1} - ${bh[0].time2} (today)`
+                  setBusinessHourStatus(txt)
+                }
               } else {
                 let txt = `Closed Now - ${bh[0].time1} - ${bh[0].time2} (today)`
                 setBusinessHourStatus(txt)
               }
-            } else {
-              let txt = `Closed Now - ${bh[0].time1} - ${bh[0].time2} (today)`
-              setBusinessHourStatus(txt)
             }
           }
         })
@@ -113,8 +118,9 @@ const Portfolio = ({ location }) => {
         await API.graphql(
           graphqlOperation(itemsData, {
             id: new URLSearchParams(location.search).get("id"),
-          })
-        ).then(res => setCategoryList(res.data.getItems.category))
+          }),
+          amplifySubscriber
+        ).then(res => res && setCategoryList(res.data.getItems.category))
       } catch (error) {
         console.log(error)
       }
@@ -139,6 +145,27 @@ const Portfolio = ({ location }) => {
     }).play()
   }
 
+  const saveToDirectory = () => {
+    localStorage.getItem("username")
+      ? addToSubscription()
+      : navigate(`/login?id=${new URLSearchParams(location.search).get("id")}`)
+
+    async function addToSubscription() {
+      try {
+        let inputs = {
+          input: {
+            id: localStorage.getItem("username")
+          },
+        }
+        await API.graphql(graphqlOperation(updateUserTable, inputs), amplifyUser).then(res =>
+          console.log(res)
+        )
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
   return (
     <Layout>
       <section
@@ -149,6 +176,10 @@ const Portfolio = ({ location }) => {
       <Banner id={new URLSearchParams(location.search).get("id")} />
 
       <Logo id={new URLSearchParams(location.search).get("id")} />
+
+      <button className={portfolioStyles.heart} onClick={saveToDirectory}>
+        <img src={require("../images/icon/heart.png")} />
+      </button>
 
       <section className={portfolioStyles.orgTitle}>
         <section className={portfolioStyles.orgRate}>
@@ -503,6 +534,13 @@ export const itemsData = /* GraphQL */ `
   query GetItems($id: ID!) {
     getItems(id: $id) {
       category
+    }
+  }
+`
+export const updateUserTable = /* GraphQL */ `
+  mutation UpdateUserTable($input: UpdateUserTableInput!) {
+    updateUserTable(input: $input) {
+      id
     }
   }
 `

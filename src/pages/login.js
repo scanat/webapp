@@ -15,7 +15,7 @@ import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
 
-const LoginPage = () => {
+const LoginPage = ({ location }) => {
   const [panel, setPanel] = useState(1)
   const [category, setCategory] = useState("")
 
@@ -40,7 +40,10 @@ const LoginPage = () => {
           <ResetSection switchPanel={panelId => switchPanel(panelId)} />
         </div>
         <div>
-          <LoginSection switchPanel={panelId => switchPanel(panelId)} />
+          <LoginSection
+            switchPanel={panelId => switchPanel(panelId)}
+            location={new URLSearchParams(location.search).get("id")}
+          />
         </div>
         <div>
           <RegistrationSection switchPanel={panelId => switchPanel(panelId)} />
@@ -62,12 +65,14 @@ const LoginSection = props => {
   const loginRef = useRef(null)
   const noticeRef = useRef("")
 
-  async function userLogin(){
+  async function userLogin() {
     if (username !== "" && password !== "") {
       try {
         const user = await Auth.signIn(username, password)
         setUser(user)
-        navigate("/profile")
+        props.location
+          ? navigate(`/portfolio/?id=${props.location}`)
+          : navigate("/profile")
       } catch (error) {
         noticeRef.current.innerHTML = error.message
       }
@@ -416,7 +421,8 @@ const OtpSection = props => {
 
   useEffect(() => {
     if (otp.length === 6) {
-      confirmOtp()
+      // confirmOtp()
+      createUserDb()
     }
   }, [otp])
 
@@ -425,7 +431,6 @@ const OtpSection = props => {
       let username = localStorage.getItem("username")
       let password = localStorage.getItem("password")
       await Auth.signIn(username, password).then(result => {
-        console.log(result)
         if (result) {
           setUser(result)
           props.switchPanel(1)
@@ -436,11 +441,24 @@ const OtpSection = props => {
     }
   }
 
+  async function createUserDb() {
+    confirmOtp()
+    try {
+      let inputs = {
+        id: localStorage.getItem("username")
+      }
+      await API.graphql(graphqlOperation(createUser, inputs)).then(
+        res => res && confirmOtp()
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   async function confirmOtp() {
     try {
-      console.log(otp)
       await Auth.confirmSignUp(localStorage.getItem("username"), otp).then(
-        res => res && signIn()
+        res => res && props.switchPanel(1)
       )
     } catch (error) {
       console.log(error)
@@ -451,7 +469,7 @@ const OtpSection = props => {
     try {
       await Auth.resendSignUp(localStorage.getItem("username")).then(res => {
         setOtp("")
-        setErrmsg("Otp Sent to "+ localStorage.getItem("username"))
+        setErrmsg("Otp Sent to " + localStorage.getItem("username"))
       })
     } catch (error) {
       console.log(error)
@@ -504,3 +522,11 @@ const OtpSection = props => {
     </section>
   )
 }
+
+export const createUser = /* GraphQL */ `
+  mutation CreateUser($input: CreateUserInput!) {
+    createUser(input: $input) {
+      id
+    }
+  }
+`

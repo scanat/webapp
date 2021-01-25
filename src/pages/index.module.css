@@ -4,7 +4,19 @@
   height: 100vh;
   overflow-x: hidden;
   background: white;
-  /* background: #1691880f; */
+}
+.animebg {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  transform: translateY(-100%);
+}
+.arowBtn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .imagebg {
   width: 900px;

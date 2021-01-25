@@ -17,9 +17,7 @@ import {
   faPenFancy,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons"
-import {
-  faClock,
-} from "@fortawesome/free-regular-svg-icons"
+import { faClock } from "@fortawesome/free-regular-svg-icons"
 import { navigate } from "gatsby"
 
 const subscriberItemsS3 = new AWS.S3({
@@ -83,21 +81,23 @@ const Default = props => {
         id: props.id,
       }
       await API.graphql(graphqlOperation(itemsData, params)).then(res => {
-        setOrgName(res.data.getSubscriber.orgName)
-        res.data.getItems.itemList.map(dataItem => {
-          if (dataItem.status) {
-            dataItem.qty = 1
-            // dataItem.ordered = false
-            dataItem.status = ""
-            list.push(dataItem)
-            let temp = [...list]
-            setList(temp)
-            if (!categoryList.includes(dataItem.category))
-              categoryList.push(dataItem.category)
-            let tempCat = [...categoryList]
-            setCategoryList(tempCat)
-          }
-        })
+        if (res) {
+          setOrgName(res.data.getSubscriber.orgName)
+          res.data.getItems.itemList.map(dataItem => {
+            if (dataItem.status) {
+              dataItem.qty = 1
+              // dataItem.ordered = false
+              dataItem.status = ""
+              list.push(dataItem)
+              let temp = [...list]
+              setList(temp)
+              if (!categoryList.includes(dataItem.category))
+                categoryList.push(dataItem.category)
+              let tempCat = [...categoryList]
+              setCategoryList(tempCat)
+            }
+          })
+        }
       })
     } catch (error) {
       console.log(error)
@@ -243,7 +243,7 @@ const Default = props => {
 
     try {
       const input = {
-        pin: props.id+pin,
+        pin: props.id + pin,
         key: props.table,
         orgId: props.id,
         order: tempList,
@@ -289,7 +289,8 @@ const Default = props => {
         }
         await API.graphql(graphqlOperation(getOrders, params)).then(res => {
           if (res.data.getOrders) {
-            res.data.getOrders.status === "GB" && navigate(`/bill/?id=${ordered.orderId}`)
+            res.data.getOrders.status === "GB" &&
+              navigate(`/bill/?id=${ordered.orderId}`)
             setFinalList(res.data.getOrders.order)
           }
         })
@@ -349,15 +350,15 @@ const Default = props => {
             searchList.map((item, index) => (
               <section className={defaultStyles.item} key={index}>
                 <img
-                  src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
+                  src={require("../../images/icon/" +
+                    item.category.toLowerCase() +
+                    ".svg")}
                   title={index}
                 />
                 <label className={defaultStyles.itemName}>
                   {item.itemName}
                 </label>
-                <p className={defaultStyles.itemDescription}>
-                  {item.desc}
-                </p>
+                <p className={defaultStyles.itemDescription}>{item.desc}</p>
                 <label className={defaultStyles.itemPrice}>
                   {item.itemPrice}
                 </label>
@@ -381,15 +382,15 @@ const Default = props => {
             ? list.map((item, index) => (
                 <section className={defaultStyles.item} key={index}>
                   <img
-                    src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
+                    src={require("../../images/icon/" +
+                      item.category.toLowerCase() +
+                      ".svg")}
                     title={index}
                   />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
-                  <p className={defaultStyles.itemDescription}>
-                    {item.desc}
-                  </p>
+                  <p className={defaultStyles.itemDescription}>{item.desc}</p>
                   <label className={defaultStyles.itemPrice}>
                     {item.itemPrice}
                   </label>
@@ -412,15 +413,15 @@ const Default = props => {
             : filteredList.map((item, index) => (
                 <section className={defaultStyles.item} key={index}>
                   <img
-                    src={require("../../images/icon/"+item.category.toLowerCase()+".svg")}
+                    src={require("../../images/icon/" +
+                      item.category.toLowerCase() +
+                      ".svg")}
                     title={index}
                   />
                   <label className={defaultStyles.itemName}>
                     {item.itemName}
                   </label>
-                  <p className={defaultStyles.itemDescription}>
-                    {item.desc}
-                  </p>
+                  <p className={defaultStyles.itemDescription}>{item.desc}</p>
                   <label className={defaultStyles.itemPrice}>
                     {item.itemPrice}
                   </label>
@@ -505,7 +506,11 @@ const Default = props => {
           >
             {orderList.map((item, index) => (
               <section key={index} className={defaultStyles.orderListPanelItem}>
-                <img src={require("../../images/icon/"+item.category.toLowerCase()+".svg")} />
+                <img
+                  src={require("../../images/icon/" +
+                    item.category.toLowerCase() +
+                    ".svg")}
+                />
                 <section>
                   <section>
                     <span onClick={() => incQty(orderList, index)}>+</span>
