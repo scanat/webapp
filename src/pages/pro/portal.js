@@ -9,6 +9,7 @@ import Orders from "../../components/profile/orders"
 import IndexPage from ".."
 import CategoryBasic from "../../components/profile/category-basic"
 import Timing from "../../components/profile/timing"
+import Posts from "../../components/profile/posts"
 
 const Portal = ({ location }) => {
   switch (new URLSearchParams(location.search).get("id")) {
@@ -35,6 +36,9 @@ const Portal = ({ location }) => {
 
     case "timing":
       return <Timing />
+
+    case "posts":
+      return <Posts />
 
     default:
       return <IndexPage />

@@ -45,6 +45,9 @@ export const createSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -94,6 +97,9 @@ export const updateSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -143,6 +149,9 @@ export const deleteSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -233,6 +242,7 @@ export const createGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -255,6 +265,7 @@ export const updateGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -277,6 +288,7 @@ export const deleteGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -361,6 +373,99 @@ export const deleteOrders = /* GraphQL */ `
       totalItems
       totalPrice
       rating
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createUsers = /* GraphQL */ `
+  mutation CreateUsers(
+    $input: CreateUsersInput!
+    $condition: ModelUsersConditionInput
+  ) {
+    createUsers(input: $input, condition: $condition) {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateUsers = /* GraphQL */ `
+  mutation UpdateUsers(
+    $input: UpdateUsersInput!
+    $condition: ModelUsersConditionInput
+  ) {
+    updateUsers(input: $input, condition: $condition) {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteUsers = /* GraphQL */ `
+  mutation DeleteUsers(
+    $input: DeleteUsersInput!
+    $condition: ModelUsersConditionInput
+  ) {
+    deleteUsers(input: $input, condition: $condition) {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createPosts = /* GraphQL */ `
+  mutation CreatePosts(
+    $input: CreatePostsInput!
+    $condition: ModelPostsConditionInput
+  ) {
+    createPosts(input: $input, condition: $condition) {
+      id
+      postedBy
+      topic
+      desc
+      img
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updatePosts = /* GraphQL */ `
+  mutation UpdatePosts(
+    $input: UpdatePostsInput!
+    $condition: ModelPostsConditionInput
+  ) {
+    updatePosts(input: $input, condition: $condition) {
+      id
+      postedBy
+      topic
+      desc
+      img
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deletePosts = /* GraphQL */ `
+  mutation DeletePosts(
+    $input: DeletePostsInput!
+    $condition: ModelPostsConditionInput
+  ) {
+    deletePosts(input: $input, condition: $condition) {
+      id
+      postedBy
+      topic
+      desc
+      img
       status
       createdAt
       updatedAt

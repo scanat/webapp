@@ -14,12 +14,18 @@
 .cardContainer {
   text-align: center;
 }
+.errMsg {
+  font-size: 0.8em;
+  color: #169188;
+  line-height: 30px;
+}
 .detailsContainer {
   display: flex;
   height: max-content;
   flex-direction: column;
   -ms-flex-direction: column;
   padding: 10px;
+  align-items: center;
 }
 .detailsLabels {
   float: left;
@@ -34,15 +40,25 @@
   float: left;
   padding: 5px;
   width: max-content;
-  border-radius: 10px;
+  border-radius: 0;
   margin-bottom: 10px;
   color: #169188;
+  font-size: 0.9em;
+  border-bottom: #cacaca 1px solid;
+  text-align: center;
 }
 .button {
-  border: thistle 1px solid;
+  width: 220px;
+  border: none;
   border-radius: 5px;
   padding: 5px;
   margin: 10px;
+  background: #169188;
+  color: white;
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.51);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .button:hover {
   cursor: pointer;

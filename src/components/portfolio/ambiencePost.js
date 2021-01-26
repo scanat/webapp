@@ -96,9 +96,11 @@ const AmbiencePost = props => {
         Key: `public/${getCurrentUser()["custom:page_id"]}/ambience.json`,
       }
       await subscriberAmbienceS3.getObject(params, (err, resp) => {
-        let resJson = new TextDecoder("utf-8").decode(resp.Body)
-        resJson = JSON.parse(resJson)
-        setImagesJson({ images: imagesJson.images.concat(resJson.images) })
+        if (resp) {
+          let resJson = new TextDecoder("utf-8").decode(resp.Body)
+          resJson = JSON.parse(resJson)
+          setImagesJson({ images: imagesJson.images.concat(resJson.images) })
+        }
       })
     } catch (error) {
       console.log(error)

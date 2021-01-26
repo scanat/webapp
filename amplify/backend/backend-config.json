@@ -1,4 +1,12 @@
 {
+  "auth": {
+    "scanatsubscribere68e1f0b": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
   "api": {
     "scanatsubscriber": {
       "service": "AppSync",
@@ -9,7 +17,7 @@
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
               "apiKeyExpirationDays": 365,
-              "description": "Scanat Subscriber"
+              "description": "Subscriber API Key"
             }
           },
           "additionalAuthenticationProviders": []
@@ -17,12 +25,10 @@
       }
     }
   },
-  "auth": {
-    "scanatsubscriberdc35bef2": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false
+  "storage": {
+    "subscriberStorage": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation"
     }
   }
 }

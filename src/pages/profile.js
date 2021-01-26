@@ -26,11 +26,11 @@ const Profile = () => {
         })
       )
       if (mods) {
-        const modules = await API.graphql(
+        await API.graphql(
           graphqlOperation(getModules, { id: mods.data.getSubscriber.category })
-        )
-
-        setRefreshModules(modules.data.getGlobalTable.modules)
+        ).then(res => {
+          setRefreshModules(res.data.getGlobalTable.modules)
+        })
       }
     } catch (error) {
       console.log(error)
@@ -91,13 +91,14 @@ const Profile = () => {
     card === "Employee Management" &&
       navigate(`/pro/portal?id=employeemanagement`)
     card === "Business Hours" && navigate(`/pro/portal?id=timing`)
+    card === "Posts" && navigate(`/pro/portal?id=posts`)
   }
 
   return (
     <Layout>
       <section className={profileStyles.container}>
         <section className={profileStyles.subContainer}>
-          {refreshModules.map((item, id) => (
+          {refreshModules.map((item, id) => item.status && (
             <ProfileCard key={id}>
               <section
                 key={id}
@@ -142,6 +143,7 @@ export const getModules = /* GraphQL */ `
         description
         default
         price
+        status
       }
     }
   }

@@ -28,15 +28,8 @@ import DishesWeek from "../portfolio/dishesWeek"
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
   apiVersion: "2006-03-01",
-  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_S3_SECRET_ACCESS_KEY,
-})
-
-const subscriberPageDb = new AWS.DynamoDB.DocumentClient({
-  region: "ap-south-1",
-  apiVersion: "2012-08-10",
-  accessKeyId: process.env.GATSBY_SUBSCRIBERPAGE_DB_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_SUBSCRIBERPAGE_DB_SECRET_ACCESS_KEY,
+  accessKeyId: "AKIAYUA25DEXFXQLVYPQ",
+  secretAccessKey: "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",
 })
 
 const Portfolio = () => {

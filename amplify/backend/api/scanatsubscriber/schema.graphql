@@ -23,6 +23,9 @@ type Subscriber @model {
   customQr: [String!]
   ambience: [Ambiences!]
   employees: [Employees!]
+  latitude: String
+  longitude: String
+  posts: [String!]
 }
 
 type Time {
@@ -75,6 +78,7 @@ type Module {
   description: String
   default: Boolean
   price: String
+  status: Boolean
 }
 
 type Category {
@@ -102,4 +106,19 @@ type Order {
   rating: String
   request: String
   status: String
+}
+
+type Users @model {
+  id: ID!
+  saved: [String!]
+  orders: [String!]
+}
+
+type Posts @model {
+  id: ID!
+  postedBy: String
+  topic: String
+  desc: String
+  img: String
+  status: Boolean
 }

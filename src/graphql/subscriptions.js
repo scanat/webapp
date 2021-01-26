@@ -42,6 +42,9 @@ export const onCreateSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -88,6 +91,9 @@ export const onUpdateSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -134,6 +140,9 @@ export const onDeleteSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -212,6 +221,7 @@ export const onCreateGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -231,6 +241,7 @@ export const onUpdateGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -250,6 +261,7 @@ export const onDeleteGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -325,6 +337,81 @@ export const onDeleteOrders = /* GraphQL */ `
       totalItems
       totalPrice
       rating
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateUsers = /* GraphQL */ `
+  subscription OnCreateUsers {
+    onCreateUsers {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateUsers = /* GraphQL */ `
+  subscription OnUpdateUsers {
+    onUpdateUsers {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteUsers = /* GraphQL */ `
+  subscription OnDeleteUsers {
+    onDeleteUsers {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreatePosts = /* GraphQL */ `
+  subscription OnCreatePosts {
+    onCreatePosts {
+      id
+      postedBy
+      topic
+      desc
+      img
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdatePosts = /* GraphQL */ `
+  subscription OnUpdatePosts {
+    onUpdatePosts {
+      id
+      postedBy
+      topic
+      desc
+      img
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeletePosts = /* GraphQL */ `
+  subscription OnDeletePosts {
+    onDeletePosts {
+      id
+      postedBy
+      topic
+      desc
+      img
       status
       createdAt
       updatedAt

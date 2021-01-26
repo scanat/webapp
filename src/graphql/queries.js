@@ -42,6 +42,9 @@ export const getSubscriber = /* GraphQL */ `
           name
         }
       }
+      latitude
+      longitude
+      posts
       createdAt
       updatedAt
     }
@@ -89,6 +92,9 @@ export const listSubscribers = /* GraphQL */ `
           id
           name
         }
+        latitude
+        longitude
+        posts
         createdAt
         updatedAt
       }
@@ -156,6 +162,7 @@ export const getGlobalTable = /* GraphQL */ `
         description
         default
         price
+        status
       }
       createdAt
       updatedAt
@@ -180,6 +187,7 @@ export const listGlobalTables = /* GraphQL */ `
           description
           default
           price
+          status
         }
         createdAt
         updatedAt
@@ -237,6 +245,70 @@ export const listOrderss = /* GraphQL */ `
         totalItems
         totalPrice
         rating
+        status
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getUsers = /* GraphQL */ `
+  query GetUsers($id: ID!) {
+    getUsers(id: $id) {
+      id
+      saved
+      orders
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listUserss = /* GraphQL */ `
+  query ListUserss(
+    $filter: ModelUsersFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        saved
+        orders
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getPosts = /* GraphQL */ `
+  query GetPosts($id: ID!) {
+    getPosts(id: $id) {
+      id
+      postedBy
+      topic
+      desc
+      img
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listPostss = /* GraphQL */ `
+  query ListPostss(
+    $filter: ModelPostsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPostss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        postedBy
+        topic
+        desc
+        img
         status
         createdAt
         updatedAt

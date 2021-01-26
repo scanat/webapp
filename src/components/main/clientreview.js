@@ -7,7 +7,6 @@ import Carousel from "react-elastic-carousel"
 const CardLayout = props => {
   return (
     <section key={props.id} className={clientReviewStyles.cardContainer}>
-
       <p className={clientReviewStyles.gist}>{props.gist}</p>
       <section className={clientReviewStyles.starContainer}>
         {props.rating >= 1 && <FontAwesomeIcon icon={faStar} color="#ffd700" />}
@@ -37,13 +36,14 @@ const ClientReview = () => {
           verticalMode={false}
           pagination={true}
           renderPagination={() => (
-            <FontAwesomeIcon icon={faEllipsisH} size='lg' color="grey" />
+            <FontAwesomeIcon icon={faEllipsisH} size="lg" color="grey" />
           )}
           focusOnSelect={true}
           showArrows={false}
         >
           {reviews.map((element, index) => (
             <CardLayout
+              key={index}
               id={index}
               rating={element.rating}
               gist={element.gist}

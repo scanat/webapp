@@ -5,8 +5,10 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { API, graphqlOperation } from "aws-amplify"
 import { getCurrentUser } from "../../utils/auth"
+import { navigate } from "gatsby"
 
 const Timing = () => {
+  const [errmsg, setErrmsg] = useState(null)
   const [time, setTime] = useState({
     day1: "Mon",
     day2: "Sat",
@@ -29,7 +31,7 @@ const Timing = () => {
         },
       }
       await API.graphql(graphqlOperation(updateSubscriber, inputs)).then(res =>
-        console.log(res)
+        res && setErrmsg("Business Hours updated for ")
       )
     } catch (error) {
       console.log(error)
@@ -212,6 +214,7 @@ const Timing = () => {
           </label>
           <FontAwesomeIcon icon={faCheckCircle} color="#169188" />
         </section>
+        {errmsg && <label className={timingStyles.errMsg}>{errmsg}{getCurrentUser()["custom:page_id"]}</label>}
         <button onClick={uploadTiming}>Upload</button>
       </section>
     </Layout>

@@ -3,7 +3,7 @@ import loginStyles from "./login.module.css"
 import Layout from "../components/layout"
 import { getCurrentUser, isLoggedIn, setUser } from "../utils/auth"
 import { navigate } from "gatsby"
-import { createSubscriber, createSubscriberPage } from "../graphql/mutations"
+import { createSubscriber } from "../graphql/mutations"
 import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
 import OtpInput from "react-otp-input"
@@ -74,13 +74,12 @@ const LoginSection = props => {
   const loginRef = useRef(null)
   const noticeRef = useRef("")
 
-  const userLogin = async () => {
-    if (username !== null && password !== null) {
+  async function userLogin(){
+    if (username !== "" && password !== "") {
       try {
-        await Auth.signIn(username, password).then(res => {
-          setUser(res)
-          navigate("/profile")
-        })
+        const user = await Auth.signIn(username, password)
+        setUser(user)
+        navigate("/profile")
       } catch (error) {
         noticeRef.current.innerHTML = error.message
       }
@@ -185,7 +184,6 @@ const RegistrationSection = props => {
                 phone_number: `+91${phoneNumber}`,
               },
             })
-            console.log(user)
             user && props.switchPanel(3)
             localStorage.setItem("username", username)
             localStorage.setItem("password", password)
@@ -431,22 +429,40 @@ const OtpSection = props => {
     if (otp.length === 6) {
       confirmOtp()
     }
-  })
+  }, [otp])
+
+  async function signIn() {
+    try {
+      let username = localStorage.getItem("username")
+      let password = localStorage.getItem("password")
+      await Auth.signIn(username, password).then(result => {
+        console.log(result)
+        if (result) {
+          setUser(result)
+          props.switchPanel(4)
+        }
+      })
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 
   async function confirmOtp() {
     try {
-      const user = await Auth.confirmSignUp(
-        localStorage.getItem("username"),
-        otp
+      console.log(otp)
+      await Auth.confirmSignUp(localStorage.getItem("username"), otp).then(
+        res => res && signIn()
       )
-      if (user) {
-        const userLogin = await Auth.signIn(
-          localStorage.getItem("username"),
-          localStorage.getItem("password")
-        )
-        userLogin && setUser(userLogin)
-        userLogin && props.switchPanel(4)
-      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function resendOtp() {
+    try {
+      await Auth.resendSignUp(localStorage.getItem("username")).then(res => {
+        setOtp("")
+      })
     } catch (error) {
       console.log(error)
     }
@@ -482,6 +498,18 @@ const OtpSection = props => {
         }}
         shouldAutoFocus
       />
+      <label
+        onClick={resendOtp}
+        style={{
+          fontSize: "0.8em",
+          letterSpacing: "1px",
+          fontWeight: "bold",
+          color: "whitesmoke",
+          marginTop: "10px",
+        }}
+      >
+        RESEND OTP
+      </label>
     </section>
   )
 }
@@ -560,7 +588,6 @@ const PageIdSelect = props => {
   }
 
   const finalizePageId = async () => {
-    console.log(getCurrentUser())
     const inputs = {
       id: pageId,
       group: "Owners",
@@ -568,7 +595,7 @@ const PageIdSelect = props => {
       phoneNumber: getCurrentUser().phone_number,
       name: getCurrentUser().name,
       category: props.category.name,
-      orgName: orgName,
+      orgName: String(orgName).toLowerCase(),
     }
     const pageInputs = {
       id: pageId,
@@ -581,9 +608,6 @@ const PageIdSelect = props => {
         }
       )
       await API.graphql(graphqlOperation(createSubscriber, { input: inputs }))
-      await API.graphql(
-        graphqlOperation(createSubscriberPage, { input: pageInputs })
-      )
 
       if (orgName.length > 0) {
         navigate("/profile")

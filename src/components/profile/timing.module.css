@@ -20,16 +20,24 @@
   -moz-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
   box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
 }
+.errMsg {
+  font-size: 0.8em;
+  color: #169188;
+  line-height: 30px;
+}
 .container > button {
   margin: 5px 0;
-  border-radius: 30px;
+  border-radius: 6px;
   line-height: 30px;
   border-color: #23d7ca;
-  background: #fbfbfb;
-  -webkit-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
-  -moz-box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
+  background: #169188;
   box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.75);
   padding: 0 35px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .subContainer {
   width: 280px;
