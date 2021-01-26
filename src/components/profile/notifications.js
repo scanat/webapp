@@ -7,8 +7,8 @@ import AWS from "aws-sdk"
 
 const notificationS3 = new AWS.S3({
   region: "ap-south-1",
-  accessKeyId: "AKIAYUA25DEXFXQLVYPQ",
-  secretAccessKey: "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",
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
 const pixelRatio =

@@ -189,7 +189,7 @@ const RegistrationSection = props => {
             localStorage.setItem("password", password)
             setResultContent({ msg: "User Created", status: true })
           } catch (error) {
-            setResultContent(error.message)
+            setResultContent(error.message, false)
             console.log(error)
           }
         } else {

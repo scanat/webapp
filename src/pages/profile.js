@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
 import profileStyles from "./profile.module.css"
 import Layout from "../components/layout"
-import { getCurrentUser } from "../utils/auth"
+import { getCurrentUser, logout } from "../utils/auth"
 import UserDetails from "../components/profile/userDetails"
 import { navigate } from "gatsby"
 import Modules from "../components/profile/modules"
-import Amplify, { API, graphqlOperation } from "aws-amplify"
+import Amplify, { API, Auth, graphqlOperation } from "aws-amplify"
 import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
@@ -94,28 +94,44 @@ const Profile = () => {
     card === "Posts" && navigate(`/pro/portal?id=posts`)
   }
 
+  async function logoutHandler() {
+    console.log("hi")
+    const res = await Auth.signOut().then(res => logout(logger))
+    function logger() {
+      navigate("/")
+    }
+  }
+
   return (
     <Layout>
       <section className={profileStyles.container}>
         <section className={profileStyles.subContainer}>
-          {refreshModules.map((item, id) => item.status && (
-            <ProfileCard key={id}>
-              <section
-                key={id}
-                className={profileStyles.cardChild}
-                onClick={() => handleCardClick(item.name)}
-              >
-                <h1 className={profileStyles.cardTopic}>
-                  {getCurrentUser()["custom:category"]} {item.name}
-                </h1>
-                <label style={{ fontSize: "0.8em", margin: 5, color: "grey" }}>
-                  {item.description}
-                </label>
-              </section>
-            </ProfileCard>
-          ))}
+          {refreshModules.map(
+            (item, id) =>
+              item.status && (
+                <ProfileCard key={id}>
+                  <section
+                    key={id}
+                    className={profileStyles.cardChild}
+                    onClick={() => handleCardClick(item.name)}
+                  >
+                    <h1 className={profileStyles.cardTopic}>
+                      {getCurrentUser()["custom:category"]} {item.name}
+                    </h1>
+                    <label
+                      style={{ fontSize: "0.8em", margin: 5, color: "grey" }}
+                    >
+                      {item.description}
+                    </label>
+                  </section>
+                </ProfileCard>
+              )
+          )}
         </section>
       </section>
+      <button className={profileStyles.logoutbtn} onClick={logoutHandler}>
+        Logout
+      </button>
 
       {/* <Portal content={portalContent} switchPortal={() => setPortalContent()} /> */}
     </Layout>
