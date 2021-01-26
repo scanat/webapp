@@ -48,7 +48,7 @@ const subscriberItemS3 = new AWS.S3({
 })
 
 const Explore = () => {
-  const [viewIndex, setViewIndex] = useState(0)
+  const [viewIndex, setViewIndex] = useState(2)
   const [directory, setDirectory] = useState([])
   const [postData, setPostData] = useState([])
 
@@ -456,56 +456,6 @@ const Home = () => {
 }
 
 const Post = props => {
-  const [postSubscriberId, setPostSubscriberId] = useState([])
-  const [pageData, setPageData] = useState([])
-
-  // useEffect(() => {
-  //   getPostSubscriptions()
-  // }, [])
-
-  // async function getPostSubscriptions() {
-  //   try {
-  //     await API.graphql(
-  //       graphqlOperation(getUsers, {
-  //         id: localStorage.getItem("username"),
-  //       })
-  //     ).then(res => getPostsId(res.data.getUsers.saved))
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  // async function getPostsId(data) {
-  //   setPostSubscriberId(data)
-  //   try {
-  //     const filtered = {
-  //       filter: {
-  //         status: {
-  //           eq: true,
-  //         },
-  //       },
-  //     }
-  //     await API.graphql(graphqlOperation(listPostss, filtered)).then(res => {
-  //       let resData = res.data.listPostss.items
-  //       resData.map(async element => {
-  //         let params = {
-  //           Bucket: process.env.GATSBY_S3_BUCKET,
-  //           Key: `public/${element.img}`,
-  //         }
-  //         await s3.getObject(params, (err, data) => {
-  //           err && console.log(err)
-  //           data &&
-  //             resData.map(item => {
-  //               item.imageData = data.Body
-  //             })
-  //             setPageData(resData)
-  //         })
-  //       })
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   return (
     <section className={exploreStyles.postContainer}>
@@ -521,26 +471,8 @@ const Post = props => {
 }
 
 const Directory = props => {
-  const [directory, setDirectory] = useState([])
 
   let colors = ["#8ee8e1", "#14b7ab", "#1cd7c9", , "#3fbfb6", "#f0f0f0"]
-
-  // useEffect(() => {
-  //   getDirectory()
-  // }, [])
-
-  // async function getDirectory() {
-  //   try {
-  //     let input = {
-  //       id: localStorage.getItem("username"),
-  //     }
-  //     await API.graphql(graphqlOperation(getUsers, input)).then(res =>
-  //       setDirectory(res.data.getUsers.saved)
-  //     )
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   return (
     <section className={exploreStyles.container}>
