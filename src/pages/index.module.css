@@ -1,16 +1,9 @@
 .container {
   width: 100%;
   position: relative;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   overflow-x: hidden;
   background: white;
-}
-.animebg {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  transform: translateY(-100%);
 }
 .arowBtn {
   position: absolute;
