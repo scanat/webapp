@@ -25,7 +25,7 @@ const Layout = ({ children }) => {
       <Header onHandleLoginModal={loginModal} loginStatus={login} />
       {login && <LoginModal onHandleLoginModal={closeLoginModal} />}
       <main className={layoutStyles.main}>{children}</main>
-      <Footer className={layoutStyles.footer} />
+      {/* <Footer className={layoutStyles.footer} /> */}
     </section>
   )
 }

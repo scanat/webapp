@@ -15,6 +15,15 @@ import awsmobile from "../aws-exports"
 
 Amplify.configure(awsmobile)
 
+const ampSub = Amplify.configure({
+  API: {
+    aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
+    aws_appsync_region: "ap-south-1",
+    aws_appsync_authenticationType: "API_KEY",
+    aws_appsync_apiKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
+  },
+})
+
 const LoginPage = ({ location }) => {
   const [panel, setPanel] = useState(1)
   const [category, setCategory] = useState("")
@@ -445,9 +454,9 @@ const OtpSection = props => {
     confirmOtp()
     try {
       let inputs = {
-        id: localStorage.getItem("username")
+        id: localStorage.getItem("username"),
       }
-      await API.graphql(graphqlOperation(createUser, inputs)).then(
+      await API.graphql(graphqlOperation(createUsers, inputs)).then(
         res => res && confirmOtp()
       )
     } catch (error) {
@@ -523,9 +532,9 @@ const OtpSection = props => {
   )
 }
 
-export const createUser = /* GraphQL */ `
-  mutation CreateUser($input: CreateUserInput!) {
-    createUser(input: $input) {
+export const createUsers = /* GraphQL */ `
+  mutation CreateUsers($input: CreateUsersInput!) {
+    createUsers(input: $input) {
       id
     }
   }

@@ -20,6 +20,7 @@ import Amplify, { API, graphqlOperation } from "aws-amplify"
 import Anime from "animejs"
 import awsmobile from "../aws-exports"
 import SwipeableViews from "react-swipeable-views"
+import { getCurrentUser } from "../utils/auth"
 
 const amp = Amplify.configure({
   API: {
@@ -30,16 +31,24 @@ const amp = Amplify.configure({
   },
 })
 
+const s3Config = {
+  // apiVersion: "2006-03-01",
+  region: "ap-south-1",
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
+}
+AWS.config.update(s3Config)
+var s3 = new AWS.S3()
 const subscriberItemS3 = new AWS.S3({
   STORAGE: {
     region: "ap-south-1",
-    accessKeyId: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
-    secretAccessKey: process.env.GATSBY_SUBSCRIBER_GL_API_KEY,
+    accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+    secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
   },
 })
 
 const Explore = () => {
-  const [viewIndex, setViewIndex] = useState(0)
+  const [viewIndex, setViewIndex] = useState(1)
 
   return (
     <Layout>
@@ -50,6 +59,11 @@ const Explore = () => {
         <div>
           <Post />
         </div>
+        {localStorage.getItem("username") && (
+          <div>
+            <Directory />
+          </div>
+        )}
       </SwipeableViews>
       <button
         className={exploreStyles.arowBtn}
@@ -399,7 +413,115 @@ const Home = () => {
 }
 
 const Post = () => {
-  return <section className={exploreStyles.container}></section>
+  const [postSubscriberId, setPostSubscriberId] = useState([])
+  const [pageData, setPageData] = useState([])
+
+  useEffect(() => {
+    getPostSubscriptions()
+  }, [])
+
+  async function getPostSubscriptions() {
+    try {
+      await API.graphql(
+        graphqlOperation(getUsers, {
+          id: localStorage.getItem("username"),
+        })
+      ).then(res => getPostsId(res.data.getUsers.saved))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function getPostsId(data) {
+    setPostSubscriberId(data)
+    try {
+      const filtered = {
+        filter: {
+          status: {
+            eq: true,
+          },
+        },
+      }
+      await API.graphql(graphqlOperation(listPostss, filtered)).then(res => {
+        let resData = res.data.listPostss.items
+        resData.map(async element => {
+          let params = {
+            Bucket: process.env.GATSBY_S3_BUCKET,
+            Key: `public/${element.img}`,
+          }
+          await s3.getObject(params, (err, data) => {
+            err && console.log(err)
+            data &&
+              resData.map(item => {
+                item.imageData = data.Body
+                  // "data:" + data.ContentType + ";base64," + encode(data.Body)
+              })
+              setPageData(resData)
+          })
+        })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  console.log(pageData)
+  function encode(data) {
+    var str = data.reduce(function (a, b) {
+      return a + String.fromCharCode(b)
+    }, "")
+    return btoa(str).replace(/.{76}(?=.)/g, "$&\n")
+  }
+
+  return (
+    <section className={exploreStyles.postContainer}>
+      <button onClick={getPostsId}>Click</button>
+      {pageData.map((item, id) => (
+        <section className={exploreStyles.postItem} key={id}>
+          <img src={item.imageData} />
+          <label>{item.topic}</label>
+          <p>{item.desc}</p>
+        </section>
+      ))}
+    </section>
+  )
+}
+
+const Directory = () => {
+  const [directory, setDirectory] = useState([])
+
+  let colors = ["#8ee8e1", "#14b7ab", "#1cd7c9", , "#3fbfb6", "#f0f0f0"]
+
+  useEffect(() => {
+    getDirectory()
+  }, [])
+
+  async function getDirectory() {
+    try {
+      let input = {
+        id: localStorage.getItem("username"),
+      }
+      await API.graphql(graphqlOperation(getUsers, input)).then(res =>
+        setDirectory(res.data.getUsers.saved)
+      )
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return (
+    <section className={exploreStyles.container}>
+      {Array(directory).map(item => (
+        <section
+          className={exploreStyles.directoryItem}
+          style={{
+            background: colors[Math.floor(Math.random() * colors.length)],
+          }}
+        >
+          <label>{item}</label>
+        </section>
+      ))}
+    </section>
+  )
 }
 
 export const listSubscribers = /* GraphQL */ `
@@ -414,6 +536,41 @@ export const listSubscribers = /* GraphQL */ `
         logo
       }
       nextToken
+    }
+  }
+`
+export const listPostss = /* GraphQL */ `
+  query ListPostss(
+    $filter: ModelPostsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPostss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        postedBy
+        topic
+        desc
+        img
+        status
+        createdAt
+      }
+      nextToken
+    }
+  }
+`
+
+export const getUsers = /* GraphQL */ `
+  query GetUsers($id: ID!) {
+    getUsers(id: $id) {
+      saved
+    }
+  }
+`
+export const getSubscriber = /* GraphQL */ `
+  query GetSubscriber($id: ID!) {
+    getSubscriber(id: $id) {
+      posts
     }
   }
 `

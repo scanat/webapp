@@ -39,7 +39,7 @@ import {
 import { Link, navigate } from "gatsby"
 import awsmobile from "../aws-exports"
 
-const amplifySubscriber = Amplify.configure({
+Amplify.configure({
   API: {
     aws_appsync_graphqlEndpoint: process.env.GATSBY_SUBSCRIBER_GL_ENDPOINT,
     aws_appsync_region: "ap-south-1",
@@ -48,7 +48,7 @@ const amplifySubscriber = Amplify.configure({
   },
 })
 
-const amplifyUser = Amplify.configure(awsmobile)
+// const amplifyUser = Amplify.configure(awsmobile)
 
 const Portfolio = ({ location }) => {
   const [shareIconsVisible, setShareIconsVisible] = useState(false)
@@ -79,8 +79,7 @@ const Portfolio = ({ location }) => {
         await API.graphql(
           graphqlOperation(portfolioData, {
             id: foundId,
-          }),
-          amplifySubscriber
+          })
         ).then(res => {
           if (res) {
             setPageData(res.data.getSubscriber)
@@ -118,8 +117,7 @@ const Portfolio = ({ location }) => {
         await API.graphql(
           graphqlOperation(itemsData, {
             id: new URLSearchParams(location.search).get("id"),
-          }),
-          amplifySubscriber
+          })
         ).then(res => res && setCategoryList(res.data.getItems.category))
       } catch (error) {
         console.log(error)
@@ -154,10 +152,11 @@ const Portfolio = ({ location }) => {
       try {
         let inputs = {
           input: {
-            id: localStorage.getItem("username")
+            id: localStorage.getItem("username"),
+            saved: [new URLSearchParams(location.search).get("id")]
           },
         }
-        await API.graphql(graphqlOperation(updateUserTable, inputs), amplifyUser).then(res =>
+        await API.graphql(graphqlOperation(updateUsers, inputs)).then(res =>
           console.log(res)
         )
       } catch (error) {
@@ -537,9 +536,9 @@ export const itemsData = /* GraphQL */ `
     }
   }
 `
-export const updateUserTable = /* GraphQL */ `
-  mutation UpdateUserTable($input: UpdateUserTableInput!) {
-    updateUserTable(input: $input) {
+export const updateUsers = /* GraphQL */ `
+  mutation UpdateUsers($input: UpdateUsersInput!) {
+    updateUsers(input: $input) {
       id
     }
   }
