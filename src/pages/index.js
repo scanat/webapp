@@ -53,7 +53,7 @@ const Explore = () => {
   const [postData, setPostData] = useState([])
 
   useEffect(() => {
-    getDirectory()
+    localStorage.getItem("username") && getDirectory()
     getPosts()
   }, [])
 
@@ -110,7 +110,7 @@ const Explore = () => {
         <div>
           <Post posts={postData} />
         </div>
-        {!typeof(window) === "UNDEFINED" && localStorage.getItem("username") && (
+        {directory.length > 0 && (
           <div>
             <Directory directory={directory} />
           </div>
