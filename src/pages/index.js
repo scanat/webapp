@@ -59,7 +59,7 @@ const Explore = () => {
         <div>
           <Post />
         </div>
-        {localStorage.getItem("username") && (
+        {!typeof(window) === "UNDEFINED" && localStorage.getItem("username") && (
           <div>
             <Directory />
           </div>
