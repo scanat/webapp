@@ -12,16 +12,16 @@
   transform: translateY(-50%);
 }
 .imagebg {
-  width: 900px;
+  width: 1300px;
   position: absolute;
-  bottom: 50px;
+  bottom: 60px;
   left: 0;
   opacity: 0.8;
 }
 .imageclouds {
-  width: 1000px;
+  width: 1600px;
   position: absolute;
-  top: 10px;
+  top: 40px;
   right: 0;
   opacity: 0.5;
 }
@@ -84,7 +84,7 @@
   -ms-flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 20vh;
+  margin-top: 30vh;
 }
 .searchBarContainer {
   width: 50%;

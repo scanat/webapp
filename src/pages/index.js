@@ -48,7 +48,7 @@ const subscriberItemS3 = new AWS.S3({
 })
 
 const Explore = () => {
-  const [viewIndex, setViewIndex] = useState(2)
+  const [viewIndex, setViewIndex] = useState(0)
   const [directory, setDirectory] = useState([])
   const [postData, setPostData] = useState([])
 
@@ -148,7 +148,7 @@ const Home = () => {
       targets: buildingRef.current,
       left: [0, `${document.body.offsetWidth - 900}px`],
       direction: "alternate",
-      duration: 30000,
+      duration: 60000,
       easing: "linear",
       loop: true,
     })

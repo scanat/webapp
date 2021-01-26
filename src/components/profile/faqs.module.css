@@ -1,0 +1,23 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  -ms-flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+}
+.faqContainer {
+  width: calc(80% - 10px);
+  margin: 10px calc(10% - 10px);
+  padding: 5px;
+}
+.faqContainer > label {
+  color: #116699;
+  font-size: 0.9em;
+  margin: 8px 0;
+}
+.faqContainer > p {
+  font-size: 0.8em;
+}

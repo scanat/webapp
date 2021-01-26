@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react"
+import Anime from "animejs"
+import React, { useEffect, useRef, useState } from "react"
 import profileStyles from "./profile.module.css"
 import Layout from "../components/layout"
-import { faSignOutAlt, faUserEdit } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faKey, faPenAlt } from "@fortawesome/free-solid-svg-icons"
-import { navigate, useStaticQuery } from "gatsby"
+import { faKey } from "@fortawesome/free-solid-svg-icons"
+import { navigate } from "gatsby"
 import { Auth } from "aws-amplify"
 import { getCurrentUser, logout } from "../utils/auth"
-import SwipeableViews from "react-swipeable-views"
-import tmpImage from "../images/stores.png"
+import Feedback from "../components/profile/feedback"
+import Faqs from "../components/profile/faqs"
+import ManageAddress from "../components/profile/manageAddress"
 
 const Profile = () => {
-  const [viewIndex, setViewIndex] = useState(0)
+  const [currentPage, setCurrentPage] = useState(null)
   const [snackMessage, setSnackMessage] = useState()
   const [snackError, setSnackError] = useState()
+  const absoluteContainerRef = useRef(null)
 
   useEffect(() => {
     setTimeout(() => {
@@ -21,113 +23,97 @@ const Profile = () => {
     }, 5000)
   }, [snackMessage, snackError])
 
+  useEffect(() => {
+    currentPage
+      ? Anime({
+          targets: absoluteContainerRef.current,
+          left: ["100%", 0],
+          duration: 500,
+          easing: "linear",
+        })
+      : Anime({
+          targets: absoluteContainerRef.current,
+          left: [0, "100%"],
+          duration: 500,
+          easing: "linear",
+        })
+  }, [currentPage])
+
   const snackHandler = (msg, err) => {
     setSnackMessage(msg)
     setSnackError(err)
   }
 
+  const logoutHandler = async () => {
+    const res = await Auth.signOut()
+    console.log(res)
+    logout(logger)
+    function logger() {
+      navigate("/")
+    }
+  }
+
   return (
     <Layout>
-      <nav>
-        <ul>
-          <li
-            onClick={() => setViewIndex(0)}
-            style={{
-              textDecoration:
-                viewIndex === 0 && "underline whitesmoke solid 1px",
-              color: viewIndex === 0 && "white",
-            }}
-          >
-            Directory
-          </li>
-          <li
-            onClick={() => setViewIndex(1)}
-            style={{
-              textDecoration:
-                viewIndex === 1 && "underline whitesmoke solid 1px",
-              color: viewIndex === 0 && "white",
-            }}
-          >
-            Order History
-          </li>
-          <li
-            onClick={() => setViewIndex(2)}
-            style={{
-              textDecoration:
-                viewIndex === 2 && "underline whitesmoke solid 1px",
-              color: viewIndex === 0 && "white",
-            }}
-          >
-            Profile
-          </li>
+      <section className={profileStyles.container}>
+        <ProfileHeader />
+        <ul className={profileStyles.userControlsContainer}>
+          <li onClick={() => setCurrentPage("orders")}>Your Orders</li>
+          <li onClick={() => setCurrentPage("notifications")}>Notifications</li>
+          <li onClick={() => setCurrentPage("address")}>Manage Address</li>
+          <li onClick={() => setCurrentPage("faqs")}>FAQs</li>
+          <li onClick={() => setCurrentPage("feedback")}>Send Feedback</li>
+          <li onClick={logoutHandler}>Logout</li>
         </ul>
-      </nav>
-      <SwipeableViews index={viewIndex}>
-        <Directory />
-        <OrderHistory currentUser={getCurrentUser()} />
-        <UserDetails handleSnack={(msg, err) => snackHandler(msg, err)} />
-      </SwipeableViews>
+      </section>
+
+      <section
+        ref={absoluteContainerRef}
+        className={profileStyles.absoluteContainer}
+      >
+        <button className={profileStyles.backarrow} onClick={() => setCurrentPage(null)}><img src={require("../images/icon/arrowback.png")} /></button>
+        <PageHandler page={currentPage && currentPage} />
+      </section>
     </Layout>
   )
 }
 
 export default Profile
 
-const ProfileCard = ({ children }) => {
-  return <section className={profileStyles.card}>{children}</section>
-}
-
-const DirectoryCard = props => {
+const ProfileHeader = () => {
   return (
-    <section className={profileStyles.directoryCardContainer}>
-      <img className={profileStyles.logo} src={props.image} alt="" />
-      <section className={profileStyles.content}>
-        <h1>{props.name}</h1>
-        <label> - {props.pageId}</label>
+    <section className={profileStyles.pheader}>
+      <section>
+        <h5>{getCurrentUser().name}</h5>
+        <label>{getCurrentUser().email}</label>
       </section>
+      <h1>{String(getCurrentUser().name).substr(0, 1)}</h1>
     </section>
   )
 }
-const directoryList = [
-  {
-    name: "Chit Chaat Corner",
-    pageId: "chitchaatcorner",
-    image: tmpImage,
-  },
-  {
-    name: "Chit Chaats",
-    pageId: "chitchaats",
-    image: tmpImage,
-  },
-  {
-    name: "Chaat Corner",
-    pageId: "chitcorner",
-    image: tmpImage,
-  },
-  {
-    name: "Delo Retro",
-    pageId: "deloretro",
-    image: tmpImage,
-  },
-]
 
-const Directory = () => {
-  const [list, setList] = useState([])
+const PageHandler = props => {
+  switch (props.page) {
+    case "orders":
+      return <Feedback />
+      break
+    case "orders":
+      return <Feedback />
+      break
+    case "address":
+      return <ManageAddress />
+      break
+    case "faqs":
+      return <Faqs />
+      break
+    case "feedback":
+      return <Feedback />
+      break
 
-  useEffect(() => {
-    setList(directoryList)
-  }, [])
-  return (
-    <section className={profileStyles.detailsContainer}>
-      {list.map(item => (
-        <DirectoryCard
-          name={item.name}
-          pageId={item.pageId}
-          image={item.image}
-        />
-      ))}
-    </section>
-  )
+    default:
+      return <section></section>
+      break
+  }
 }
 
 const UserDetails = props => {
@@ -297,72 +283,6 @@ const UserDetails = props => {
       >
         Logout
       </button>
-    </section>
-  )
-}
-
-const OrderHistoryCard = props => {
-  return (
-    <section className={profileStyles.orderContent}>
-      <h1>{props.name}</h1>
-      <label className={profileStyles.smallText}>Date - {props.date}</label>
-      <label className={profileStyles.smallText}>
-        Total - Rs. {props.total} /-
-      </label>
-      <label>STATUS - {props.status}</label>
-    </section>
-  )
-}
-const orderList = [
-  {
-    name: "Chit Chaat Corner",
-    date: "10/01/2020",
-    total: "340",
-    status: "complete",
-  },
-  {
-    name: "Retro Pool",
-    date: "12/01/2020",
-    total: "80",
-    status: "complete",
-  },
-  {
-    name: "Chit Chaats",
-    date: "13/01/2020",
-    total: "210",
-    status: "canceled",
-  },
-  {
-    name: "Chaat Corner",
-    date: "13/01/2020",
-    total: "240",
-    status: "approved",
-  },
-  {
-    name: "Delo Retro",
-    date: "13/01/2020",
-    total: "140",
-    status: "complete",
-  },
-]
-
-const OrderHistory = () => {
-  const [list, setList] = useState([])
-
-  useEffect(() => {
-    setList(orderList)
-  }, [])
-
-  return (
-    <section className={profileStyles.detailsContainer}>
-      {list.map(item => (
-        <OrderHistoryCard
-          name={item.name}
-          date={item.date}
-          total={item.total}
-          status={item.status}
-        />
-      ))}
     </section>
   )
 }
