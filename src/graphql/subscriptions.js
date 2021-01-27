@@ -349,6 +349,15 @@ export const onCreateUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -360,6 +369,15 @@ export const onUpdateUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -371,6 +389,15 @@ export const onDeleteUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -413,6 +440,45 @@ export const onDeletePosts = /* GraphQL */ `
       desc
       img
       status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateFeedback = /* GraphQL */ `
+  subscription OnCreateFeedback {
+    onCreateFeedback {
+      id
+      sentFrom
+      message
+      rating
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateFeedback = /* GraphQL */ `
+  subscription OnUpdateFeedback {
+    onUpdateFeedback {
+      id
+      sentFrom
+      message
+      rating
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteFeedback = /* GraphQL */ `
+  subscription OnDeleteFeedback {
+    onDeleteFeedback {
+      id
+      sentFrom
+      message
+      rating
+      type
       createdAt
       updatedAt
     }

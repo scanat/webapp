@@ -259,6 +259,15 @@ export const getUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -275,6 +284,15 @@ export const listUserss = /* GraphQL */ `
         id
         saved
         orders
+        address {
+          flat
+          building
+          street
+          landmark
+          city
+          state
+          pincode
+        }
         createdAt
         updatedAt
       }
@@ -310,6 +328,39 @@ export const listPostss = /* GraphQL */ `
         desc
         img
         status
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getFeedback = /* GraphQL */ `
+  query GetFeedback($id: ID!) {
+    getFeedback(id: $id) {
+      id
+      sentFrom
+      message
+      rating
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listFeedbacks = /* GraphQL */ `
+  query ListFeedbacks(
+    $filter: ModelFeedbackFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listFeedbacks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        sentFrom
+        message
+        rating
+        type
         createdAt
         updatedAt
       }

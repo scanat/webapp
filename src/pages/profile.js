@@ -20,18 +20,21 @@ const Profile = () => {
 
   async function fetchAllModules() {
     try {
-      const mods = await API.graphql(
+      await API.graphql(
         graphqlOperation(getCategory, {
           id: getCurrentUser()["custom:page_id"],
         })
-      )
-      if (mods) {
-        await API.graphql(
-          graphqlOperation(getModules, { id: mods.data.getSubscriber.category })
-        ).then(res => {
-          setRefreshModules(res.data.getGlobalTable.modules)
-        })
-      }
+      ).then(async res => {
+        if (res.data.getSubscriber) {
+          await API.graphql(
+            graphqlOperation(getModules, {
+              id: res.data.getSubscriber.category,
+            })
+          ).then(result => {
+            setRefreshModules(result.data.getGlobalTable.modules)
+          })
+        }
+      })
     } catch (error) {
       console.log(error)
     }
@@ -87,7 +90,7 @@ const Profile = () => {
     card === "Portfolio" && navigate(`/pro/portal?id=portfolio`)
     card === "Products" && navigate(`/pro/portal?id=products`)
     card === "Live Orders" && navigate(`/pro/portal?id=liveorders`)
-    card === "QR Codes" && navigate(`/pro/portal?id=qrcodes`)
+    card === "QR Code" && navigate(`/pro/portal?id=qrcodes`)
     card === "Employee Management" &&
       navigate(`/pro/portal?id=employeemanagement`)
     card === "Business Hours" && navigate(`/pro/portal?id=timing`)

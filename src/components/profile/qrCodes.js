@@ -24,16 +24,16 @@ Amplify.configure(awsmobile)
 
 const QrCodes = () => {
   const [portfolioUrl, setPortfolioUrl] = useState("")
-  const [seqQr, setSeqQr] = useState("")
-  const [customQr, setCustomQr] = useState([])
+  const [seqQr, setSeqQr] = useState(null)
+  const [customQr, setCustomQr] = useState(null)
   const [viewQr, setViewQr] = useState(false)
-  const seqQrRef = useRef("")
-  const customQrRef = useRef("")
-  const customQrNotice = useRef("")
+  const seqQrRef = useRef(null)
+  const customQrRef = useRef(null)
+  const customQrNotice = useRef(null)
 
   useEffect(() => {
     setPortfolioUrl(
-      `https://www.scanat.in/portfolio?id=${getCurrentUser()["custom:page_id"]}`
+      `https://www.scanat.in/portfolio/?id=${getCurrentUser()["custom:page_id"]}`
     )
     getSubscribersQrs()
   }, [])
@@ -302,7 +302,7 @@ const QrCodes = () => {
 
       {viewQr && (
         <ViewQr
-          seqQr={parseInt(seqQr)}
+          seqQr={seqQr}
           customQr={customQr}
           alterViewQr={() => setViewQr(!viewQr)}
         />

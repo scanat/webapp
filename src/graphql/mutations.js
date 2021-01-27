@@ -388,6 +388,15 @@ export const createUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -402,6 +411,15 @@ export const updateUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -416,6 +434,15 @@ export const deleteUsers = /* GraphQL */ `
       id
       saved
       orders
+      address {
+        flat
+        building
+        street
+        landmark
+        city
+        state
+        pincode
+      }
       createdAt
       updatedAt
     }
@@ -467,6 +494,54 @@ export const deletePosts = /* GraphQL */ `
       desc
       img
       status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createFeedback = /* GraphQL */ `
+  mutation CreateFeedback(
+    $input: CreateFeedbackInput!
+    $condition: ModelFeedbackConditionInput
+  ) {
+    createFeedback(input: $input, condition: $condition) {
+      id
+      sentFrom
+      message
+      rating
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateFeedback = /* GraphQL */ `
+  mutation UpdateFeedback(
+    $input: UpdateFeedbackInput!
+    $condition: ModelFeedbackConditionInput
+  ) {
+    updateFeedback(input: $input, condition: $condition) {
+      id
+      sentFrom
+      message
+      rating
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteFeedback = /* GraphQL */ `
+  mutation DeleteFeedback(
+    $input: DeleteFeedbackInput!
+    $condition: ModelFeedbackConditionInput
+  ) {
+    deleteFeedback(input: $input, condition: $condition) {
+      id
+      sentFrom
+      message
+      rating
+      type
       createdAt
       updatedAt
     }

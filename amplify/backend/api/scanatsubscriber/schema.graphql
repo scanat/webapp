@@ -112,6 +112,17 @@ type Users @model {
   id: ID!
   saved: [String!]
   orders: [String!]
+  address: [Address!]
+}
+
+type Address {
+  flat: String
+  building: String
+  street: String
+  landmark: String
+  city: String
+  state: String
+  pincode: String
 }
 
 type Posts @model {
@@ -121,4 +132,12 @@ type Posts @model {
   desc: String
   img: String
   status: Boolean
+}
+
+type Feedback @model {
+  id: ID!
+  sentFrom: String
+  message: String
+  rating: String
+  type: String
 }

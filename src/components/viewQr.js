@@ -18,7 +18,7 @@ const Card = ({ children }) => {
 const ViewQr = (props, { location }) => {
   const [noQrs, setNoQrs] = useState()
   const [arrQrs, setArrQrs] = useState([])
-  const liveUrl = "https://www.scanat.in/live?id="
+  const liveUrl = "https://www.scanat.in/portfolio/?id="
 
   const downloadDynamicQrs = () => {
     if (noQrs !== "undefined")
@@ -95,7 +95,6 @@ const ViewQr = (props, { location }) => {
     <section className={viewQrStyles.container}>
       <FontAwesomeIcon
         icon={faTimes}
-        color="whitesmoke"
         size="lg"
         style={{ position: "absolute", right: 15, top: 15 }}
         onClick={props.alterViewQr}
@@ -123,13 +122,13 @@ const ViewQr = (props, { location }) => {
             <u>Download All QR Codes</u>
           </a>
           <section className={viewQrStyles.qrGridContainer}>
-            {[...Array(props.seqQr)].map((element, index) => (
+            {[...Array(parseInt(props.seqQr)).keys()].map((element, index) => (
               <Card>
                 <QRCode
                   value={`${liveUrl}${
                     getCurrentUser()["custom:page_id"]
-                  }&key=${index}`}
-                  size={134}
+                  }&key=${index+1}`}
+                  size={100}
                   qrStyle="dots"
                   enableCORS={true}
                   ecLevel="H"
@@ -138,7 +137,7 @@ const ViewQr = (props, { location }) => {
                   <QRCode
                     value={`${liveUrl}${
                       getCurrentUser()["custom:page_id"]
-                    }&key=${index}`}
+                    }&key=${index+1}`}
                     size={380}
                     qrStyle="dots"
                     enableCORS={true}
@@ -168,7 +167,7 @@ const ViewQr = (props, { location }) => {
                 <QRCode
                   value={`${liveUrl}${
                     getCurrentUser()["custom:page_id"]
-                  }&key=${element}`}
+                  }&key=${index+1}`}
                   size={134}
                   qrStyle="dots"
                   enableCORS={true}
@@ -178,7 +177,7 @@ const ViewQr = (props, { location }) => {
                   <QRCode
                     value={`${liveUrl}${
                       getCurrentUser()["custom:page_id"]
-                    }&key=${element}`}
+                    }&key=${index+1}`}
                     size={380}
                     qrStyle="dots"
                     enableCORS={true}
