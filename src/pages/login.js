@@ -74,7 +74,7 @@ const LoginSection = props => {
   const loginRef = useRef(null)
   const noticeRef = useRef("")
 
-  async function userLogin(){
+  async function userLogin() {
     if (username !== "" && password !== "") {
       try {
         const user = await Auth.signIn(username, password)
@@ -175,7 +175,7 @@ const RegistrationSection = props => {
       if (String(phoneNumber).length === 10) {
         if (password === confirmPass) {
           try {
-            const user = await Auth.signUp({
+            await Auth.signUp({
               username,
               password,
               attributes: {
@@ -183,10 +183,12 @@ const RegistrationSection = props => {
                 name: name,
                 phone_number: `+91${phoneNumber}`,
               },
+            }).then(res => {
+              res && props.switchPanel(3)
+              localStorage.setItem("username", username)
+              localStorage.setItem("password", password)
             })
-            user && props.switchPanel(3)
-            localStorage.setItem("username", username)
-            localStorage.setItem("password", password)
+
             setResultContent({ msg: "User Created", status: true })
           } catch (error) {
             setResultContent(error.message, false)
