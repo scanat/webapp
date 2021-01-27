@@ -15,17 +15,7 @@ const ManageAddress = () => {
   const [errmsg, setErrmsg] = useState()
   const [updateState, setUpdateState] = useState(null)
 
-  const [addresses, setAddresses] = useState([
-    {
-      flat: "",
-      building: "",
-      street: "",
-      landmark: "",
-      city: "",
-      state: "",
-      pincode: "",
-    },
-  ])
+  const [addresses, setAddresses] = useState([])
   useEffect(() => {
     getAddress()
   }, [])
@@ -123,30 +113,32 @@ const ManageAddress = () => {
       <button className={mAStyles.addBtn} onClick={addAddress}>
         Add Address
       </button>
-      <ReactElasticCarousel
-        showArrows={false}
-        pagination={false}
-        enableAutoPlay
-        autoPlaySpeed={8000}
-      >
-        {addresses.map((item, id) => (
-          <section key={id} className={mAStyles.addressExisting}>
-            <button
-              className={mAStyles.updateBtn}
-              onClick={() => updateAddress(item)}
-            >
-              Update
-            </button>
-            <label>{item.flat}</label>
-            <label>{item.building}</label>
-            <label>{item.street}</label>
-            <label>{item.landmark}</label>
-            <label>{item.city}</label>
-            <label>{item.state}</label>
-            <label>{item.pincode}</label>
-          </section>
-        ))}
-      </ReactElasticCarousel>
+      {addresses.length > 0 && (
+        <ReactElasticCarousel
+          showArrows={false}
+          pagination={false}
+          enableAutoPlay
+          autoPlaySpeed={8000}
+        >
+          {addresses.map((item, id) => (
+            <section key={id} className={mAStyles.addressExisting}>
+              <button
+                className={mAStyles.updateBtn}
+                onClick={() => updateAddress(item)}
+              >
+                Update
+              </button>
+              <label>{item.flat}</label>
+              <label>{item.building}</label>
+              <label>{item.street}</label>
+              <label>{item.landmark}</label>
+              <label>{item.city}</label>
+              <label>{item.state}</label>
+              <label>{item.pincode}</label>
+            </section>
+          ))}
+        </ReactElasticCarousel>
+      )}
     </section>
   )
 }
