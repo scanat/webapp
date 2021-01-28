@@ -25,11 +25,6 @@ const subscriberItemsS3 = new AWS.S3({
   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
-const messageItem = new AWS.SNS({
-  region: "ap-south-1",
-  // accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
-  // secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
-})
 
 Amplify.configure({
   API: {
@@ -244,7 +239,7 @@ const Default = props => {
     try {
       const input = {
         pin: props.id + pin,
-        key: props.table,
+        key: props.key,
         orgId: props.id,
         order: tempList,
         totalItems: tempList.length,

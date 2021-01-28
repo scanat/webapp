@@ -37,6 +37,7 @@ const s3Config = {
   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 }
+AWS.config.setPromisesDependency()
 AWS.config.update(s3Config)
 var s3 = new AWS.S3()
 const subscriberItemS3 = new AWS.S3({
@@ -80,27 +81,13 @@ const Explore = () => {
         },
       }
       await API.graphql(graphqlOperation(listPostss, filtered)).then(res => {
-        let resData = res.data.listPostss.items
-        resData.map(async element => {
-          let params = {
-            Bucket: process.env.GATSBY_S3_BUCKET,
-            Key: `public/${element.img}`,
-          }
-          await s3.getObject(params, (err, data) => {
-            err && console.log(err)
-            data &&
-              resData.map(item => {
-                item.imageData = data.Body
-              })
-              setPostData(resData)
-          })
-        })
+        setPostData(res.data.listPostss.items)
       })
     } catch (error) {
       console.log(error)
     }
   }
-
+  console.log(postData)
   return (
     <Layout>
       <SwipeableViews index={viewIndex}>
@@ -163,6 +150,12 @@ const Home = () => {
     })
   }, [])
 
+  useEffect(() => {
+    let temp = searchObjectList
+    console.log(temp)
+    setSearchObjectList(temp)
+  }, [searchObjectList])
+
   const getGeolocation = () => {
     if (typeof window !== "undefined")
       window.navigator.geolocation.getCurrentPosition(res => setLocation(res))
@@ -210,23 +203,45 @@ const Home = () => {
           searchListManipulation(true)
           setSearchObjectList(list)
           list.map(item => {
-            getImage()
-            async function getImage() {
-              try {
-                const paramsImg = {
-                  Bucket: process.env.GATSBY_S3_BUCKET,
-                  Key: "public/" + item.logo,
+            getLists()
+            async function getLists() {
+              if (item.logo !== null) {
+                try {
+                  await s3
+                    .listObjectsV2({
+                      Bucket: process.env.GATSBY_S3_BUCKET,
+                      Prefix: "public/" + item.logo,
+                    })
+                    .promise()
+                    .then(d => {
+                      getObjectofList()
+                      async function getObjectofList() {
+                        for (var currentValue of d.Contents) {
+                          if (currentValue.Size > 0) {
+                            var params = {
+                              Bucket: process.env.GATSBY_S3_BUCKET,
+                              Key: currentValue.Key,
+                            }
+                            try {
+                              await s3
+                                .getObject(params)
+                                .promise()
+                                .then(result => {
+                                  item.imageData = result.Body
+                                  setSearchObjectList(list)
+                                })
+                                setSearchObjectList(list)
+                            } catch (error) {
+                              console.log(error)
+                            }
+                          }
+                        }
+                      }
+                      setSearchObjectList(list)
+                    })
+                } catch (error) {
+                  console.log(error)
                 }
-                await subscriberItemS3.getObject(paramsImg, (err, res) => {
-                  if (res) {
-                    item.imageData = Buffer.from(res.Body, "base64").toString(
-                      "ascii"
-                    )
-                    setSearchObjectList(list)
-                  }
-                })
-              } catch (error) {
-                console.log(error)
               }
             }
           })
@@ -247,23 +262,45 @@ const Home = () => {
           searchListManipulation(true)
           setSearchObjectList(list)
           list.map(item => {
-            getImage()
-            async function getImage() {
-              try {
-                const paramsImg = {
-                  Bucket: process.env.GATSBY_S3_BUCKET,
-                  Key: "public/" + item.logo,
+            getLists()
+            async function getLists() {
+              if (item.logo !== null) {
+                try {
+                  await s3
+                    .listObjectsV2({
+                      Bucket: process.env.GATSBY_S3_BUCKET,
+                      Prefix: "public/" + item.logo,
+                    })
+                    .promise()
+                    .then(d => {
+                      getObjectofList()
+                      async function getObjectofList() {
+                        for (var currentValue of d.Contents) {
+                          if (currentValue.Size > 0) {
+                            var params = {
+                              Bucket: process.env.GATSBY_S3_BUCKET,
+                              Key: currentValue.Key,
+                            }
+                            try {
+                              await s3
+                                .getObject(params)
+                                .promise()
+                                .then(result => {
+                                  item.imageData = result.Body
+                                  setSearchObjectList(list)
+                                })
+                                setSearchObjectList(list)
+                            } catch (error) {
+                              console.log(error)
+                            }
+                          }
+                        }
+                      }
+                      setSearchObjectList(list)
+                    })
+                } catch (error) {
+                  console.log(error)
                 }
-                await subscriberItemS3.getObject(paramsImg, (err, res) => {
-                  if (res) {
-                    item.imageData = Buffer.from(res.Body, "base64").toString(
-                      "ascii"
-                    )
-                    setSearchObjectList(list)
-                  }
-                })
-              } catch (error) {
-                console.log(error)
               }
             }
           })
@@ -273,6 +310,7 @@ const Home = () => {
       }
     }
   }
+  console.log(searchObjectList)
 
   return (
     <section
@@ -456,12 +494,16 @@ const Home = () => {
 }
 
 const Post = props => {
-
   return (
     <section className={exploreStyles.postContainer}>
       {props.posts.map((item, id) => (
         <section className={exploreStyles.postItem} key={id}>
-          <img src={item.imageData} />
+          {/* <img
+            src={
+              "https://subscriberstoragebucket192012-dev.s3.amazonaws.com/public/" +
+              item.img
+            }
+          /> */}
           <label>{item.topic}</label>
           <p>{item.desc}</p>
         </section>
@@ -471,7 +513,6 @@ const Post = props => {
 }
 
 const Directory = props => {
-
   let colors = ["#8ee8e1", "#14b7ab", "#1cd7c9", , "#3fbfb6", "#f0f0f0"]
 
   return (
