@@ -160,6 +160,8 @@ export const onCreateItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
@@ -180,6 +182,8 @@ export const onUpdateItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
@@ -200,6 +204,8 @@ export const onDeleteItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category

@@ -28,12 +28,13 @@ import DishesWeek from "../portfolio/dishesWeek"
 const subscriberPageS3 = new AWS.S3({
   region: "ap-south-1",
   apiVersion: "2006-03-01",
-  accessKeyId: "AKIAYUA25DEXFXQLVYPQ",
-  secretAccessKey: "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",
+  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
 })
 
 const Portfolio = () => {
   const [loading, setLoading] = useState(false)
+  const [load, setLoad] = useState(false)
   const [subscriberData, setSubscriberData] = useState({})
   const address1Ref = useRef("")
   const address2Ref = useRef("")
@@ -47,6 +48,7 @@ const Portfolio = () => {
   }, [])
 
   async function getSubscriberPageData() {
+    setLoad(true)
     try {
       const subData = await API.graphql(
         graphqlOperation(portfolioData, {
@@ -63,9 +65,11 @@ const Portfolio = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoad(false)
   }
 
   async function updateAddress() {
+    setLoad(true)
     try {
       const addressData = await API.graphql(
         graphqlOperation(updateSubscriberAddress, {
@@ -89,9 +93,11 @@ const Portfolio = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoad(false)
   }
 
   async function updateAbout() {
+    setLoad(true)
     try {
       const aboutData = await API.graphql(
         graphqlOperation(updateSubscriberAbout, {
@@ -107,10 +113,12 @@ const Portfolio = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoad(false)
   }
 
   return Object.keys(getCurrentUser()).length === 0 ? (
     <Layout>
+      <Loader loading={load} />
       <h1
         style={{
           color: "crimson",
@@ -135,7 +143,7 @@ const Portfolio = () => {
     </Layout>
   ) : (
     <Layout>
-      {/* <Loader loading={loading} /> */}
+      <Loader loading={loading} />
       <Banner />
 
       <Logo loadHandler={val => setLoading(val)} />

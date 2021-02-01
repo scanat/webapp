@@ -34,6 +34,7 @@
     "react-is": "^17.0.1",
     "react-otp-input": "^2.1.0",
     "react-qrcode-logo": "^2.2.1",
+    "react-swipeable-views": "^0.13.9",
     "styled-components": "^5.2.0"
   },
   "devDependencies": {

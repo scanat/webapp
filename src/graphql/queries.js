@@ -114,6 +114,8 @@ export const getItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
@@ -139,6 +141,8 @@ export const listItemss = /* GraphQL */ `
           image
           status
           delivery
+          takeaway
+          veg
           desc
         }
         category

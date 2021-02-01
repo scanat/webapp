@@ -48,7 +48,9 @@ type Item {
   itemPrice: String
   image: String
   status: Boolean
-  delivery: String
+  delivery: Boolean
+  takeaway: Boolean
+  veg: Boolean
   desc: String
 }
 

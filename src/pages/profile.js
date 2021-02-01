@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import profileStyles from "./profile.module.css"
 import Layout from "../components/layout"
 import { getCurrentUser, logout } from "../utils/auth"
+import Loader from "../components/loader"
 import UserDetails from "../components/profile/userDetails"
 import { navigate } from "gatsby"
 import Modules from "../components/profile/modules"
@@ -11,14 +12,15 @@ import awsmobile from "../aws-exports"
 Amplify.configure(awsmobile)
 
 const Profile = () => {
-  const [portalContent, setPortalContent] = useState()
   const [refreshModules, setRefreshModules] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetchAllModules()
-  }, [refreshModules])
+  }, [])
 
   async function fetchAllModules() {
+    setLoading(true)
     try {
       await API.graphql(
         graphqlOperation(getCategory, {
@@ -32,56 +34,14 @@ const Profile = () => {
             })
           ).then(result => {
             setRefreshModules(result.data.getGlobalTable.modules)
+            setLoading(false)
           })
         }
       })
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
-  }
-
-  const Portal = props => {
-    if (props.content === "Business Details")
-      return (
-        <section className={profileStyles.portalContainer}>
-          <UserDetails />
-          <section
-            className={profileStyles.closeClickSection}
-            onClick={props.switchPortal}
-            onMouseUp={props.switchPortal}
-          ></section>
-        </section>
-      )
-    else if (props.content === "My Modules")
-      return (
-        <section className={profileStyles.portalContainer}>
-          <Modules />
-          <section
-            className={profileStyles.closeClickSection}
-            onClick={props.switchPortal}
-            onMouseUp={props.switchPortal}
-          ></section>
-        </section>
-      )
-    return null
-  }
-
-  const navigateToLive = () => {
-    if (typeof window !== "undefined") {
-      var dataOrg = getCurrentUser().name
-      var dataId = String(getCurrentUser().phone_number).replace("+91", "")
-      var encodedId = window.btoa(dataId)
-
-      const orgActiveUrl = `https://www.scanat.in?id=${
-        getCurrentUser()["custom:page_id"]
-      }`
-
-      window.location.href = orgActiveUrl
-    }
-  }
-
-  const openPortal = content => {
-    setPortalContent(content)
   }
 
   const handleCardClick = card => {
@@ -89,7 +49,7 @@ const Profile = () => {
     card === "My Modules" && navigate(`/pro/portal?id=modules`)
     card === "Portfolio" && navigate(`/pro/portal?id=portfolio`)
     card === "Products" && navigate(`/pro/portal?id=products`)
-    card === "Live Orders" && navigate(`/pro/portal?id=liveorders`)
+    card === "Live Order" && navigate(`/pro/portal?id=liveorders`)
     card === "QR Code" && navigate(`/pro/portal?id=qrcodes`)
     card === "Employee Management" &&
       navigate(`/pro/portal?id=employeemanagement`)
@@ -98,8 +58,7 @@ const Profile = () => {
   }
 
   async function logoutHandler() {
-    console.log("hi")
-    const res = await Auth.signOut().then(res => logout(logger))
+    await Auth.signOut().then(res => res && logout(logger))
     function logger() {
       navigate("/")
     }
@@ -107,6 +66,7 @@ const Profile = () => {
 
   return (
     <Layout>
+      <Loader loading={loading} />
       <section className={profileStyles.container}>
         <section className={profileStyles.subContainer}>
           {refreshModules.map(
@@ -135,8 +95,6 @@ const Profile = () => {
       <button className={profileStyles.logoutbtn} onClick={logoutHandler}>
         Logout
       </button>
-
-      {/* <Portal content={portalContent} switchPortal={() => setPortalContent()} /> */}
     </Layout>
   )
 }

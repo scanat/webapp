@@ -4,10 +4,15 @@ import postStyles from "./posts.module.css"
 import ReactCrop from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
 import AWS from "aws-sdk"
-import { API, graphqlOperation, Storage } from "aws-amplify"
+import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
 import { getCurrentUser } from "../../utils/auth"
+import Loader from "../loader"
+import awsmobile from "../../aws-exports"
+import { navigate } from "gatsby"
 
-new AWS.S3({
+Amplify.configure(awsmobile)
+
+const s3 = new AWS.S3({
   region: "ap-south-1",
   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
@@ -30,6 +35,7 @@ const Posts = () => {
   const cropRef = useRef(null)
   const previewCanvasRef = useRef(null)
   const imgRef = useRef(null)
+  const [loading, setLoading] = useState(false)
 
   const selectImage = async e => {
     const selectedFile = e.target.files[0]
@@ -108,41 +114,40 @@ const Posts = () => {
 
     const readyImage = canvas.toDataURL(imageDetails.type, 0.7)
     try {
-      const storeImg = await Storage.put(
-        `${getCurrentUser()["custom:page_id"]}/posts/post${imageDetails.name}`,
-        readyImage,
-        {
-          level: "public",
-          contentType: imageDetails.type,
-          contentEncoding: "base64",
-        }
-      )
-      //   const inputs = {
-      //     input: {
-      //       id: getCurrentUser()["custom:page_id"],
-      //       banner: storeImg.key,
-      //     },
-      //   }
-      //   const data = await API.graphql(
-      //     graphqlOperation(updateSubscriberBanner, inputs)
-      //   )
-      if (storeImg) {
-        setPostImage(readyImage)
-        setImageSelector(false)
+      let params = {
+        Bucket: process.env.GATSBY_S3_BUCKET,
+        Key:
+          "" +
+          `public/${getCurrentUser()["custom:page_id"]}/posts/post${
+            imageDetails.name
+          }`,
+        ContentType: imageDetails.type,
+        Body: readyImage,
       }
+
+      await s3.upload(params, (err, data) => {
+        console.log(err, data)
+        if (data) {
+          setPostImage(readyImage)
+          setImageSelector(false)
+          setImageDetails({
+            name: data.key,
+            type: imageDetails.type,
+          })
+        }
+      })
     } catch (error) {
       console.log(error)
     }
   }
 
   async function uploadPost() {
+    setLoading(true)
     let inputs = {
       input: {
         topic: topicRef.current.value,
         desc: descRef.current.value,
-        img: `${getCurrentUser()["custom:page_id"]}/posts/post${
-          imageDetails.name
-        }`,
+        img: imageDetails.name,
         status: true,
         postedBy: getCurrentUser()["custom:page_id"],
       },
@@ -171,7 +176,7 @@ const Posts = () => {
 
                   await API.graphql(
                     graphqlOperation(updateSubscriber, params)
-                  ).then(res1 => console.log(res1))
+                  ).then(res1 => navigate("/profile/"))
                 } else {
                   array = result.data.getSubscriber.posts
                   let params = {
@@ -183,7 +188,7 @@ const Posts = () => {
 
                   await API.graphql(
                     graphqlOperation(updateSubscriber, params)
-                  ).then(res1 => console.log(res1))
+                  ).then(res1 => navigate("/profile/"))
                 }
               }
             })
@@ -193,10 +198,12 @@ const Posts = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
   }
 
   return (
     <Layout>
+      <Loader loading={loading} />
       <section className={postStyles.container}>
         {imageSelector && (
           <section className={postStyles.imageSelectorContainer}>
@@ -234,14 +241,14 @@ const Posts = () => {
         <input
           ref={topicRef}
           type="text"
-          placeholder="Enter topic"
+          placeholder="Enter headline"
           className={postStyles.inputText}
         />
         <textarea
           ref={descRef}
           maxLength={500}
           type="text"
-          placeholder="What are you up for today?"
+          placeholder="Blow your trumpet here..."
           className={postStyles.inputDesc}
         />
 

@@ -22,25 +22,26 @@ import SnackBar from "../snackBar"
 import Layout from "../layout"
 import Loader from "../loader"
 import Amplify, { API, graphqlOperation, Storage } from "aws-amplify"
-import ReactCrop from "react-image-crop"
+// import ReactCrop from "react-image-crop"
+import SwipeableViews from "react-swipeable-views"
 import awsmobile from "../../aws-exports"
-import alcohol from "../../images/icons/categories/alcoholicdrinks.svg"
-import burger from "../../images/icons/categories/burger.svg"
-import meal from "../../images/icons/categories/meal.svg"
+import cross from "../../images/icons/cross.png"
+import pencil from "../../images/icons/pencil.png"
+import tick from "../../images/icons/tick.png"
 import meat from "../../images/icons/categories/meat.svg"
 import pizza from "../../images/icons/categories/pizza.svg"
 import rice from "../../images/icons/categories/rice.svg"
 
-const subscriberItemsS3 = new AWS.S3({
-  region: "ap-south-1",
-  accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
-  secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
-})
+// const subscriberItemsS3 = new AWS.S3({
+//   region: "ap-south-1",
+//   accessKeyId: process.env.GATSBY_S3_ACCESS_ID,
+//   secretAccessKey: process.env.GATSBY_S3_ACCESS_SECRET,
+// })
 
-Amplify.configure(awsmobile)
+// Amplify.configure(awsmobile)
 
-const pixelRatio =
-  (typeof window !== "undefined" && window.devicePixelRatio) || 1
+// const pixelRatio =
+//   (typeof window !== "undefined" && window.devicePixelRatio) || 1
 
 const Card = props => {
   return (
@@ -57,29 +58,20 @@ const CategoryBasic = props => {
   const [categoryList, setCategoryList] = useState(["Category"])
   const [snackContent, setSnackContent] = useState()
   const [snackError, setSnackError] = useState(false)
-  const itemImageForm = useRef(null)
-  const uploadItemImageInput = useRef(null)
   const [loading, setLoading] = useState(false)
+  const [viewIndex, setViewIndex] = useState(0)
+  const [closeCategory, setCloseCategory] = useState(true)
+  const [takeaway, setTakeaway] = useState(true)
+  const [delivery, setDelivery] = useState(true)
+  const [veg, setVeg] = useState(true)
+  const [categoryEdit, setCategoryEdit] = useState(false)
 
   const itemNameRef = useRef("")
   const itemPriceRef = useRef("")
   const itemDescRef = useRef("")
-  const itemImageRef = useRef("")
-  const [imageUrl, setImageUrl] = useState("")
-
-  const cropRef = useRef("")
-  const previewCanvasRef = useRef(null)
-  const imgRef = useRef(null)
-  const [imageSelector, setImageSelector] = useState(false)
-  const [crop, setCrop] = useState({ aspect: 10 / 7, width: 320 })
-  const [completedCrop, setCompletedCrop] = useState(null)
-  const [imageDetails, setImageDetails] = useState({
-    name: "",
-    type: "",
-    image: "",
-  })
+  const inputCategoryRef = useRef(null)
   const [displayCategory, setDisplayCategory] = useState(false)
-  const [choiceCategory, setChoiceCategory] = useState(null)
+  const [choiceCategory, setChoiceCategory] = useState("Category")
 
   useEffect(() => {
     setTimeout(() => {
@@ -91,89 +83,11 @@ const CategoryBasic = props => {
     fetchData()
   }, [])
 
-  const onLoad = useCallback(img => {
-    imgRef.current = img
-  })
-
-  useEffect(() => {
-    if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
-      return
-    }
-
-    const image = imgRef.current
-    const canvas = previewCanvasRef.current
-    const crop = completedCrop
-
-    const scaleX = image.naturalWidth / image.width
-    const scaleY = image.naturalHeight / image.height
-    const ctx = canvas.getContext("2d")
-
-    canvas.width = crop.width * pixelRatio
-    canvas.height = crop.height * pixelRatio
-
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
-    ctx.imageSmoothingQuality = "medium"
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    )
-  }, [completedCrop])
-
-  async function getIndividualImage(key) {
-    setLoading(true)
-    try {
-      const paramsImg = {
-        Bucket: awsmobile.aws_user_files_s3_bucket,
-        Key: "public/" + key,
-      }
-      await subscriberItemsS3.getObject(paramsImg, (err, resp) => {
-        let temp = imageDetails
-        temp.image = resp.Body
-        setImageDetails(temp)
-        setLoading(false)
-      })
-    } catch (error) {
-      setLoading(false)
-      console.log(error)
-    }
+  const deleteCategory = id => {
+    const tempList = [...categoryList]
+    tempList.splice(id, 1)
+    setCategoryList(tempList)
   }
-
-  function getCroppedImg(canvas, newWidth, newHeight) {
-    const tmpCanvas = document.createElement("canvas")
-    tmpCanvas.width = newWidth
-    tmpCanvas.height = newHeight
-
-    const ctx = tmpCanvas.getContext("2d")
-    ctx.drawImage(
-      canvas,
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-      0,
-      0,
-      newWidth,
-      newHeight
-    )
-
-    return tmpCanvas
-  }
-
-  // Delete Category
-  // const deleteCategory = () => {
-  //   const tempList = [...categoryList]
-  //   const index = tempList.indexOf(category)
-  //   tempList.splice(index, 1)
-  //   setCategoryList(tempList)
-  // }
 
   // Fetch inital data if available
   const fetchData = async () => {
@@ -196,12 +110,7 @@ const CategoryBasic = props => {
               })
             ).then(data => {
               setList(data.data.getItems.itemList)
-
-              let temp = [...categoryList]
-              data.data.getItems.itemList.map(item => {
-                temp.push(item.category)
-              })
-              setCategoryList(temp)
+              setCategoryList(data.data.getItems.category)
             })
         setLoading(false)
       })
@@ -210,20 +119,12 @@ const CategoryBasic = props => {
     }
   }
 
-  // const setSelectedCategory = () => {
-  //   let newCategoryName = prompt("Add a category to the list!")
-  //   if (newCategoryName !== null && newCategoryName !== "") {
-  //     setCategoryList(categoryList.concat(newCategoryName.toString()))
-  //   }
-  // }
-
   // Adding the items to the list
   const addItemHandler = () => {
     setLoading(true)
     if (
-      itemNameRef.current.value !== "" &&
-      itemPriceRef.current.value !== "" &&
-      !choiceCategory
+      itemNameRef.current.value.length > 0 &&
+      itemPriceRef.current.value > 0
     ) {
       let tempList = [...list]
       tempList.push({
@@ -232,16 +133,15 @@ const CategoryBasic = props => {
         itemPrice: itemPriceRef.current.value,
         status: true,
         category: choiceCategory,
-        image: imageUrl,
+        // image: imageUrl,
         desc: itemDescRef.current.value,
       })
       setList(tempList)
-      uploadImage()
+      // uploadImage()
       itemNameRef.current.value = ""
       itemPriceRef.current.value = ""
       itemDescRef.current.value = ""
-      setImageDetails({ name: "", type: "", image: "" })
-      setLoading(false)
+      // setImageDetails({ name: "", type: "", image: "" })
     }
     setLoading(false)
   }
@@ -252,7 +152,7 @@ const CategoryBasic = props => {
     itemPriceRef.current.value = ""
     itemDescRef.current.value = ""
 
-    setImageDetails({ name: "", type: "", image: "" })
+    // setImageDetails({ name: "", type: "", image: "" })
     setChanging(false)
     setChosenItem()
   }
@@ -296,9 +196,6 @@ const CategoryBasic = props => {
     itemNameRef.current.value = item.itemName
     itemPriceRef.current.value = item.itemPrice
     itemDescRef.current.value = item.desc
-    item.image !== ""
-      ? getIndividualImage(item.image)
-      : setImageDetails({ name: "", type: "", image: "" })
     setChanging(true)
   }
 
@@ -311,7 +208,7 @@ const CategoryBasic = props => {
         item.itemPrice = itemPriceRef.current.value
         item.desc = itemDescRef.current.value
         item.category = choiceCategory
-        item.image = imageUrl
+        // item.image = imageUrl
       }
     })
     setList(temp)
@@ -340,63 +237,6 @@ const CategoryBasic = props => {
     }
   }
 
-  const selectImage = async e => {
-    setLoading(true)
-    const selectedFile = e.target.files[0]
-    const reader = new FileReader(selectedFile)
-    reader.readAsDataURL(selectedFile)
-    reader.onload = async () => {
-      setImageUrl(reader.result)
-      setImageDetails({
-        name: selectedFile.name,
-        type: selectedFile.type,
-        image: "",
-      })
-    }
-    setImageSelector(true)
-    setLoading(false)
-  }
-
-  const setImage = (previewCanvas, crop) => {
-    if (!crop || !previewCanvas) {
-      return
-    }
-
-    const canvas = getCroppedImg(previewCanvas, crop.width, crop.height)
-
-    let temp = imageDetails
-    temp.image = canvas.toDataURL(imageDetails.type)
-    setImageDetails(temp)
-    setImageUrl(
-      `${getCurrentUser()["custom:page_id"]}/items/item${imageDetails.name}`
-    )
-    setImageSelector(false)
-  }
-
-  const uploadImage = async () => {
-    setLoading(true)
-    try {
-      const storeImg = await Storage.put(
-        `${getCurrentUser()["custom:page_id"]}/items/item${imageDetails.name}`,
-        imageDetails.image,
-        {
-          level: "public",
-          contentType: imageDetails.type,
-          contentEncoding: "base64",
-        }
-      )
-      if (storeImg) {
-        setLoading(false)
-        setImageSelector(false)
-        console.log(storeImg)
-      }
-    } catch (error) {
-      console.log(error)
-      setLoading(false)
-      setImageSelector(false)
-    }
-  }
-
   const switchContent = (content, err) => {
     setSnackContent(content)
     setSnackError(err)
@@ -407,6 +247,7 @@ const CategoryBasic = props => {
   }, [choiceCategory])
 
   async function updateCategoriesList() {
+    setLoading(true)
     let temp = []
     list.map(item => {
       temp.push(item.category)
@@ -417,7 +258,7 @@ const CategoryBasic = props => {
       let input = {
         input: {
           id: getCurrentUser()["custom:page_id"],
-          category: uniqueCategory,
+          category: categoryList,
         },
       }
       await API.graphql(graphqlOperation(updateItemsList, input)).then(res =>
@@ -426,216 +267,241 @@ const CategoryBasic = props => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
+  }
+
+  const categoryInputOpt = id => {
+    setCloseCategory(!closeCategory)
+    if (!categoryEdit) {
+      inputCategoryRef.current.value.length > 0 &&
+        setCategoryList(categoryList.concat(inputCategoryRef.current.value))
+      inputCategoryRef.current.value.length > 0 &&
+        (inputCategoryRef.current.value = "")
+    } else {
+      let tempList = [...categoryList]
+      tempList[id] = inputCategoryRef.current.value
+      setCategoryList(tempList)
+      setCategoryEdit(false)
+    }
   }
 
   return (
     <Layout>
       <Loader loading={loading} />
-      {imageSelector && (
-        <section className={categoryBasicStyles.imageSelectorContainer}>
-          <ReactCrop
-            src={imageUrl}
-            crop={crop}
-            onChange={newCrop => setCrop(newCrop)}
-            style={{ marginTop: 44 }}
-            ruleOfThirds
-            onComplete={c => setCompletedCrop(c)}
-            onImageLoaded={onLoad}
-            ref={cropRef}
-          />
-          <div style={{ height: "70vh" }}>
-            <canvas
-              ref={previewCanvasRef}
-              style={{
-                width: 1920,
-                height: "auto",
-                display: "none",
-              }}
-            />
-          </div>
-          <section className={categoryBasicStyles.buttonButtomContainer}>
-            <button
-              onClick={() => {
-                setImageUrl("")
-                setImageSelector(false)
-              }}
-              className={categoryBasicStyles.button}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => setImage(previewCanvasRef.current, completedCrop)}
-              className={categoryBasicStyles.button}
-            >
-              OK
-            </button>
-          </section>
-        </section>
-      )}
       <section className={categoryBasicStyles.container}>
+        <ul className={categoryBasicStyles.navigation}>
+          <li
+            onClick={() => setViewIndex(0)}
+            style={{
+              color: viewIndex === 0 ? "white" : "whitesmoke",
+              letterSpacing: viewIndex === 0 ? "1px" : "0.5px",
+              bold: viewIndex === 0 ? "bold" : "normal"
+            }}
+          >
+            Product
+          </li>
+          <li
+            onClick={() => setViewIndex(1)}
+            style={{
+              color: viewIndex === 1 ? "white" : "whitesmoke",
+              letterSpacing: viewIndex === 1 ? "1px" : "0.5px",
+              bold: viewIndex === 1 ? "bold" : "normal"
+            }}
+          >
+            Category
+          </li>
+        </ul>
+
         <Card>
-          <section>
-            {/* <h3>Product Handler</h3> */}
-            {/* <h3>{changing ? "Update Item" : "Add Item"}</h3> */}
-            <input
-              className={categoryBasicStyles.input}
-              type="text"
-              placeholder="Item name"
-              ref={itemNameRef}
-            />
-            <input
-              className={categoryBasicStyles.input}
-              type="number"
-              placeholder="Item price"
-              ref={itemPriceRef}
-            />
-            <ul className={categoryBasicStyles.categoryDropdown}>
-              <li>
-                <label onClick={() => setDisplayCategory(!displayCategory)}>
-                  {choiceCategory ? choiceCategory : "Select Category"}
-                </label>
-                <ul style={{ display: displayCategory ? "block" : "none" }}>
-                  <li onClick={() => setChoiceCategory("Alcohol")}>
-                    <img src={alcohol} />
-                    Alcoholic Drinks
-                  </li>
-                  <li onClick={() => setChoiceCategory("Burger")}>
-                    <img src={burger} />
-                    Burger
-                  </li>
-                  <li onClick={() => setChoiceCategory("Meal")}>
-                    <img src={meal} />
-                    Meal
-                  </li>
-                  <li onClick={() => setChoiceCategory("Meat")}>
-                    <img src={meat} />
-                    Meat
-                  </li>
-                  <li onClick={() => setChoiceCategory("Pizza")}>
-                    <img src={pizza} />
-                    Pizza
-                  </li>
-                  <li onClick={() => setChoiceCategory("Rice")}>
-                    <img src={rice} />
-                    Rice
+          <SwipeableViews index={viewIndex}>
+            <div>
+              <section>
+                {/* <h3>Product Handler</h3> */}
+                {/* <h3>{changing ? "Update Item" : "Add Item"}</h3> */}
+                <input
+                  className={categoryBasicStyles.input}
+                  type="text"
+                  placeholder="Item name"
+                  ref={itemNameRef}
+                />
+                <input
+                  className={categoryBasicStyles.input}
+                  type="number"
+                  placeholder="Item price"
+                  ref={itemPriceRef}
+                />
+                <ul className={categoryBasicStyles.categoryDropdown}>
+                  <li>
+                    <label onClick={() => setDisplayCategory(!displayCategory)}>
+                      {choiceCategory ? choiceCategory : "Select Category"}
+                    </label>
+                    <ul style={{ display: displayCategory ? "block" : "none" }}>
+                      {categoryList.map((item, id) => (
+                        <li key={id} onClick={() => setChoiceCategory(item)}>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
                   </li>
                 </ul>
-              </li>
-            </ul>
-          </section>
+              </section>
 
-          <section className={categoryBasicStyles.itemControls}>
-            <section className={categoryBasicStyles.controlItem}>
-              <FontAwesomeIcon
-                icon={faSyncAlt}
-                onClick={resetInputHandler}
-                size="lg"
-                color="#169188"
-              />
-              <label className={categoryBasicStyles.controlItemLabel}>
-                Reset
-              </label>
-            </section>
-            <section className={categoryBasicStyles.controlItem}>
-              <FontAwesomeIcon
-                icon={changing ? faCheckCircle : faPlusSquare}
-                onClick={changing ? updateChangeHandler : addItemHandler}
-                size="lg"
-                color="#169188"
-              />
-              <label className={categoryBasicStyles.controlItemLabel}>
-                Add Item
-              </label>
-            </section>
-            {/* <section className={categoryBasicStyles.controlItem}>
-              <FontAwesomeIcon
-                icon={faNetworkWired}
-                onClick={setSelectedCategory}
-                size="lg"
-                color="#169188"
-              />
-              <label className={categoryBasicStyles.controlItemLabel}>
-                Add Category
-              </label>
-            </section> */}
-            <section className={categoryBasicStyles.controlItem}>
-              <FontAwesomeIcon
-                icon={faCloudUploadAlt}
-                onClick={list.length > 0 ? uploadData : null}
-                size="lg"
-                color={list.length > 0 ? "#169188" : "grey"}
-              />
-              <label className={categoryBasicStyles.controlItemLabel}>
-                Upload
-              </label>
-            </section>
-            {/* <section className={categoryBasicStyles.controlItem}>
-              <FontAwesomeIcon
-                icon={faCut}
-                onClick={deleteCategory}
-                size="lg"
-                color={list.length > 0 ? "#169188" : "grey"}
-              />
-              <label className={categoryBasicStyles.controlItemLabel}>
-                Delete Category
-              </label>
-            </section> */}
-          </section>
-
-          <section className={categoryBasicStyles.itemControls}>
-            <textarea
-              ref={itemDescRef}
-              placeholder="Enter product description..."
-              maxLength={100}
-            />
-            {/* <section className={categoryBasicStyles.itemImageContainer}>
-              {imageDetails.image !== "" ? (
-                <img
-                  src={imageDetails.image}
-                  ref={itemImageRef}
-                  className={categoryBasicStyles.itemImage}
-                />
-              ) : (
-                <section className={categoryBasicStyles.itemImageInstructions}>
+              <section className={categoryBasicStyles.itemControls}>
+                <section className={categoryBasicStyles.controlItem}>
                   <FontAwesomeIcon
-                    icon={faPlusCircle}
+                    icon={faSyncAlt}
+                    onClick={resetInputHandler}
                     size="lg"
                     color="#169188"
-                    onClick={() => uploadItemImageInput.current.click()}
                   />
-                  <form ref={itemImageForm} hidden>
-                    <input
-                      ref={uploadItemImageInput}
-                      id="itemId"
-                      type="file"
-                      accept="image/*"
-                      onChange={e => {
-                        selectImage(e)
-                      }}
-                      hidden
-                    />
-                    <button type="submit"></button>
-                  </form>
+                  <label className={categoryBasicStyles.controlItemLabel}>
+                    Reset
+                  </label>
                 </section>
-              )}
-            </section> */}
-          </section>
+                <section className={categoryBasicStyles.controlItem}>
+                  <FontAwesomeIcon
+                    icon={changing ? faCheckCircle : faPlusSquare}
+                    onClick={changing ? updateChangeHandler : addItemHandler}
+                    size="lg"
+                    color="#169188"
+                  />
+                  <label className={categoryBasicStyles.controlItemLabel}>
+                    Add Item
+                  </label>
+                </section>
+                <section className={categoryBasicStyles.controlItem}>
+                  <FontAwesomeIcon
+                    icon={faCloudUploadAlt}
+                    onClick={list.length > 0 ? uploadData : null}
+                    size="lg"
+                    color={list.length > 0 ? "#169188" : "grey"}
+                  />
+                  <label className={categoryBasicStyles.controlItemLabel}>
+                    Upload
+                  </label>
+                </section>
+              </section>
+
+              <section className={categoryBasicStyles.itemControls}>
+                <section
+                  style={{
+                    width: "60px",
+                    border: takeaway ? "2px green solid" : "none",
+                    background: takeaway ? "white" : "#c13333",
+                    padding: "5px 10px",
+                    fontSize: "0.7em",
+                    letterSpacing: "0.5px",
+                    color: takeaway ? "black" : "white",
+                  }}
+                  onClick={() => setTakeaway(!takeaway)}
+                >
+                  Takeaway
+                </section>
+                <section
+                  style={{
+                    width: "60px",
+                    border: delivery ? "2px green solid" : "none",
+                    background: delivery ? "white" : "#c13333",
+                    padding: "5px 10px",
+                    fontSize: "0.7em",
+                    letterSpacing: "0.5px",
+                    color: delivery ? "black" : "white",
+                  }}
+                  onClick={() => setDelivery(!delivery)}
+                >
+                  Delivery
+                </section>
+                <section
+                  style={{
+                    width: "60px",
+                    border: veg ? "2px green solid" : "none",
+                    background: veg ? "white" : "#c13333",
+                    padding: "5px 10px",
+                    fontSize: "0.7em",
+                    letterSpacing: "0.5px",
+                    color: veg ? "black" : "white",
+                  }}
+                  onClick={() => setVeg(!veg)}
+                >
+                  {veg ? "Veg" : "Non-Veg"}
+                </section>
+              </section>
+
+              <section className={categoryBasicStyles.itemControls}>
+                <textarea
+                  ref={itemDescRef}
+                  placeholder="Enter product description..."
+                  maxLength={100}
+                />
+              </section>
+            </div>
+            <div>
+              <section className={categoryBasicStyles.categoryContainer}>
+                <ul>
+                  {categoryList.map(
+                    (item, id) =>
+                      item !== "Category" && (
+                        <li key={id}>
+                          {item}
+                          <section
+                            className={categoryBasicStyles.categoryChangeArea}
+                          >
+                            <img
+                              src={pencil}
+                              onClick={() => {
+                                inputCategoryRef.current.value = item
+                                setCloseCategory(false)
+                                setCategoryEdit(true)
+                                categoryInputOpt(id)
+                              }}
+                            />
+                            <img
+                              src={cross}
+                              onClick={() => deleteCategory(id)}
+                            />
+                          </section>
+                        </li>
+                      )
+                  )}
+                </ul>
+                <input
+                  className={categoryBasicStyles.categoryEntryInput}
+                  type="text"
+                  placeholder="Delux Gravy"
+                  hidden={closeCategory}
+                  ref={inputCategoryRef}
+                />
+                <button
+                  className={categoryBasicStyles.addCategoryBtn}
+                  onClick={categoryInputOpt}
+                >
+                  +
+                </button>
+                <button
+                  className={categoryBasicStyles.finalCategoryBtn}
+                  onClick={updateCategoriesList}
+                >
+                  <img src={tick} />
+                </button>
+              </section>
+            </div>
+          </SwipeableViews>
         </Card>
 
         <section className={categoryBasicStyles.listContainer}>
           {list.map((item, id) => (
-            <section className={categoryBasicStyles.greenCard} key={item.id} on>
+            <section className={categoryBasicStyles.greenCard} key={item.id}>
               <section className={categoryBasicStyles.parentDataContainer}>
                 <section className={categoryBasicStyles.basicDataContainer}>
                   <section className={categoryBasicStyles.textContainers}>
                     <section>
-                      {item.category && (
+                      {/* {item.category && (
                         <img
                           srcSet={require("../../images/icons/categories/" +
                             item.category.toLowerCase() +
                             ".svg")}
                         />
-                      )}
+                      )} */}
                       <p className={categoryBasicStyles.itemName}>
                         {item.itemName}
                       </p>
@@ -712,10 +578,10 @@ export const getItems = /* GraphQL */ `
         category
         itemName
         itemPrice
-        image
         status
         desc
       }
+      category
     }
   }
 `

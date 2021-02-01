@@ -21,8 +21,8 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `gatsby-starter-default`,
-        short_name: `starter`,
+        name: `Scanat`,
+        short_name: `Scanat`,
         start_url: `/`,
         background_color: `white`,
         theme_color: `#169188`,

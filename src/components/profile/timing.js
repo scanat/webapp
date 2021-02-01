@@ -5,7 +5,7 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { API, graphqlOperation } from "aws-amplify"
 import { getCurrentUser } from "../../utils/auth"
-import { navigate } from "gatsby"
+import Loader from "../loader"
 
 const Timing = () => {
   const [errmsg, setErrmsg] = useState(null)
@@ -21,8 +21,10 @@ const Timing = () => {
     time1: "10:00",
     time2: "22:00",
   })
+  const [loading, setLoading] = useState(false)
 
   const uploadTiming = async () => {
+    setLoading(true)
     try {
       let inputs = {
         input: {
@@ -36,10 +38,12 @@ const Timing = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
   }
 
   return (
     <Layout>
+      <Loader loading={loading} />
       <section className={timingStyles.container}>
         <section className={timingStyles.subContainer}>
           <label>Business Days</label>

@@ -6,6 +6,7 @@ import Amplify, { API, Auth, graphqlOperation, input } from "aws-amplify"
 import { getCurrentUser } from "../../utils/auth"
 import awsmobile from "../../aws-exports"
 import Layout from "../layout"
+import Loader from "../loader"
 
 Amplify.configure(awsmobile)
 
@@ -42,12 +43,14 @@ const UserDetails = () => {
     postal_code: "",
   })
   const [location, setLocation] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getData()
   }, [])
 
   async function getData() {
+    setLoading(true)
     try {
       let params = {
         id: getCurrentUser()["custom:page_id"],
@@ -78,9 +81,11 @@ const UserDetails = () => {
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
   }
 
   const changeUserPassword = async () => {
+    setLoading(true)
     if (
       oldPass !== null &&
       oldPass !== "" &&
@@ -105,9 +110,12 @@ const UserDetails = () => {
     } else {
       // snackHandler("Inputs spaces cannot be empty!", false)
     }
+    setLoading(false)
   }
+
   const changeUserAttributes = async () => {
     setErrmsg(null)
+    setLoading(true)
     try {
       await Auth.updateUserAttributes(await Auth.currentAuthenticatedUser(), {
         name: name,
@@ -142,6 +150,7 @@ const UserDetails = () => {
     } catch (error) {
       // snackHandler(error.message, false)
     }
+    setLoading(false)
   }
 
   const getGeolocation = () => {
@@ -151,6 +160,7 @@ const UserDetails = () => {
 
   return (
     <Layout>
+      <Loader loading={loading} />
       <section id="cardContainer" className={detailStyles.cardContainer}>
         <section className={detailStyles.detailsContainer}>
           <label className={detailStyles.detailsLabels}>Name</label>
@@ -234,6 +244,7 @@ const UserDetails = () => {
               onClick={getGeolocation}
             />
           </section>
+          
           <button
             type="button"
             onClick={changeUserAttributes}

@@ -1,27 +1,18 @@
-import React, { useEffect } from 'react'
-import loaderStyles from './loader.module.css'
-import LoadingImage from '../images/loading.png'
-import Anime from 'animejs'
+import React, { useEffect } from "react"
+import loaderStyles from "./loader.module.css"
 
-const Loader = (props) => {
+const Loader = props => {
 
-    useEffect(() => {
-        Anime({
-            targets: document.getElementById('spinnerId'),
-            loop: true,
-            autoplay: true,
-            rotate: [0, 360],
-            easing: 'linear',
-            duration: 800
-        })
-    }, [])
-
-    return(
-        <section className={loaderStyles.container} style={{display: props.loading ? 'flex' : 'none'}}>
-            <h1 className={loaderStyles.topic}>SCAN AT</h1>
-            <img id="spinnerId" src={LoadingImage} alt="Scan At Loading Image" />
-        </section>
-    )
+  return (
+    <section
+      className={loaderStyles.container}
+      style={{ display: props.loading ? "flex" : "none" }}
+    >
+      <div className={loaderStyles.snippet}>
+        <div className={loaderStyles.dotovertaking}></div>
+      </div>
+    </section>
+  )
 }
 
 export default Loader

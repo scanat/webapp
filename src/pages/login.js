@@ -77,9 +77,10 @@ const LoginSection = props => {
   async function userLogin() {
     if (username !== "" && password !== "") {
       try {
-        const user = await Auth.signIn(username, password)
-        setUser(user)
-        navigate("/profile")
+        const user = await Auth.signIn(username, password).then(res => {
+          res && setUser(user)
+          res && navigate("/profile")
+        })
       } catch (error) {
         noticeRef.current.innerHTML = error.message
       }
@@ -309,12 +310,12 @@ const ResetSection = props => {
 
   const sendVerificationCode = async () => {
     try {
-      const result = await Auth.forgotPassword(email)
-      console.log(result)
-      setVerify(true)
-      setResultContent({
-        msg: `Verification mail has been sent to ${result.CodeDeliveryDetails.Destination}`,
-        status: true,
+      await Auth.forgotPassword(email).then(res => {
+        res && setVerify(true)
+        setResultContent({
+          msg: `Verification mail has been sent to ${res.CodeDeliveryDetails.Destination}`,
+          status: true,
+        })
       })
     } catch (error) {
       setResultContent({ msg: error.message, status: false })
@@ -323,9 +324,10 @@ const ResetSection = props => {
 
   const resetPassword = async () => {
     try {
-      await Auth.forgotPasswordSubmit(username, code, newPass)
-      props.switchPanel(1)
-      setResultContent({ msg: "Password has been reset", status: true })
+      await Auth.forgotPasswordSubmit(username, code, newPass).then(res => {
+        res && props.switchPanel(1)
+        setResultContent({ msg: "Password has been reset", status: true })
+      })
     } catch (error) {
       setResultContent({ msg: error.message, status: false })
     }
@@ -438,7 +440,6 @@ const OtpSection = props => {
       let username = localStorage.getItem("username")
       let password = localStorage.getItem("password")
       await Auth.signIn(username, password).then(result => {
-        console.log(result)
         if (result) {
           setUser(result)
           props.switchPanel(4)
@@ -463,7 +464,7 @@ const OtpSection = props => {
   async function resendOtp() {
     try {
       await Auth.resendSignUp(localStorage.getItem("username")).then(res => {
-        setOtp("")
+        res && setOtp("")
       })
     } catch (error) {
       console.log(error)

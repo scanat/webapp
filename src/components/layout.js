@@ -1,9 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import Header from "../components/header"
 import layoutStyles from "./layout.module.css"
 import Footer from "./footer"
-import Amplify from 'aws-amplify'
-import awsmobile from '../aws-exports'
+import { graphql } from "graphql"
 
 const Layout = ({ children }) => {
 
@@ -13,7 +12,7 @@ const Layout = ({ children }) => {
       <main className={layoutStyles.main}>
         {children}
       </main>
-        <Footer className={layoutStyles.footer} />
+      <Footer className={layoutStyles.footer} />
     </section>
   )
 }

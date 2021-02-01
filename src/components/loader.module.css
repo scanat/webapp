@@ -1,16 +1,99 @@
-.container{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 20;
-    background: #169188;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@charset "UTF-8";
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 20;
+  background: #00000094;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.topic{
-    color: whitesmoke;
-    font-size: 40px;
+.topic {
+  color: whitesmoke;
+  font-size: 40px;
+}
+/* .snippet{
+    width: 100%;
+    height: 50px;
+} */
+.dotovertaking {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: white;
+  margin: -1px 0;
+  box-shadow: 0 -20px 0 0;
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+  -webkit-animation: dotovertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dotovertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+}
+
+.dotovertaking::before,
+.dotovertaking::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: white;
+  box-shadow: 0 -20px 0 0;
+}
+
+.dotovertaking::before {
+  -webkit-animation: dotovertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dotovertaking 2s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+}
+
+.dotovertaking::after {
+  -webkit-animation: dot-overtaking 1.5s infinite
+    cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  animation: dotovertaking 1.5s infinite cubic-bezier(0.2, 0.6, 0.8, 0.2);
+  -webkit-animation-delay: 0.6s;
+  animation-delay: 0.6s;
+}
+@-o-keyframes dotovertaking {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+@-moz-keyframes dotovertaking {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+@-webkit-keyframes dotovertaking {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes dotovertaking {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }

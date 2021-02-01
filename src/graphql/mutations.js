@@ -172,6 +172,8 @@ export const createItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
@@ -195,6 +197,8 @@ export const updateItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
@@ -218,6 +222,8 @@ export const deleteItems = /* GraphQL */ `
         image
         status
         delivery
+        takeaway
+        veg
         desc
       }
       category
