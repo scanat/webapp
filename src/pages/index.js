@@ -49,7 +49,7 @@ const subscriberItemS3 = new AWS.S3({
 })
 
 const Explore = () => {
-  const [viewIndex, setViewIndex] = useState(0)
+  const [viewIndex, setViewIndex] = useState(1)
   const [directory, setDirectory] = useState([])
   const [postData, setPostData] = useState([])
 
@@ -87,7 +87,7 @@ const Explore = () => {
       console.log(error)
     }
   }
-  console.log(postData)
+
   return (
     <Layout>
       <SwipeableViews index={viewIndex}>
@@ -152,7 +152,6 @@ const Home = () => {
 
   useEffect(() => {
     let temp = searchObjectList
-    console.log(temp)
     setSearchObjectList(temp)
   }, [searchObjectList])
 
@@ -199,6 +198,7 @@ const Home = () => {
           graphqlOperation(listSubscribers, filtered),
           amp
         ).then(res => {
+          console.log(res)
           let list = res.data.listSubscribers.items
           searchListManipulation(true)
           setSearchObjectList(list)
@@ -230,14 +230,12 @@ const Home = () => {
                                   item.imageData = result.Body
                                   setSearchObjectList(list)
                                 })
-                                setSearchObjectList(list)
                             } catch (error) {
                               console.log(error)
                             }
                           }
                         }
                       }
-                      setSearchObjectList(list)
                     })
                 } catch (error) {
                   console.log(error)
@@ -258,6 +256,7 @@ const Home = () => {
           graphqlOperation(listSubscribers, filtered),
           amp
         ).then(res => {
+          console.log(res)
           let list = res.data.listSubscribers.items
           searchListManipulation(true)
           setSearchObjectList(list)
@@ -289,14 +288,12 @@ const Home = () => {
                                   item.imageData = result.Body
                                   setSearchObjectList(list)
                                 })
-                                setSearchObjectList(list)
                             } catch (error) {
                               console.log(error)
                             }
                           }
                         }
                       }
-                      setSearchObjectList(list)
                     })
                 } catch (error) {
                   console.log(error)
@@ -310,7 +307,6 @@ const Home = () => {
       }
     }
   }
-  console.log(searchObjectList)
 
   return (
     <section
@@ -494,20 +490,48 @@ const Home = () => {
 }
 
 const Post = props => {
+  const [list, setList] = useState([])
+
+  useEffect(() => {
+    setList(props.posts)
+  }, [props.posts])
+
+  async function getPostImage(item) {
+    try {
+      let temp = [...list]
+      let params = {
+        Bucket: process.env.GATSBY_S3_BUCKET,
+        Key: item.img,
+      }
+      await s3.getObject(params, (err, data) => {
+        data &&
+          temp.map(subitem => {
+            if (subitem.id === item.id) {
+              subitem.imageData = data.Body
+              setList(temp)
+            }
+          })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <section className={exploreStyles.postContainer}>
-      {props.posts.map((item, id) => (
-        <section className={exploreStyles.postItem} key={id}>
-          {/* <img
-            src={
-              "https://subscriberstoragebucket192012-dev.s3.amazonaws.com/public/" +
-              item.img
-            }
-          /> */}
-          <label>{item.topic}</label>
-          <p>{item.desc}</p>
-        </section>
-      ))}
+      {props.posts.map(
+        (item, id) =>
+          item.status && (
+            <section
+              className={exploreStyles.postItem}
+              key={id}
+              onClick={() => getPostImage(item)}
+            >
+              {item.imageData && <img src={item.imageData} />}
+              <label>{item.topic}</label>
+              <p>{item.desc}</p>
+            </section>
+          )
+      )}
     </section>
   )
 }

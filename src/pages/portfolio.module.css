@@ -40,7 +40,7 @@
   text-transform: uppercase;
 }
 .heart {
-  position: fixed;
+  position: absolute;
   right: 10px;
   top: 32%;
   width: 40px;

@@ -38,6 +38,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons"
 import { Link, navigate } from "gatsby"
 import awsmobile from "../aws-exports"
+import SwipeableViews from "react-swipeable-views"
 
 Amplify.configure({
   API: {
@@ -66,6 +67,7 @@ const Portfolio = ({ location }) => {
   const [categoryList, setCategoryList] = useState([])
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
   const [businessHourStatus, setBusinessHourStatus] = useState("")
+  const [viewIndex, setViewIndex] = useState(1)
 
   useEffect(() => {
     if (document.body.offsetWidth < 481) setWidth(1)
@@ -153,7 +155,7 @@ const Portfolio = ({ location }) => {
         let inputs = {
           input: {
             id: localStorage.getItem("username"),
-            saved: [new URLSearchParams(location.search).get("id")]
+            saved: [new URLSearchParams(location.search).get("id")],
           },
         }
         await API.graphql(graphqlOperation(updateUsers, inputs)).then(res =>
@@ -167,230 +169,228 @@ const Portfolio = ({ location }) => {
 
   return (
     <Layout>
-      <section
-        className={portfolioStyles.backLayout}
-        ref={backLayoutPanel}
-        onClick={closeBackLayout}
-      ></section>
-      <Banner id={new URLSearchParams(location.search).get("id")} />
+      <SwipeableViews index={viewIndex}>
+        <div>
+          <section
+            className={portfolioStyles.backLayout}
+            ref={backLayoutPanel}
+            onClick={closeBackLayout}
+          ></section>
+          <Banner id={new URLSearchParams(location.search).get("id")} />
 
-      <Logo id={new URLSearchParams(location.search).get("id")} />
+          <Logo id={new URLSearchParams(location.search).get("id")} />
 
-      <button className={portfolioStyles.heart} onClick={saveToDirectory}>
-        <img src={require("../images/icon/heart.png")} />
-      </button>
+          <button className={portfolioStyles.heart} onClick={saveToDirectory}>
+            <img src={require("../images/icon/heart.png")} />
+          </button>
 
-      <section className={portfolioStyles.orgTitle}>
-        <section className={portfolioStyles.orgRate}>
-          <FontAwesomeIcon
-            icon={faStar}
-            color="#ffc400"
-            size="xs"
-            style={{ margin: "0 2px" }}
-          />
-          <FontAwesomeIcon
-            icon={faStar}
-            color="#ffc400"
-            size="xs"
-            style={{ margin: "0 2px" }}
-          />
-          <FontAwesomeIcon
-            icon={faStar}
-            color="#ffc400"
-            size="xs"
-            style={{ margin: "0 2px" }}
-          />
-          <FontAwesomeIcon
-            icon={faStar}
-            color="#ffc400"
-            size="xs"
-            style={{ margin: "0 2px" }}
-          />
-          <FontAwesomeIcon
-            icon={faStar}
-            color="#ffc400"
-            size="xs"
-            style={{ margin: "0 2px" }}
-          />
-        </section>
-        <h1>{pageData.orgName}</h1>
-        {pageData.businessHours && (
-          <>
-            <label className={portfolioStyles.openTimes} onClick={openTiming}>
-              <label>{businessHourStatus}</label>
+          <section className={portfolioStyles.orgTitle}>
+            <section className={portfolioStyles.orgRate}>
               <FontAwesomeIcon
-                icon={faAngleDown}
-                style={{ margin: "0 0 -3px 5px" }}
+                icon={faStar}
+                color="#ffc400"
+                size="xs"
+                style={{ margin: "0 2px" }}
               />
-            </label>
-            <section
-              ref={timingPanelRef}
-              className={portfolioStyles.timingPanel}
-            >
-              <h5>Business hours</h5>
-              <label>
-                ({pageData.businessHours[0].day1} -{" "}
-                {pageData.businessHours[0].day2}) :{" "}
-                {pageData.businessHours[0].time1} -{" "}
-                {pageData.businessHours[0].time2}
-              </label>
-              <br />
-              <hr />
-              <h5>Happy hours</h5>
-              {pageData.businessHours[1].day1 ===
-              pageData.businessHours[1].day2 ? (
-                <label>
-                  ({pageData.businessHours[1].day1} :{" "}
-                  {pageData.businessHours[1].time1} -{" "}
-                  {pageData.businessHours[1].time2}
-                </label>
-              ) : (
-                <label>
-                  ({pageData.businessHours[1].day1} -{" "}
-                  {pageData.businessHours[1].day2}) :{" "}
-                  {pageData.businessHours[1].time1} -{" "}
-                  {pageData.businessHours[1].time2}
-                </label>
-              )}
+              <FontAwesomeIcon
+                icon={faStar}
+                color="#ffc400"
+                size="xs"
+                style={{ margin: "0 2px" }}
+              />
+              <FontAwesomeIcon
+                icon={faStar}
+                color="#ffc400"
+                size="xs"
+                style={{ margin: "0 2px" }}
+              />
+              <FontAwesomeIcon
+                icon={faStar}
+                color="#ffc400"
+                size="xs"
+                style={{ margin: "0 2px" }}
+              />
+              <FontAwesomeIcon
+                icon={faStar}
+                color="#ffc400"
+                size="xs"
+                style={{ margin: "0 2px" }}
+              />
             </section>
-          </>
-        )}
-      </section>
+            <h1>{pageData.orgName}</h1>
+            {pageData.businessHours && (
+              <>
+                <label
+                  className={portfolioStyles.openTimes}
+                  onClick={openTiming}
+                >
+                  <label>{businessHourStatus}</label>
+                  <FontAwesomeIcon
+                    icon={faAngleDown}
+                    style={{ margin: "0 0 -3px 5px" }}
+                  />
+                </label>
+                <section
+                  ref={timingPanelRef}
+                  className={portfolioStyles.timingPanel}
+                >
+                  <h5>Business hours</h5>
+                  <label>
+                    ({pageData.businessHours[0].day1} -{" "}
+                    {pageData.businessHours[0].day2}) :{" "}
+                    {pageData.businessHours[0].time1} -{" "}
+                    {pageData.businessHours[0].time2}
+                  </label>
+                  <br />
+                  <hr />
+                  <h5>Happy hours</h5>
+                  {pageData.businessHours[1].day1 ===
+                  pageData.businessHours[1].day2 ? (
+                    <label>
+                      ({pageData.businessHours[1].day1} :{" "}
+                      {pageData.businessHours[1].time1} -{" "}
+                      {pageData.businessHours[1].time2}
+                    </label>
+                  ) : (
+                    <label>
+                      ({pageData.businessHours[1].day1} -{" "}
+                      {pageData.businessHours[1].day2}) :{" "}
+                      {pageData.businessHours[1].time1} -{" "}
+                      {pageData.businessHours[1].time2}
+                    </label>
+                  )}
+                </section>
+              </>
+            )}
+          </section>
 
-      <section className={portfolioStyles.tabs}>
-        <ul>
-          <li>
-            <button>
-              <img src={livemenu} color="white" />
-              <label>Live</label>
-            </button>
-          </li>
+          <section className={portfolioStyles.tabs}>
+            <ul>
+              <li>
+                <button>
+                  <img src={livemenu} color="white" />
+                  <label>Live</label>
+                </button>
+              </li>
 
-          <li>
-            <button>
-              <img src={delivery} />
-              <label>Deliver</label>
-            </button>
-          </li>
+              <li>
+                <button>
+                  <img src={delivery} />
+                  <label>Deliver</label>
+                </button>
+              </li>
 
-          <li>
-            <button
-              className={reviewShow ? portfolioStyles.active : ""}
-              onClick={() => {
-                setReviewShow(!reviewShow)
-                setInfoShow(false)
-                setGalleryShow(false)
-                setShareShow(false)
-              }}
-            >
-              <img src={review} />
-              <label>Review</label>
-            </button>
-          </li>
+              <li>
+                <button
+                  className={reviewShow ? portfolioStyles.active : ""}
+                  onClick={() => {
+                    setReviewShow(!reviewShow)
+                    setInfoShow(false)
+                    setGalleryShow(false)
+                    setShareShow(false)
+                  }}
+                >
+                  <img src={review} />
+                  <label>Review</label>
+                </button>
+              </li>
 
-          <li>
-            <button
-              className={galleryShow ? portfolioStyles.active : ""}
-              onClick={() => {
-                setGalleryShow(!galleryShow)
-                setInfoShow(false)
-                setReviewShow(false)
-                setShareShow(false)
-              }}
-            >
-              <img src={gallery} />
-              <label>Photos</label>
-            </button>
-          </li>
+              <li>
+                <button
+                  className={galleryShow ? portfolioStyles.active : ""}
+                  onClick={() => {
+                    setGalleryShow(!galleryShow)
+                    setInfoShow(false)
+                    setReviewShow(false)
+                    setShareShow(false)
+                  }}
+                >
+                  <img src={gallery} />
+                  <label>Photos</label>
+                </button>
+              </li>
 
-          <li>
-            <button
-              className={shareShow ? portfolioStyles.active : ""}
-              onClick={() => {
-                setShareShow(!shareShow)
-                setInfoShow(false)
-                setReviewShow(false)
-                setGalleryShow(false)
-              }}
-            >
-              <img src={share} />
-              <label>Share</label>
-            </button>
-          </li>
+              <li>
+                <button
+                  className={shareShow ? portfolioStyles.active : ""}
+                  onClick={() => {
+                    setShareShow(!shareShow)
+                    setInfoShow(false)
+                    setReviewShow(false)
+                    setGalleryShow(false)
+                  }}
+                >
+                  <img src={share} />
+                  <label>Share</label>
+                </button>
+              </li>
 
-          <li>
-            <button
-              className={infoShow ? portfolioStyles.active : ""}
-              onClick={() => {
-                setInfoShow(!infoShow)
-                setReviewShow(false)
-                setGalleryShow(false)
-                setShareShow(false)
-              }}
-            >
-              <img src={info} />
-              <label>Info</label>
-            </button>
-          </li>
-        </ul>
-      </section>
+              <li>
+                <button
+                  className={infoShow ? portfolioStyles.active : ""}
+                  onClick={() => {
+                    setInfoShow(!infoShow)
+                    setReviewShow(false)
+                    setGalleryShow(false)
+                    setShareShow(false)
+                  }}
+                >
+                  <img src={info} />
+                  <label>Info</label>
+                </button>
+              </li>
+            </ul>
+          </section>
 
-      {category === "" && categoryList.length > 0 && (
-        <section className={portfolioStyles.gridCategory}>
-          {categoryList.map((item, index) => (
-            <section key={index} onClick={() => setCategory(item)}>
-              <img src={require(`../images/icon/${item.toLowerCase()}.svg`)} />
-              <label>{item}</label>
+          {category === "" && categoryList.length > 0 && (
+            <section className={portfolioStyles.gridCategory}>
+              {categoryList.map((item, index) => (
+                <section key={index} onClick={() => setCategory(item)}>
+                  <label>{item}</label>
+                </section>
+              ))}
             </section>
-          ))}
-        </section>
-      )}
+          )}
 
-      <LiveMenu
-        id={new URLSearchParams(location.search).get("id")}
-        table={new URLSearchParams(location.search).get("table")}
-        category={category}
-      />
+          <SocialPlatform
+            id={new URLSearchParams(location.search).get("id")}
+            show={shareShow}
+          />
 
-      <SocialPlatform
-        id={new URLSearchParams(location.search).get("id")}
-        show={shareShow}
-      />
+          <Gallery
+            id={new URLSearchParams(location.search).get("id")}
+            show={galleryShow}
+          />
 
-      <Gallery
-        id={new URLSearchParams(location.search).get("id")}
-        show={galleryShow}
-      />
+          <Info
+            id={new URLSearchParams(location.search).get("id")}
+            show={infoShow}
+            address={{
+              address1: pageData.address1,
+              address2: pageData.address2,
+              city: pageData.city,
+              state: pageData.state,
+              postalCode: pageData.postalCode,
+            }}
+            phoneNumber={pageData.phoneNumber}
+            about={pageData.about}
+          />
 
-      <Info
-        id={new URLSearchParams(location.search).get("id")}
-        show={infoShow}
-        address={{
-          address1: pageData.address1,
-          address2: pageData.address2,
-          city: pageData.city,
-          state: pageData.state,
-          postalCode: pageData.postalCode,
-        }}
-        phoneNumber={pageData.phoneNumber}
-        about={pageData.about}
-      />
+          <Review
+            id={new URLSearchParams(location.search).get("id")}
+            show={reviewShow}
+            orgName={pageData.orgName}
+          />
 
-      <Review
-        id={new URLSearchParams(location.search).get("id")}
-        show={reviewShow}
-        orgName={pageData.orgName}
-      />
-
-      {/* <section className={portfolioStyles.liveSpaceContainer}>
+          {/* <section className={portfolioStyles.liveSpaceContainer}>
         <Link to={`/live?id=${String(location.search).substring(4)}`}>
           <label className={portfolioStyles.menuMainText}>LIVE MENU</label>
         </Link>
       </section> */}
 
-      {/* <SocialPage id={String(location.search).substring(4)} /> */}
+          {/* <SocialPage id={String(location.search).substring(4)} /> */}
 
-      {/* <section className={portfolioStyles.fullDescription}>
+          {/* <section className={portfolioStyles.fullDescription}>
         <section className={portfolioStyles.businessLocation}>
           <FontAwesomeIcon icon={faMapMarkerAlt} color="crimson" size="3x" />
           <p className={portfolioStyles.topic}>ADDRESS</p>
@@ -415,11 +415,11 @@ const Portfolio = ({ location }) => {
         </section>
       </section> */}
 
-      {/* <AmbiencePost id={String(location.search).substring(4)} /> */}
+          {/* <AmbiencePost id={String(location.search).substring(4)} /> */}
 
-      {/* <DishesWeek id={String(location.search).substring(4)} /> */}
+          {/* <DishesWeek id={String(location.search).substring(4)} /> */}
 
-      {/* <section className={portfolioStyles.reviewContainer}>
+          {/* <section className={portfolioStyles.reviewContainer}>
         <h2 className={portfolioStyles.headerTopic}>Like what you see?</h2>
         <section className={portfolioStyles.reviewHolder}>
           <label className={portfolioStyles.labelTopic}>Rate Us</label>
@@ -474,7 +474,7 @@ const Portfolio = ({ location }) => {
         </section>
       </section> */}
 
-      {/* <section className={portfolioStyles.bulkOrders}>
+          {/* <section className={portfolioStyles.bulkOrders}>
         <h2 style={{ margin: "20px 5%", textDecoration: "underline" }}>
           For more
         </h2>
@@ -498,6 +498,15 @@ const Portfolio = ({ location }) => {
           Submit
         </button>
       </section> */}
+        </div>
+        <div>
+          <LiveMenu
+            id={new URLSearchParams(location.search).get("id")}
+            table={new URLSearchParams(location.search).get("table")}
+            category={category}
+          />
+        </div>
+      </SwipeableViews>
     </Layout>
   )
 }
